@@ -1,0 +1,218 @@
+import { reactive } from 'vue'
+
+export type PokemonBasic = {
+  id: number
+  name: string
+  sprites: { front_default?: string }
+  types: { type: { name: string } }[]
+  stats?: { base_stat: number; stat: { name: string } }[]
+}
+
+type Account = { username: string | null }
+
+export type Move = { name: string; type: string; power: number; accuracy: number }
+
+export type PokemonInstance = PokemonBasic & {
+  level: number
+  moves: Move[]
+}
+
+type BattleState = {
+  inBattle: boolean
+  wild: PokemonInstance | null
+  partyIndex: number
+}
+
+const state = reactive({
+  account: { username: null } as Account,
+  caught: [] as PokemonInstance[],
+  battle: { inBattle: false, wild: null, partyIndex: 0 } as BattleState,
+  theme: 'light' as 'light' | 'dark',
+  themeMode: 'auto' as 'auto' | 'light' | 'dark',
+})
+
+const defaultMovesByType: Record<string, Move[]> = {
+  normal: [
+    { name: 'Tackle', type: 'normal', power: 40, accuracy: 1 },
+    { name: 'Quick Attack', type: 'normal', power: 40, accuracy: 1 },
+  ],
+  fire: [
+    { name: 'Ember', type: 'fire', power: 40, accuracy: 1 },
+    { name: 'Flame Wheel', type: 'fire', power: 60, accuracy: 1 },
+  ],
+  water: [
+    { name: 'Water Gun', type: 'water', power: 40, accuracy: 1 },
+    { name: 'Bubble Beam', type: 'water', power: 65, accuracy: 1 },
+  ],
+  grass: [
+    { name: 'Vine Whip', type: 'grass', power: 45, accuracy: 1 },
+    { name: 'Razor Leaf', type: 'grass', power: 55, accuracy: 0.95 },
+  ],
+  electric: [
+    { name: 'Thunder Shock', type: 'electric', power: 40, accuracy: 1 },
+    { name: 'Spark', type: 'electric', power: 65, accuracy: 1 },
+  ],
+  ice: [
+    { name: 'Ice Shard', type: 'ice', power: 40, accuracy: 1 },
+    { name: 'Ice Fang', type: 'ice', power: 65, accuracy: 0.95 },
+  ],
+  fighting: [
+    { name: 'Karate Chop', type: 'fighting', power: 50, accuracy: 1 },
+  ],
+  poison: [
+    { name: 'Poison Sting', type: 'poison', power: 15, accuracy: 1 },
+    { name: 'Sludge', type: 'poison', power: 65, accuracy: 1 },
+  ],
+  ground: [
+    { name: 'Mud-Slap', type: 'ground', power: 20, accuracy: 1 },
+    { name: 'Bulldoze', type: 'ground', power: 60, accuracy: 1 },
+  ],
+  flying: [
+    { name: 'Gust', type: 'flying', power: 40, accuracy: 1 },
+    { name: 'Wing Attack', type: 'flying', power: 60, accuracy: 1 },
+  ],
+  psychic: [
+    { name: 'Confusion', type: 'psychic', power: 50, accuracy: 1 },
+  ],
+  bug: [
+    { name: 'Bug Bite', type: 'bug', power: 60, accuracy: 1 },
+  ],
+  rock: [
+    { name: 'Rock Throw', type: 'rock', power: 50, accuracy: 0.9 },
+  ],
+  ghost: [
+    { name: 'Lick', type: 'ghost', power: 30, accuracy: 1 },
+  ],
+  dragon: [
+    { name: 'Dragon Breath', type: 'dragon', power: 60, accuracy: 1 },
+  ],
+  dark: [
+    { name: 'Bite', type: 'dark', power: 60, accuracy: 1 },
+  ],
+  steel: [
+    { name: 'Metal Claw', type: 'steel', power: 50, accuracy: 0.95 },
+  ],
+  fairy: [
+    { name: 'Fairy Wind', type: 'fairy', power: 40, accuracy: 1 },
+  ],
+}
+
+function generateMoves(types: string[], count = 4): Move[] {
+  const pool: Move[] = []
+  for (const t of types) {
+    pool.push(...(defaultMovesByType[t] || []))
+  }
+  if (pool.length === 0) pool.push(...defaultMovesByType['normal'])
+  // Fill with normal moves if needed
+  while (pool.length < count) pool.push(defaultMovesByType['normal'][0])
+  // Pick up to 4 distinct-ish moves
+  const chosen: Move[] = []
+  const used = new Set<string>()
+  for (const mv of pool) {
+    if (chosen.length >= count) break
+    if (used.has(mv.name)) continue
+    chosen.push(mv)
+    used.add(mv.name)
+  }
+  return chosen.slice(0, count)
+}
+
+function toInstance(p: PokemonBasic, level?: number): PokemonInstance {
+  const types = p.types?.map((t) => t.type.name) || ['normal']
+  const lvl = level ?? Math.max(3, Math.floor(3 + Math.random() * 15))
+  return {
+    ...p,
+    level: lvl,
+    moves: generateMoves(types),
+  }
+}
+
+export function useStore() {
+  return {
+    theme: state.theme,
+    themeMode: state.themeMode,
+    account: state.account,
+    caught: state.caught,
+    battle: state.battle,
+    initFromStorage() {
+      try {
+        const raw = localStorage.getItem('mpb_state')
+        if (raw) {
+          const parsed = JSON.parse(raw)
+          if (parsed.account) state.account.username = parsed.account.username
+          if (Array.isArray(parsed.caught)) {
+            // Ensure legacy entries get level/moves
+            for (const p of parsed.caught) {
+              if (p.level && p.moves) state.caught.push(p)
+              else state.caught.push(toInstance(p))
+            }
+          }
+          if (parsed.theme === 'dark' || parsed.theme === 'light') state.theme = parsed.theme
+          if (parsed.themeMode === 'auto' || parsed.themeMode === 'light' || parsed.themeMode === 'dark') state.themeMode = parsed.themeMode
+        }
+      } catch {}
+      // apply theme on init
+      try {
+        document.documentElement.classList.toggle('dark', state.theme === 'dark')
+      } catch {}
+    },
+    persist() {
+      try {
+        localStorage.setItem('mpb_state', JSON.stringify({ account: state.account, caught: state.caught, theme: state.theme, themeMode: state.themeMode }))
+      } catch {}
+    },
+    login(username: string) {
+      state.account.username = username
+      this.persist()
+    },
+    logout() {
+      state.account.username = null
+      state.caught.splice(0)
+      this.persist()
+    },
+    addCaught(p: PokemonBasic) {
+      if (!state.caught.find((x) => x.id === p.id)) {
+        state.caught.push(toInstance(p))
+        this.persist()
+      }
+    },
+    startBattle(wild: PokemonBasic, partyIndex = 0) {
+      state.battle.inBattle = true
+      const my = state.caught[partyIndex]
+      const lvl = my ? Math.max(3, Math.min(50, my.level + (Math.floor(Math.random() * 5) - 2))) : undefined
+      state.battle.wild = toInstance(wild, lvl)
+      state.battle.partyIndex = Math.min(partyIndex, Math.max(0, state.caught.length - 1))
+    },
+    setPartyIndex(i: number) {
+      if (state.caught.length === 0) return
+      const n = ((i % state.caught.length) + state.caught.length) % state.caught.length
+      state.battle.partyIndex = n
+    },
+    endBattle() {
+      state.battle.inBattle = false
+      state.battle.wild = null
+    },
+    setTheme(theme: 'light' | 'dark') {
+      state.theme = theme
+      try { document.documentElement.classList.toggle('dark', theme === 'dark') } catch {}
+      this.persist()
+    },
+    computeTimeTheme(): 'light' | 'dark' {
+      const hour = new Date().getHours()
+      // Gold/Silver rough day/night split: day 6:00-17:59, night 18:00-5:59
+      return hour >= 6 && hour < 18 ? 'light' : 'dark'
+    },
+    setThemeMode(mode: 'auto' | 'light' | 'dark') {
+      state.themeMode = mode
+      const next = mode === 'auto' ? this.computeTimeTheme() : (mode as 'light' | 'dark')
+      this.setTheme(next)
+      this.persist()
+    },
+    toggleThemeMode() {
+      const order: Array<'auto' | 'light' | 'dark'> = ['auto', 'light', 'dark']
+      const idx = order.indexOf(state.themeMode)
+      const next = order[(idx + 1) % order.length]
+      this.setThemeMode(next)
+    },
+  }
+}

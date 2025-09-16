@@ -1,0 +1,56 @@
+:root {
+  /* Pokemon Gold/Silver inspired day palette */
+  --bg: #f2efde;            /* warm parchment */
+  --text: #2a1f1a;          /* deep brown */
+  --panel: rgba(255, 252, 240, 0.96);
+  --panel-weak: rgba(255, 252, 240, 0.9);
+  --panel-border: #c8b794;
+  --button-bg: #fff8d8;
+  --button-text: #2a1f1a;
+  --accent: #d4a015;        /* gold */
+  --success: #2ea043;       /* green */
+  --shadow: rgba(82, 62, 39, 0.25);
+  --overlay: rgba(42, 31, 26, 0.45);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.dark {
+  /* Pokemon Gold/Silver inspired night palette */
+  --bg: #0b1430;            /* deep navy */
+  --text: #dce7ff;          /* pale blue */
+  --panel: rgba(12, 22, 50, 0.92);
+  --panel-weak: rgba(12, 22, 50, 0.88);
+  --panel-border: #2a3d6b;
+  --button-bg: #0f1a3f;
+  --button-text: #e6efff;
+  --accent: #65b3ff;        /* crystal blue */
+  --success: #22c55e;
+  --shadow: rgba(0, 0, 0, 0.55);
+  --overlay: rgba(0, 0, 0, 0.55);
+}
+* { box-sizing: border-box; }
+html, body, #app { height: 100%; margin: 0; }
+.fullscreen { position: absolute; inset: 0; }
+.panel { background: var(--panel); border-radius: 12px; box-shadow: 0 6px 20px var(--shadow); padding: 0.75rem; color: var(--text); }
+.btn { appearance: none; border: 1px solid var(--panel-border); background: var(--button-bg); color: var(--button-text); border-radius: 8px; padding: 0.5rem 0.75rem; cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #ffffff; }
+.btn.danger { background: #ef4444; border-color: #dc2626; color: white; }
+.row { display: flex; gap: 0.5rem; align-items: center; }
+.stack { display: grid; gap: 0.5rem; }
+.overlay { position: absolute; inset: 0; background: var(--overlay); display: flex; align-items: center; justify-content: center; }
+
+/* Mapbox control theming */
+.mapboxgl-ctrl, .mapboxgl-ctrl-group {
+  background: var(--panel) !important;
+  border: 1px solid var(--panel-border) !important;
+  box-shadow: 0 2px 8px var(--shadow) !important;
+}
+.mapboxgl-ctrl button {
+  background: var(--button-bg) !important;
+  color: var(--button-text) !important;
+}
+.mapboxgl-ctrl button:hover {
+  background: var(--panel-weak) !important;
+}
