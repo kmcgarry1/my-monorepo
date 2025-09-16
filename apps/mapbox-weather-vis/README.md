@@ -1,5 +1,22 @@
-# Vue 3 + TypeScript + Vite
+# Mapbox Weather Visualiser
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+A minimal Vue 3 + Vite application that renders a full-screen [Mapbox GL JS](https://docs.mapbox.com/mapbox-gl-js/) map.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+## Getting started
+
+1. Install dependencies from the repository root:
+   ```bash
+   pnpm install
+   ```
+2. Provide a Mapbox access token. Create an `.env` file in `apps/mapbox-weather-vis` (or export the variable in your shell) with:
+   ```bash
+   VITE_MAPBOX_ACCESS_TOKEN=your_public_token_here
+   ```
+   You can create a free token from the [Mapbox dashboard](https://account.mapbox.com/access-tokens/).
+3. Launch the development server:
+   ```bash
+   pnpm --filter mapbox-weather-vis dev
+   ```
+4. Open the printed URL in your browser to view the map.
+
+The map centres on New York City and includes navigation and fullscreen controls. Feel free to adjust the configuration in `src/App.vue` to suit your needs.

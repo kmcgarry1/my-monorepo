@@ -1,30 +1,80 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+import mapboxgl from 'mapbox-gl'
+
+const mapContainer = ref<HTMLDivElement | null>(null)
+const mapInstance = ref<mapboxgl.Map | null>(null)
+const errorMessage = ref<string | null>(null)
+
+onMounted(() => {
+  if (!mapContainer.value) {
+    errorMessage.value = 'Map container failed to mount.'
+    return
+  }
+
+  const accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN as string | undefined
+  if (!accessToken) {
+    errorMessage.value =
+      'Add a VITE_MAPBOX_ACCESS_TOKEN value to your environment to display the map.'
+    return
+  }
+
+  mapboxgl.accessToken = accessToken
+
+  try {
+    const map = new mapboxgl.Map({
+      container: mapContainer.value,
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: [-74.006, 40.7128],
+      zoom: 11,
+    })
+
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right')
+    map.addControl(new mapboxgl.FullscreenControl())
+
+    mapInstance.value = map
+  } catch (error) {
+    console.error('Failed to initialise Mapbox GL JS map', error)
+    errorMessage.value = 'The map failed to load. Check the console for details.'
+  }
+})
+
+onBeforeUnmount(() => {
+  mapInstance.value?.remove()
+  mapInstance.value = null
+})
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="map-page">
+    <div ref="mapContainer" class="map" aria-hidden="true"></div>
+    <div v-if="errorMessage" class="map-error" role="alert">{{ errorMessage }}</div>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.map-page {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+
+.map {
+  width: 100%;
+  height: 100%;
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+
+.map-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: #f8fafc;
+  background: rgba(15, 23, 42, 0.8);
 }
 </style>
