@@ -17,16 +17,19 @@ export type PokemonInstance = PokemonBasic & {
   moves: Move[]
 }
 
+export type BattleOutcome = 'ongoing' | 'victory' | 'defeat' | 'caught' | 'fled'
+
 type BattleState = {
   inBattle: boolean
   wild: PokemonInstance | null
   partyIndex: number
+  outcome: BattleOutcome
 }
 
 const state = reactive({
   account: { username: null } as Account,
   caught: [] as PokemonInstance[],
-  battle: { inBattle: false, wild: null, partyIndex: 0 } as BattleState,
+  battle: { inBattle: false, wild: null, partyIndex: 0, outcome: 'ongoing' } as BattleState,
   theme: 'light' as 'light' | 'dark',
   themeMode: 'auto' as 'auto' | 'light' | 'dark',
 })
@@ -182,13 +185,15 @@ export function useStore() {
       const lvl = my ? Math.max(3, Math.min(50, my.level + (Math.floor(Math.random() * 5) - 2))) : undefined
       state.battle.wild = toInstance(wild, lvl)
       state.battle.partyIndex = Math.min(partyIndex, Math.max(0, state.caught.length - 1))
+      state.battle.outcome = 'ongoing'
     },
     setPartyIndex(i: number) {
       if (state.caught.length === 0) return
       const n = ((i % state.caught.length) + state.caught.length) % state.caught.length
       state.battle.partyIndex = n
     },
-    endBattle() {
+    endBattle(outcome: BattleOutcome = 'fled') {
+      state.battle.outcome = outcome
       state.battle.inBattle = false
       state.battle.wild = null
     },
