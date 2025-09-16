@@ -21,6 +21,7 @@ const themeInterval = ref<number | null>(null)
 type Spawn = { id: number; coord: [number, number]; marker?: mapboxgl.Marker; data?: PokeBasic }
 const spawns = reactive<Spawn[]>([])
 const selected = ref<Spawn | null>(null)
+const activeBattleSpawn = ref<Spawn | null>(null)
 
 function getEnvAt(lngLat: mapboxgl.LngLat): 'water' | 'urban' | 'forest' | 'default' {
   try {
@@ -83,6 +84,13 @@ async function spawnBatch(center: mapboxgl.LngLat) {
 function clearSpawns() {
   spawns.forEach((s) => s.marker?.remove())
   spawns.splice(0)
+}
+
+function releaseSpawn(spawn: Spawn | null) {
+  if (!spawn) return
+  spawn.marker?.remove()
+  const idx = spawns.indexOf(spawn)
+  if (idx >= 0) spawns.splice(idx, 1)
 }
 
 function ensureAccessToken() {
@@ -221,9 +229,7 @@ function catchPokemon(s: Spawn) {
   const success = Math.random() < 0.6
   if (success) {
     store.addCaught(s.data)
-    s.marker?.remove()
-    const idx = spawns.indexOf(s)
-    if (idx >= 0) spawns.splice(idx, 1)
+    releaseSpawn(s)
     selected.value = null
     alert(`Caught ${s.data.name}!`)
   } else {
@@ -233,7 +239,9 @@ function catchPokemon(s: Spawn) {
 
 function battlePokemon(s: Spawn) {
   if (!s.data) return
-  store.startBattle(s.data, 0)
+  activeBattleSpawn.value = s
+  selected.value = null
+  store.startBattle(s.data, store.battle.partyIndex)
 }
 
 function recenterToPlayer() {
@@ -241,6 +249,18 @@ function recenterToPlayer() {
     map.value.easeTo({ center: playerPos.value, duration: 500, essential: true })
   }
 }
+
+watch(
+  () => store.battle.inBattle,
+  (inBattle) => {
+    if (!inBattle) {
+      if (store.battle.outcome === 'victory' || store.battle.outcome === 'caught') {
+        releaseSpawn(activeBattleSpawn.value)
+      }
+      activeBattleSpawn.value = null
+    }
+  }
+)
 
 onMounted(() => {
   try {
