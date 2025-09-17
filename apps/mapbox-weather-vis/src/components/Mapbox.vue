@@ -6,15 +6,30 @@
     <ThreeParticlesOverlay v-else />
     <RadarOverlay :active="uiState.radarOn" :opacity="uiState.radarOpacity" />
 
-    <div class="ui-overlay" role="region" aria-label="Map controls">
-      <div class="panel">
-        <h2 class="panel-title">Map Controls</h2>
-        <StyleSelector />
-        <LayerToggle />
-        <RadarControl />
-        <EffectSelector />
-        <TimeControl />
-      </div>
+    <div class="ui-overlay" role="region" aria-labelledby="map-controls-title">
+      <section class="panel">
+        <header class="panel-header">
+          <p class="panel-eyebrow">Weather layers</p>
+          <h2 id="map-controls-title" class="panel-title">Map Controls</h2>
+        </header>
+        <div class="panel-content">
+          <div class="panel-section">
+            <StyleSelector />
+          </div>
+          <div class="panel-section">
+            <LayerToggle />
+          </div>
+          <div class="panel-section">
+            <RadarControl />
+          </div>
+          <div class="panel-section">
+            <EffectSelector />
+          </div>
+          <div class="panel-section">
+            <TimeControl />
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </template>
@@ -124,25 +139,66 @@ function applyLabelVisibility(m: mapboxgl.Map, visible: boolean) {
 }
 .ui-overlay {
   position: absolute;
-  top: 0.75rem;
-  left: 0.75rem;
+  top: 1.25rem;
+  left: 1.25rem;
   z-index: 10;
   display: flex;
   gap: 0.75rem;
+  align-items: flex-start;
 }
 .panel {
-  min-width: 240px;
-  max-width: 320px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 10px;
-  box-shadow: 0 4px 16px rgba(2, 6, 23, 0.2);
-  padding: 0.75rem;
-  backdrop-filter: blur(6px);
+  min-width: 260px;
+  max-width: min(360px, calc(100vw - 2.5rem));
+  background: rgba(15, 23, 42, 0.72);
+  border-radius: 18px;
+  box-shadow: 0 30px 60px rgba(15, 23, 42, 0.35);
+  padding: 1.25rem;
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #e2e8f0;
+}
+.panel-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+.panel-eyebrow {
+  margin: 0;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(226, 232, 240, 0.7);
 }
 .panel-title {
-  margin: 0 0 0.5rem 0;
-  font-size: 0.95rem;
+  margin: 0;
+  font-size: 1.25rem;
   font-weight: 600;
-  color: #0f172a;
+  color: #f8fafc;
+}
+.panel-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.panel-section {
+  border-radius: 14px;
+  padding: 0.85rem;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: inset 0 1px 0 rgba(226, 232, 240, 0.05);
+}
+
+@media (max-width: 768px) {
+  .ui-overlay {
+    top: 1rem;
+    left: 1rem;
+    right: 1rem;
+  }
+
+  .panel {
+    width: 100%;
+    max-width: none;
+  }
 }
 </style>
