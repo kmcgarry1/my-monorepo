@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch, nextTick } from 'vue'
 import { useStore, type PokemonInstance, type Move, type BattleOutcome } from '../../store'
+import AppButton from '../ui/AppButton.vue'
 
 type BattlerState = {
   instance: PokemonInstance
@@ -69,6 +70,7 @@ const foeState = ref<BattlerState | null>(null)
 const activeIndex = ref(0)
 const bag = reactive({ potion: 3, pokeball: 3 })
 const result = ref<BattleOutcome>('ongoing')
+const anim = reactive({ playerEnter: false, foeEnter: false, playerHit: false, foeHit: false })
 
 let finishingBattle = false
 
@@ -93,6 +95,22 @@ const foeHpPercent = computed(() => {
 const myHpPercent = computed(() => {
   if (!playerState.value || playerState.value.maxHp === 0) return 0
   return Math.max(0, (playerState.value.currentHp / playerState.value.maxHp) * 100)
+})
+
+watch(playerState, async (v) => {
+  if (v) {
+    anim.playerEnter = false
+    await nextTick()
+    requestAnimationFrame(() => (anim.playerEnter = true))
+  }
+})
+
+watch(foeState, async (v) => {
+  if (v) {
+    anim.foeEnter = false
+    await nextTick()
+    requestAnimationFrame(() => (anim.foeEnter = true))
+  }
 })
 
 function formatName(name: string): string {
@@ -250,6 +268,13 @@ async function performMove(attacker: BattlerState, defender: BattlerState, move:
   const dmg = calculateDamage(attacker, defender, move)
   defender.currentHp = Math.max(0, defender.currentHp - dmg)
   logPush(`${defenderLabel} took ${dmg} damage.`)
+  if (actor === 'player') {
+    anim.foeHit = true
+    setTimeout(() => (anim.foeHit = false), 220)
+  } else {
+    anim.playerHit = true
+    setTimeout(() => (anim.playerHit = false), 220)
+  }
   if (eff > 1.5) logPush("It's super effective!")
   else if (eff < 1) logPush("It's not very effective...")
   await wait(220)
@@ -418,7 +443,8 @@ initBattle()
             <div class="hpbar"><div class="hp" :style="{ width: foeHpPercent + '%' }"></div></div>
             <div class="hptext">{{ foeState.currentHp }} / {{ foeState.maxHp }}</div>
           </div>
-          <img :src="foeState.instance.sprites.front_default" alt="foe" class="sprite foe-sprite" />
+          <div class="platform platform-foe"></div>
+          <img :src="foeState.instance.sprites.front_default" alt="foe" class="sprite foe-sprite" :class="{ 'enter-foe': anim.foeEnter, 'hit': anim.foeHit }" />
         </div>
         <div class="side me" v-if="playerState">
           <div class="info">
@@ -428,16 +454,19 @@ initBattle()
             <div class="hpbar"><div class="hp" :style="{ width: myHpPercent + '%' }"></div></div>
             <div class="hptext">{{ playerState.currentHp }} / {{ playerState.maxHp }}</div>
           </div>
-          <img :src="playerState.instance.sprites.front_default" alt="me" class="sprite me-sprite" />
+          <div class="platform platform-me"></div>
+          <img :src="(playerState.instance.sprites as any)?.back_default || playerState.instance.sprites.front_default"
+               :class="{ 'me-sprite': true, 'sprite': true, 'flipped': !(playerState.instance.sprites as any)?.back_default, 'enter-me': anim.playerEnter, 'hit': anim.playerHit }"
+               alt="me" />
         </div>
       </div>
 
       <div class="box">
         <div v-if="menu === 'root'" class="menu">
-          <button class="btn" :disabled="!canAct" @click="openMoves">FIGHT</button>
-          <button class="btn" :disabled="!canAct" @click="openBag">BAG</button>
+          <AppButton variant="primary" :disabled="!canAct" @click="openMoves">FIGHT</AppButton>
+          <AppButton variant="outline" :disabled="!canAct" @click="openBag">BAG</AppButton>
           <button class="btn" :disabled="!canAct" @click="openSwitch">POKéMON</button>
-          <button class="btn" :disabled="!canAct" @click="attemptRun">RUN</button>
+          <AppButton variant="outline" :disabled="!canAct" @click="attemptRun">RUN</AppButton>
         </div>
         <div v-else-if="menu === 'moves'" class="moves">
           <div v-for="mv in playerMoves" :key="mv.name">
@@ -476,140 +505,59 @@ initBattle()
       </div>
     </div>
   </div>
-</template>
+ </template>
 
 <style scoped>
-.battle {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  grid-template-rows: 1fr auto auto;
-}
-.field {
-  position: relative;
-  padding: 1rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: end;
-}
-.sprite {
-  image-rendering: pixelated;
-  width: 96px;
-}
+.battle { @apply w-[min(92vw,900px)] aspect-[16/9] rounded-2xl shadow-[0_12px_28px_var(--shadow)] grid grid-rows-[1fr_auto_auto] overflow-hidden; background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0) 35%), var(--panel); }
+.field { @apply relative p-3 h-full; }
+/* Place foe top-right, player bottom-left, closer together */
+.side.foe { position: absolute; top: 0.5rem; right: 0.8rem; display: grid; justify-items: end; gap: 0.25rem; }
+.side.me { position: absolute; bottom: 0.8rem; left: 0.8rem; display: grid; justify-items: start; gap: 0.25rem; }
+.sprite { image-rendering: pixelated; width: clamp(96px, 14vw, 140px); filter: drop-shadow(0 6px 10px rgba(0,0,0,0.35)); position: relative; z-index: 2; }
 .foe-sprite {
   justify-self: end;
 }
-.info {
-  background: var(--panel-weak);
-  border-radius: 8px;
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
-  display: grid;
-  gap: 0.25rem;
-  width: fit-content;
-}
-.types {
-  font-size: 0.8rem;
-  opacity: 0.75;
-}
-.name {
-  text-transform: capitalize;
-  font-weight: 600;
-}
-.level {
-  font-size: 0.85rem;
-  opacity: 0.8;
-}
-.hpbar {
-  width: 180px;
-  height: 10px;
-  background: var(--panel-border);
-  border-radius: 6px;
-  overflow: hidden;
-}
-.hp {
-  height: 100%;
-  background: var(--success);
-}
-.hptext {
-  font-size: 0.8rem;
-  opacity: 0.85;
-}
-.box {
-  background: var(--panel);
-  border-radius: 12px;
-  margin: 0 1rem 0.5rem;
-  padding: 0.75rem;
-}
-.menu {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-}
-.moves {
-  display: grid;
-  gap: 0.5rem;
-}
-.move {
-  width: 100%;
-  display: grid;
-  gap: 0.2rem;
-  text-align: left;
-}
-.move-name {
-  font-weight: 600;
-}
-.move-meta {
-  font-size: 0.8rem;
-  opacity: 0.75;
-}
-.bag {
-  display: grid;
-  gap: 0.5rem;
-}
-.switch {
-  display: grid;
-  gap: 0.4rem;
-}
-.switch-item {
-  display: contents;
-}
-.switch-btn {
-  width: 100%;
-  display: grid;
-  gap: 0.2rem;
-  text-align: left;
-}
-.switch-btn.active {
-  outline: 2px solid #2563eb;
-}
-.switch-name {
-  font-weight: 600;
-  text-transform: capitalize;
-}
-.switch-meta {
-  font-size: 0.8rem;
-  opacity: 0.75;
-}
-.log {
-  background: var(--panel-weak);
-  border-radius: 12px;
-  margin: 0 1rem 1rem;
-  padding: 0.5rem 0.75rem;
-  max-height: 140px;
-  overflow: auto;
-  font-size: 0.9rem;
-}
-.btn {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--panel-border);
-  border-radius: 8px;
-  background: var(--button-bg);
-  color: var(--button-text);
-  cursor: pointer;
-}
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+.me-sprite.flipped { transform: scaleX(-1); }
+.info { @apply bg-[var(--panel-weak)] rounded-lg p-2 mb-2 grid gap-1 w-fit; }
+.types { @apply text-[0.8rem] opacity-75; }
+.name { @apply capitalize font-semibold; }
+.level { @apply text-[0.85rem] opacity-80; }
+.hpbar { @apply w-[180px] h-[10px] bg-[var(--panel-border)] rounded-md overflow-hidden; }
+.hp { @apply h-full bg-[var(--success)] transition-[width] duration-[260ms] ease-out; }
+.hptext { @apply text-[0.8rem] opacity-85; }
+.box { @apply bg-[var(--panel)] border-t border-[var(--panel-border)] p-3; }
+.menu { @apply grid grid-cols-4 gap-2; }\n.moves { @apply grid gap-2; }
+.move { @apply w-full grid gap-[0.2rem] text-left; }
+.move-name { @apply font-semibold; }
+.move-meta { @apply text-[0.8rem] opacity-75; }
+/* Move type colorways (work in light and dark) */
+/* Move type colors now come from global Tailwind-applied classes in src/styles/move-types.css */
+.bag { @apply grid gap-2; }
+.switch { @apply grid gap-[0.4rem]; }
+.switch-item { @apply contents; }
+.switch-btn { @apply w-full grid gap-[0.2rem] text-left; }
+.switch-btn.active { @apply outline outline-2 outline-blue-600; }
+.switch-name { @apply font-semibold capitalize; }
+.switch-meta { @apply text-[0.8rem] opacity-75; }
+.log { @apply bg-[var(--panel-weak)] border-t border-[var(--panel-border)] px-3 py-2 max-h-[140px] overflow-auto text-[0.9rem]; }
+
+
+/* Platforms under sprites */
+.platform { width: clamp(100px, 16vw, 180px); height: clamp(16px, 2vw, 28px); background: radial-gradient(ellipse at center, rgba(0,0,0,0.35), rgba(0,0,0,0) 70%); filter: blur(2px); opacity: 0.5; border-radius: 999px; position: relative; z-index: 1; }
+.platform::after { content: ''; position: absolute; left: -10%; right: -10%; top: -35%; height: 70%; border-radius: 999px; border-top: 2px solid rgba(0,0,0,0.25); border-left: 2px solid transparent; border-right: 2px solid transparent; }
+.platform-foe { justify-self: end; }
+.platform-me { justify-self: start; }
+
+/* Entry animations */
+@keyframes enterFromRight { from { opacity: 0; transform: translateX(22px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes enterFromLeft { from { opacity: 0; transform: translateX(-22px); } to { opacity: 1; transform: translateX(0); } }
+.enter-foe { animation: enterFromRight 300ms ease-out both; }
+.enter-me { animation: enterFromLeft 300ms ease-out both; }
+
+/* Hit animation */
+@keyframes hitShake { 0%{ transform: translate(0,0);} 25%{ transform: translate(-3px,0);} 50%{ transform: translate(3px,0);} 75%{ transform: translate(-2px,0);} 100%{ transform: translate(0,0);} }
+.hit { animation: hitShake 220ms ease-out; }
 </style>
+
+
+

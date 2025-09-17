@@ -1,38 +1,42 @@
 <script setup lang="ts">
-import { useStore } from '../../store'
+import { useStore, type PokemonInstance } from '../../store'
+import AppButton from '../ui/AppButton.vue'
 const store = useStore()
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'inspect'])
 
 function setActive(i: number) {
   store.setPartyIndex(i)
   emit('close')
 }
+
+function inspect(p: PokemonInstance) {
+  emit('inspect', p)
+}
 </script>
 
 <template>
   <div class="overlay" @click.self="emit('close')">
-    <div class="panel" style="max-width: 520px; width: 100%;">
-      <h3 style="margin:0 0 0.5rem 0;">Your Team</h3>
-      <div class="list">
-        <div class="item" v-for="(p,i) in store.caught" :key="p.id">
-          <img :src="p.sprites.front_default" style="width:56px; image-rendering: pixelated;" />
-          <div class="meta">
-            <div class="name">{{ p.name }}</div>
-            <div class="sub">Lv {{ p.level }} • {{ p.types.map(t=>t.type.name).join(', ') }}</div>
+    <div class="panel max-w-[520px] w-full">
+      <h3 class="m-0 mb-2">Your Team</h3>
+      <div class="grid gap-2">
+        <div class="grid [grid-template-columns:56px_1fr_auto] gap-2 items-center bg-[var(--panel-weak)] p-2 rounded-lg" v-for="(p,i) in store.caught" :key="p.id">
+          <img :src="p.sprites.front_default" class="w-[56px] [image-rendering:pixelated]" />
+          <div>
+            <div class="capitalize font-semibold">{{ p.name }}</div>
+            <div class="text-[0.85rem] opacity-70">Lv {{ p.level }} • {{ p.types.map(t=>t.type.name).join(', ') }}</div>
           </div>
-          <button class="btn" @click="setActive(i)" :disabled="store.battle.partyIndex===i">Set Active</button>
+          <div class="row gap-[0.4rem]">
+            <AppButton variant="outline" size="sm" @click="inspect(p)">Inspect</AppButton>
+            <AppButton variant="primary" size="sm" @click="setActive(i)" :disabled="store.battle.partyIndex===i">Set Active</AppButton>
+          </div>
         </div>
       </div>
-      <div class="row" style="justify-content: end; margin-top: 0.5rem;">
-        <button class="btn" @click="emit('close')">Close</button>
+      <div class="row justify-end mt-2">
+        <AppButton variant="outline" @click="emit('close')">Close</AppButton>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.list { display: grid; gap: 0.5rem; }
-.item { display: grid; grid-template-columns: 56px 1fr auto; gap: 0.5rem; align-items: center; background: var(--panel-weak); padding: 0.5rem; border-radius: 8px; }
-.name { text-transform: capitalize; font-weight: 600; }
-.sub { font-size: 0.85rem; opacity: 0.7; }
 </style>

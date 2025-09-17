@@ -93,25 +93,25 @@ function run() {
 </script>
 
 <template>
-  <div class="fullscreen" style="display:grid; grid-template-rows: 1fr auto;">
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 1rem; align-items:center;">
+  <div class="fullscreen grid [grid-template-rows:1fr_auto]">
+    <div class="grid [grid-template-columns:1fr_1fr] gap-4 p-4 items-center">
       <div class="panel" v-if="myMon">
-        <h3 style="margin:0; text-transform:capitalize;">Your {{ myMon.name }}</h3>
-        <div class="row"><img :src="myMon.sprite" style="width:96px; image-rendering: pixelated;" />
+        <h3 class="m-0 capitalize">Your {{ myMon.name }}</h3>
+        <div class="row"><img :src="myMon.sprite" class="w-24 [image-rendering:pixelated]" />
           <div class="stack">
             <div>HP: {{ myMon.hp }} / {{ myMon.maxHp }}</div>
             <div>ATK: {{ myMon.atk }} DEF: {{ myMon.def }}</div>
           </div>
         </div>
-        <div class="row" v-if="$router && $route" style="margin-top:0.5rem; gap:0.5rem;">
+        <div class="row mt-2 gap-2" v-if="$router && $route">
           <button class="btn" @click="store.setPartyIndex(store.battle.partyIndex - 1)" :disabled="!store.caught.length">Prev</button>
           <button class="btn" @click="store.setPartyIndex(store.battle.partyIndex + 1)" :disabled="!store.caught.length">Next</button>
           <span>Party: {{ store.battle.partyIndex + 1 }} / {{ store.caught.length }}</span>
         </div>
       </div>
       <div class="panel" v-if="wildMon">
-        <h3 style="margin:0; text-transform:capitalize;">Wild {{ wildMon.name }}</h3>
-        <div class="row"><img :src="wildMon.sprite" style="width:96px; image-rendering: pixelated;" />
+        <h3 class="m-0 capitalize">Wild {{ wildMon.name }}</h3>
+        <div class="row"><img :src="wildMon.sprite" class="w-24 [image-rendering:pixelated]" />
           <div class="stack">
             <div>HP: {{ wildMon.hp }} / {{ wildMon.maxHp }}</div>
             <div>ATK: {{ wildMon.atk }} DEF: {{ wildMon.def }}</div>
@@ -119,15 +119,15 @@ function run() {
         </div>
       </div>
     </div>
-    <div class="panel" style="border-radius: 12px 12px 0 0;">
-      <div class="row" style="justify-content: space-between; align-items: center;">
-        <div class="row" style="gap:0.75rem;">
+    <div class="panel rounded-t-xl">
+      <div class="row justify-between items-center">
+        <div class="row gap-3">
           <button class="btn" :disabled="!myTurn || !myMon || !wildMon" @click="attack">Attack</button>
           <button class="btn" @click="run">Run</button>
         </div>
         <router-link to="/" class="btn">Back to Map</router-link>
       </div>
-      <div style="margin-top:0.75rem; max-height: 160px; overflow:auto;">
+      <div class="mt-3 max-h-[160px] overflow-auto">
         <div v-if="!myMon">No caught Pokémon. Capture one to battle!</div>
         <div v-for="(line,i) in log" :key="i">{{ line }}</div>
       </div>
@@ -136,5 +136,4 @@ function run() {
 </template>
 
 <style scoped>
-h3 { font-size: 1rem; }
 </style>
