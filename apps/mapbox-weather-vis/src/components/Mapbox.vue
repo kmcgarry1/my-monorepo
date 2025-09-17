@@ -47,17 +47,17 @@ import RadarControl from './controls/RadarControl.vue'
 import WeatherParticlesCanvas from './overlays/WeatherParticlesCanvas.vue'
 import ThreeParticlesOverlay from './overlays/ThreeParticlesOverlay.vue'
 import RadarOverlay from './overlays/RadarOverlay.vue'
-import { MapboxKey, MapUiStateKey } from './di/keys'
+import { MapboxKey, MapUiStateKey, type MapUiState } from './di/keys'
 
 const mapContainer = ref<HTMLDivElement | null>(null)
 const map = shallowRef<mapboxgl.Map | null>(null)
 
-const uiState = reactive({
+const uiState = reactive<MapUiState>({
   styleId: 'mapbox://styles/mapbox/standard',
   showLabels: true,
   time: 0,
   playing: false,
-  effect: 'off' as 'off' | 'wind' | 'rain' | 'snow',
+  effect: 'off',
   radarOn: false,
   radarOpacity: 0.6,
 })
@@ -65,45 +65,69 @@ const uiState = reactive({
 provide(MapboxKey, map)
 provide(MapUiStateKey, uiState)
 
+type ConfigurableMap = mapboxgl.Map & {
+  setConfig?: (config: unknown) => void
+}
+
+const standardBasemapConfig = {
+  basemap: {
+    lightPreset: 'night',
+    theme: 'monochrome',
+  },
+} as const
+
+let standardConfigErrorLogged = false
+
+function applyStandardBasemap(m: ConfigurableMap) {
+  if (!uiState.styleId.includes('mapbox/standard')) return
+  try {
+    m.setConfig?.(standardBasemapConfig)
+  } catch (error) {
+    if (!standardConfigErrorLogged) {
+      console.warn('Failed to apply Mapbox standard basemap config', error)
+      standardConfigErrorLogged = true
+    }
+  }
+}
+
 onMounted(() => {
-  const accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN as string | undefined
+  const accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
   if (!accessToken) {
     console.error('Missing VITE_MAPBOX_ACCESS_TOKEN in environment')
     return
   }
 
+  if (!mapContainer.value) {
+    console.error('Map container element not found')
+    return
+  }
+
   mapboxgl.accessToken = accessToken
 
-  const m = new mapboxgl.Map({
-    container: mapContainer.value!,
+  const mapOptions: mapboxgl.MapboxOptions = {
+    container: mapContainer.value,
     style: uiState.styleId,
-    config: {
-      basemap: {
-        lightPreset: 'night',
-        theme: 'monochrome',
-      },
-    } as any,
     center: [-6.2603, 53.3498],
     zoom: 10,
     attributionControl: true,
-  })
+  }
 
-  m.addControl(new mapboxgl.NavigationControl(), 'top-right')
-  m.addControl(new mapboxgl.FullscreenControl())
+  const mapInstance = new mapboxgl.Map(mapOptions)
+  const configurableMap = mapInstance as ConfigurableMap
+
+  applyStandardBasemap(configurableMap)
+
+  mapInstance.addControl(new mapboxgl.NavigationControl(), 'top-right')
+  mapInstance.addControl(new mapboxgl.FullscreenControl())
 
   // Keep style in sync if changed by control
-  m.on('styledata', () => {
-    try {
-      // Reapply Standard style config if available
-      if (typeof (m as any).setConfig === 'function' && uiState.styleId.includes('mapbox/standard')) {
-        ;(m as any).setConfig({ basemap: { lightPreset: 'night', theme: 'monochrome' } })
-      }
-    } catch {}
+  mapInstance.on('styledata', () => {
+    applyStandardBasemap(configurableMap)
     // Best-effort to maintain label visibility toggle after style switch
-    applyLabelVisibility(m, uiState.showLabels)
+    applyLabelVisibility(mapInstance, uiState.showLabels)
   })
 
-  map.value = m
+  map.value = mapInstance
 })
 
 onBeforeUnmount(() => {
@@ -116,9 +140,8 @@ function applyLabelVisibility(m: mapboxgl.Map, visible: boolean) {
     const style = m.getStyle()
     if (!style?.layers) return
     for (const layer of style.layers) {
-      if ((layer as any).type === 'symbol') {
-        const id = (layer as any).id
-        m.setLayoutProperty(id, 'visibility', visible ? 'visible' : 'none')
+      if (layer.type === 'symbol') {
+        m.setLayoutProperty(layer.id, 'visibility', visible ? 'visible' : 'none')
       }
     }
   } catch (e) {

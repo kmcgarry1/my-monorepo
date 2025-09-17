@@ -1,22 +1,31 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { useStore } from '../store'
+import { useStore, type PokemonInstance } from '../store'
 import { useRouter } from 'vue-router'
 
 const store = useStore()
 const router = useRouter()
 
-type Battler = { name: string; hp: number; maxHp: number; atk: number; def: number; type: string; sprite?: string }
+type Battler = {
+  name: string
+  hp: number
+  maxHp: number
+  atk: number
+  def: number
+  type: string
+  sprite?: string | null
+}
 
-function toBattler(p: any): Battler {
-  const stats = Object.fromEntries((p.stats || []).map((s: any) => [s.stat.name, s.base_stat])) as any
+function toBattler(p: PokemonInstance): Battler {
+  const statEntries = (p.stats ?? []).map((s) => [s.stat.name, s.base_stat] as const)
+  const stats = Object.fromEntries(statEntries) as Record<string, number>
   return {
     name: p.name,
     maxHp: Math.max(50, (stats.hp || 45) * 2),
     hp: Math.max(50, (stats.hp || 45) * 2),
     atk: Math.max(20, stats.attack || 49),
     def: Math.max(20, stats.defense || 49),
-    type: (p.types?.[0]?.type?.name) || 'normal',
+    type: p.types?.[0]?.type?.name || 'normal',
     sprite: p.sprites?.front_default,
   }
 }

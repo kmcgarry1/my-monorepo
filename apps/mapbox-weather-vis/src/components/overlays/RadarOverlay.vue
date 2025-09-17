@@ -1,18 +1,21 @@
 <script setup lang="ts">
-import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { inject, onBeforeUnmount, onMounted, watch } from 'vue'
 import type mapboxgl from 'mapbox-gl'
 import { MapboxKey } from '../di/keys'
 
 const props = defineProps<{ active: boolean; opacity: number }>()
 
-const mapRef = inject(MapboxKey, null) as unknown as { value: mapboxgl.Map | null } | null
+const mapRef = inject(MapboxKey, null)
 const LAYER_ID = 'radar-raster-layer'
 const SOURCE_ID = 'radar-raster-source'
-let intervalId: any = null
+let intervalId: number | null = null
 let frameUrls: string[] = []
 let frameIndex = 0
+let styleDataHandler: (() => void) | null = null
 
-const isOn = computed(() => !!props.active)
+type RasterSource = mapboxgl.RasterSource & {
+  setTiles?: (tiles: string[]) => void
+}
 
 async function fetchTimeline(): Promise<string[]> {
   try {
@@ -29,28 +32,30 @@ async function fetchTimeline(): Promise<string[]> {
 
 function addOrUpdateLayer(map: mapboxgl.Map) {
   // Add source if missing
-  const src = map.getSource(SOURCE_ID) as any
-  if (!src) {
-    map.addSource(SOURCE_ID, {
+  const source = map.getSource(SOURCE_ID) as RasterSource | undefined
+  if (!source) {
+    const sourceSpec: mapboxgl.RasterSourceSpecification = {
       type: 'raster',
       tiles: frameUrls.length ? [frameUrls[frameIndex]] : [],
       tileSize: 256,
       attribution: 'RainViewer',
-    } as any)
+    }
+    map.addSource(SOURCE_ID, sourceSpec)
   } else {
     if (frameUrls.length) {
       try {
-        src.setTiles([frameUrls[frameIndex]])
+        source.setTiles?.([frameUrls[frameIndex]])
       } catch {
         // Some versions require re-adding on style change
         map.removeLayer(LAYER_ID)
         map.removeSource(SOURCE_ID)
-        map.addSource(SOURCE_ID, {
+        const freshSource: mapboxgl.RasterSourceSpecification = {
           type: 'raster',
           tiles: [frameUrls[frameIndex]],
           tileSize: 256,
           attribution: 'RainViewer',
-        } as any)
+        }
+        map.addSource(SOURCE_ID, freshSource)
       }
     }
   }
@@ -77,12 +82,12 @@ function removeLayer(map: mapboxgl.Map) {
 
 async function enable(map: mapboxgl.Map) {
   frameUrls = await fetchTimeline()
-  frameIndex = Math.max(0, Math.min(frameUrls.length - 1, frameUrls.length - 1))
+  frameIndex = Math.max(0, frameUrls.length - 1)
   addOrUpdateLayer(map)
   // Animate frames if available
-  clearInterval(intervalId)
+  stopAnimation()
   if (frameUrls.length > 1) {
-    intervalId = setInterval(() => {
+    intervalId = window.setInterval(() => {
       frameIndex = (frameIndex + 1) % frameUrls.length
       addOrUpdateLayer(map)
     }, 800)
@@ -90,19 +95,26 @@ async function enable(map: mapboxgl.Map) {
 }
 
 function disable(map: mapboxgl.Map) {
-  clearInterval(intervalId)
-  intervalId = null
+  stopAnimation()
   removeLayer(map)
+}
+
+function stopAnimation() {
+  if (intervalId !== null) {
+    clearInterval(intervalId)
+    intervalId = null
+  }
 }
 
 onMounted(() => {
   const map = mapRef?.value
   if (!map) return
+  styleDataHandler = () => {
+    if (props.active) addOrUpdateLayer(map)
+  }
   const init = () => {
     if (props.active) enable(map)
-    map.on('styledata', () => {
-      if (props.active) addOrUpdateLayer(map)
-    })
+    if (styleDataHandler) map.on('styledata', styleDataHandler)
   }
   if (map.loaded()) init()
   else map.once('load', init)
@@ -111,7 +123,11 @@ onMounted(() => {
 onBeforeUnmount(() => {
   const map = mapRef?.value
   if (!map) return
-  clearInterval(intervalId)
+  stopAnimation()
+  if (styleDataHandler) {
+    map.off('styledata', styleDataHandler)
+    styleDataHandler = null
+  }
   if (map.getLayer(LAYER_ID)) removeLayer(map)
 })
 

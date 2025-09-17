@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { inject, onBeforeUnmount, onMounted, ref } from 'vue'
 import type mapboxgl from 'mapbox-gl'
 import { MapboxKey, MapUiStateKey } from '../di/keys'
 
-type UiState = { time: number }
-
-const map = inject(MapboxKey, null) as unknown as { value: mapboxgl.Map | null } | null
-const uiState = inject(MapUiStateKey, null) as unknown as UiState | null
+const map = inject(MapboxKey, null)
+const uiState = inject(MapUiStateKey, null)
 
 const canvasEl = ref<HTMLCanvasElement | null>(null)
 const ctxRef = ref<CanvasRenderingContext2D | null>(null)
@@ -55,7 +53,7 @@ function step() {
   const h = canvas.clientHeight
 
   // Vary wind direction with time [0..100]
-  const t = (uiState?.time ?? 0) / 100 * Math.PI * 2
+  const t = ((uiState?.time ?? 0) / 100) * Math.PI * 2
   const windX = Math.cos(t) * 0.6
   const windY = Math.sin(t) * 0.3
 

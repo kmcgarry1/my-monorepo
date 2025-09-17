@@ -1,9 +1,21 @@
 import { reactive } from 'vue'
 
+export type OfficialArtwork = {
+  front_default?: string | null
+}
+
+export type PokemonSprites = {
+  front_default?: string | null
+  back_default?: string | null
+  other?: {
+    ['official-artwork']?: OfficialArtwork | null
+  } | null
+}
+
 export type PokemonBasic = {
   id: number
   name: string
-  sprites: { front_default?: string }
+  sprites: PokemonSprites
   types: { type: { name: string } }[]
   stats?: { base_stat: number; stat: { name: string } }[]
 }

@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { inject } from 'vue'
-import { MapUiStateKey } from '../di/keys'
+import { MapUiStateKey, type MapEffect } from '../di/keys'
 
-type UiState = { effect: 'off' | 'wind' | 'rain' | 'snow' }
-const uiState = inject(MapUiStateKey, null) as unknown as UiState | null
+const uiState = inject(MapUiStateKey, null)
+const allowedEffects = ['off', 'wind', 'rain', 'snow'] as const satisfies readonly MapEffect[]
+
+function isMapEffect(value: string): value is MapEffect {
+  return (allowedEffects as readonly string[]).includes(value)
+}
 
 function onChange(e: Event) {
-  const v = (e.target as HTMLSelectElement).value as UiState['effect']
-  if (uiState) uiState.effect = v
+  const value = (e.target as HTMLSelectElement).value
+  if (!uiState || !isMapEffect(value)) return
+  uiState.effect = value
 }
 </script>
 

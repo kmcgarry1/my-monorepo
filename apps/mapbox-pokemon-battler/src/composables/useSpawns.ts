@@ -2,9 +2,9 @@ import { ref } from 'vue'
 import mapboxgl from 'mapbox-gl'
 import { fetchPokemon, type PokeBasic, typeWeightedRandom } from '../services/pokeapi'
 
-export type Spawn = { id: number; coord: [number, number]; marker?: any; data?: PokeBasic }
+export type Spawn = { id: number; coord: [number, number]; marker?: mapboxgl.Marker | null; data?: PokeBasic }
 
-export function useSpawns(getMap: () => any | null, opts?: { onSelect?: (s: Spawn) => void }) {
+export function useSpawns(getMap: () => mapboxgl.Map | null, opts?: { onSelect?: (s: Spawn) => void }) {
   const spawns = ref<Spawn[]>([])
   // Memoize environment lookups by quantized coordinate for a brief period
   const envCache = new Map<string, { env: 'water' | 'urban' | 'forest' | 'default'; ts: number }>()
@@ -32,13 +32,13 @@ export function useSpawns(getMap: () => any | null, opts?: { onSelect?: (s: Spaw
         { x: pt.x - pad, y: pt.y - pad },
         { x: pt.x + pad, y: pt.y + pad },
       ]
-      const features: any[] = existing.length
-        ? (map.queryRenderedFeatures(bbox, { layers: existing }) as any)
-        : (map.queryRenderedFeatures(bbox) as any)
+      const features: mapboxgl.MapboxGeoJSONFeature[] = existing.length
+        ? map.queryRenderedFeatures(bbox, { layers: existing })
+        : map.queryRenderedFeatures(bbox)
       let env: 'water' | 'urban' | 'forest' | 'default' = 'default'
-      if (features.some((f: any) => f.layer && typeof f.layer.id === 'string' && f.layer.id.includes('water'))) env = 'water'
-      else if (features.some((f: any) => f.layer && typeof f.layer.id === 'string' && f.layer.id.includes('park'))) env = 'forest'
-      else if (features.some((f: any) => f.layer && typeof f.layer.id === 'string' && f.layer.id.includes('landuse'))) env = 'urban'
+      if (features.some((f) => f.layer && typeof f.layer.id === 'string' && f.layer.id.includes('water'))) env = 'water'
+      else if (features.some((f) => f.layer && typeof f.layer.id === 'string' && f.layer.id.includes('park'))) env = 'forest'
+      else if (features.some((f) => f.layer && typeof f.layer.id === 'string' && f.layer.id.includes('landuse'))) env = 'urban'
       envCache.set(key, { env, ts: Date.now() })
       return env
     } catch {}
@@ -71,13 +71,15 @@ export function useSpawns(getMap: () => any | null, opts?: { onSelect?: (s: Spaw
       img.style.maxHeight = '36px'
       el.appendChild(img)
       if (opts?.onSelect) {
-        el.addEventListener('click', () => opts.onSelect!(s))
+        el.addEventListener('click', () => opts.onSelect?.(s))
       }
-      s.marker = new mapboxgl.Marker({ element: el }).setLngLat(coord).addTo(getMap()!)
+      const mapInstance = getMap()
+      if (!mapInstance) return
+      s.marker = new mapboxgl.Marker({ element: el }).setLngLat(coord).addTo(mapInstance)
     } catch {}
   }
 
-  function randomCoordAround(center: any, radiusMeters = 200): [number, number] {
+  function randomCoordAround(center: mapboxgl.LngLat, radiusMeters = 200): [number, number] {
     const r = radiusMeters * Math.sqrt(Math.random())
     const theta = Math.random() * Math.PI * 2
     const dx = r * Math.cos(theta)
@@ -89,7 +91,7 @@ export function useSpawns(getMap: () => any | null, opts?: { onSelect?: (s: Spaw
     return [lng, lat]
   }
 
-  async function spawnBatch(center: any) {
+  async function spawnBatch(center: mapboxgl.LngLat) {
     const count = 8
     const env = getEnv([center.lng, center.lat])
     for (let i = 0; i < count; i++) addSpawnAt(randomCoordAround(center, 200), env)
