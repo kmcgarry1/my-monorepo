@@ -1,0 +1,61 @@
+@import './styles/move-types.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Pokemon Gold/Silver inspired day palette */
+    --bg: #f2efde;            /* warm parchment */
+    --text: #2a1f1a;          /* deep brown */
+    --panel: rgba(255, 252, 240, 0.96);
+    --panel-weak: rgba(255, 252, 240, 0.9);
+    --panel-border: #c8b794;
+    --button-bg: #fff8d8;
+    --button-text: #2a1f1a;
+    --accent: #d4a015;        /* gold */
+    --success: #2ea043;       /* green */
+    --shadow: rgba(82, 62, 39, 0.25);
+    --overlay: rgba(42, 31, 26, 0.45);
+  }
+
+  .dark {
+    /* Pokemon Gold/Silver inspired night palette */
+    --bg: #0b1430;            /* deep navy */
+    --text: #dce7ff;          /* pale blue */
+    --panel: rgba(12, 22, 50, 0.92);
+    --panel-weak: rgba(12, 22, 50, 0.88);
+    --panel-border: #2a3d6b;
+    --button-bg: #0f1a3f;
+    --button-text: #e6efff;
+    --accent: #65b3ff;        /* crystal blue */
+    --success: #22c55e;
+    --shadow: rgba(0, 0, 0, 0.55);
+    --overlay: rgba(0, 0, 0, 0.55);
+  }
+
+  * { box-sizing: border-box; }
+  html, body, #app { margin: 0; height: 100%; }
+  body { @apply text-[var(--text)] bg-[var(--bg)] font-sans; }
+}
+
+@layer components {
+  .fullscreen { @apply absolute inset-0; }
+  .panel { @apply bg-[var(--panel)] rounded-xl shadow-[0_6px_20px_var(--shadow)] p-3 text-[var(--text)]; }
+  .btn { @apply appearance-none border border-[var(--panel-border)] bg-[var(--button-bg)] text-[var(--button-text)] rounded-lg px-3 py-2 cursor-pointer; }
+  .btn.primary { @apply bg-[var(--accent)] border-[var(--accent)] text-white; }
+  .btn.danger { @apply bg-red-500 border-red-600 text-white; }
+  .row { @apply flex gap-2 items-center; }
+  .stack { @apply grid gap-2; }
+  .overlay { @apply absolute inset-0 bg-[var(--overlay)] grid place-items-center; }
+}
+
+/* Mapbox control theming */
+.mapboxgl-ctrl, .mapboxgl-ctrl-group {
+  @apply bg-[var(--panel)] border border-[var(--panel-border)] shadow-[0_2px_8px_var(--shadow)];
+}
+.mapboxgl-ctrl button {
+  @apply bg-[var(--button-bg)] text-[var(--button-text)];
+}
+.mapboxgl-ctrl button:hover { @apply bg-[var(--panel-weak)]; }
+
