@@ -2,8 +2,7 @@
 import { inject } from 'vue'
 import { MapUiStateKey } from '../di/keys'
 
-type UiState = { radarOn: boolean; radarOpacity: number }
-const uiState = inject(MapUiStateKey, null) as unknown as UiState | null
+const uiState = inject(MapUiStateKey, null)
 
 function onToggle(e: Event) {
   if (!uiState) return

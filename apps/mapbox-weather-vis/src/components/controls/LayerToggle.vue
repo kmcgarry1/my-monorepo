@@ -3,41 +3,42 @@ import { inject, watch } from 'vue'
 import type mapboxgl from 'mapbox-gl'
 import { MapboxKey, MapUiStateKey } from '../di/keys'
 
-type UiState = {
-  showLabels: boolean
-}
+const map = inject(MapboxKey, null)
+const uiState = inject(MapUiStateKey, null)
 
-const map = inject(MapboxKey, null) as unknown as { value: mapboxgl.Map | null } | null
-const uiState = inject(MapUiStateKey, null) as unknown as UiState | null
-
-function setSymbolVisibility(visible: boolean) {
-  const m = (map as any)?.value as mapboxgl.Map | null
-  if (!m) return
+function setSymbolVisibility(mapInstance: mapboxgl.Map | null, visible: boolean) {
+  if (!mapInstance) return
   try {
-    const style = m.getStyle()
+    const style = mapInstance.getStyle()
     if (!style?.layers) return
     for (const layer of style.layers) {
-      if ((layer as any).type === 'symbol') {
-        m.setLayoutProperty((layer as any).id, 'visibility', visible ? 'visible' : 'none')
+      if (layer.type === 'symbol') {
+        mapInstance.setLayoutProperty(layer.id, 'visibility', visible ? 'visible' : 'none')
       }
     }
   } catch {
-    // ignore
+    // Ignore errors from incomplete style data
   }
 }
 
 function onToggleLabels(e: Event) {
   const checked = (e.target as HTMLInputElement).checked
   if (uiState) uiState.showLabels = checked
-  setSymbolVisibility(checked)
+  setSymbolVisibility(map?.value ?? null, checked)
 }
 
-// Re-apply after style changes
 watch(
-  () => (map as any)?.value?.getStyle()?.sprite,
-  () => {
-    if (uiState) setSymbolVisibility(uiState.showLabels)
-  }
+  () => map?.value ?? null,
+  (mapInstance, _prev, onCleanup) => {
+    if (!mapInstance) return
+    const apply = () => setSymbolVisibility(mapInstance, uiState?.showLabels ?? true)
+    apply()
+    mapInstance.on('styledata', apply)
+    onCleanup(() => {
+      mapInstance.off('styledata', apply)
+    })
+  },
+  { immediate: true }
 )
 </script>
 

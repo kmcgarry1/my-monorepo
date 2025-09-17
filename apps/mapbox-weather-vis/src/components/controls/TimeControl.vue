@@ -1,13 +1,8 @@
 <script setup lang="ts">
-import { inject, onMounted, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, inject, onMounted, onBeforeUnmount, ref } from 'vue'
 import { MapUiStateKey } from '../di/keys'
 
-type UiState = {
-  time: number
-  playing: boolean
-}
-
-const uiState = inject(MapUiStateKey, null) as unknown as UiState | null
+const uiState = inject(MapUiStateKey, null)
 const rafId = ref<number | null>(null)
 
 function tick() {
@@ -37,10 +32,13 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  if (rafId.value) cancelAnimationFrame(rafId.value)
+  if (rafId.value) {
+    cancelAnimationFrame(rafId.value)
+    rafId.value = null
+  }
 })
 
-const timeLabel = () => (uiState ? Math.round(uiState.time) : 0)
+const timeLabel = computed(() => (uiState ? Math.round(uiState.time) : 0))
 </script>
 
 <template>
@@ -58,7 +56,7 @@ const timeLabel = () => (uiState ? Math.round(uiState.time) : 0)
         {{ uiState?.playing ? 'Pause' : 'Play' }}
       </button>
     </legend>
-    <div class="time-readout">t = {{ timeLabel() }}</div>
+    <div class="time-readout">t = {{ timeLabel }}</div>
     <input
       class="time-slider"
       type="range"

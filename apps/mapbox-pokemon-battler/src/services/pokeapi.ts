@@ -1,7 +1,9 @@
+import type { PokemonSprites } from '../store'
+
 export type PokeBasic = {
   id: number
   name: string
-  sprites: { front_default?: string }
+  sprites: PokemonSprites
   types: { type: { name: string } }[]
   stats: { base_stat: number; stat: { name: string } }[]
 }

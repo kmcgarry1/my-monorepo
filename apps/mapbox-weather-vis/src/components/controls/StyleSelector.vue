@@ -1,31 +1,18 @@
 <script setup lang="ts">
-import { inject, watch } from 'vue'
-import type mapboxgl from 'mapbox-gl'
+import { inject } from 'vue'
 import { MapboxKey, MapUiStateKey } from '../di/keys'
 
-type UiState = {
-  styleId: string
-}
-
-const map = inject(MapboxKey, null) as unknown as { value: mapboxgl.Map | null } | null
-const uiState = inject(MapUiStateKey, null) as unknown as UiState | null
+const map = inject(MapboxKey, null)
+const uiState = inject(MapUiStateKey, null)
 
 // When user changes style, apply to map
 function onChange(e: Event) {
   const next = (e.target as HTMLSelectElement).value
   if (!uiState) return
   uiState.styleId = next
-  const m = (map as any)?.value as mapboxgl.Map | null
-  if (m) m.setStyle(next)
+  const mapInstance = map?.value
+  if (mapInstance) mapInstance.setStyle(next)
 }
-
-// Keep select in sync if style changes externally
-watch(
-  () => (map as any)?.value?.getStyle()?.sprite,
-  () => {
-    // No-op placeholder for potential sync logic
-  }
-)
 </script>
 
 <template>

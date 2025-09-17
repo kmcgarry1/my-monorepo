@@ -7,7 +7,8 @@ const props = defineProps<{ pokemon: PokemonInstance }>()
 const emit = defineEmits(['close', 'set-active'])
 
 function spriteUrl() {
-  return (props.pokemon.sprites as any)?.other?.['official-artwork']?.front_default || props.pokemon.sprites.front_default
+  const sprites = props.pokemon.sprites
+  return sprites.other?.['official-artwork']?.front_default || sprites.front_default || ''
 }
 
 function typeList() {

@@ -2,13 +2,12 @@
 import { inject, onBeforeUnmount, onMounted, watch } from 'vue'
 import * as THREE from 'three'
 import mapboxgl from 'mapbox-gl'
-import { MapboxKey, MapUiStateKey } from '../di/keys'
+import { MapboxKey, MapUiStateKey, type MapEffect } from '../di/keys'
 
-type Effect = 'wind' | 'rain' | 'snow'
-type UiState = { effect: 'off' | Effect; playing: boolean; time: number }
+type Effect = Exclude<MapEffect, 'off'>
 
-const mapRef = inject(MapboxKey, null) as unknown as { value: mapboxgl.Map | null } | null
-const uiState = inject(MapUiStateKey, null) as unknown as UiState | null
+const mapRef = inject(MapboxKey, null)
+const uiState = inject(MapUiStateKey, null)
 
 const LAYER_ID = 'three-particles-layer'
 
@@ -23,7 +22,7 @@ let rainLines: THREE.LineSegments | null = null
 let rainLinePositions: Float32Array | null = null
 let velocities: Float32Array | null = null
 let mapInstance: mapboxgl.Map | null = null
-let prevMerc: any | null = null
+let prevMerc: mapboxgl.MercatorCoordinate | null = null
 let prevScale = 1
 let spreadX = 300
 let spreadY = 300
@@ -41,7 +40,8 @@ function createSplashTexture(): THREE.Texture {
   canvas.width = size
   canvas.height = size
   const ctx = canvas.getContext('2d')!
-  const grd = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2)
+  const half = size / 2
+  const grd = ctx.createRadialGradient(half, half, 0, half, half, half)
   grd.addColorStop(0.0, 'rgba(255,255,255,0.8)')
   grd.addColorStop(0.6, 'rgba(255,255,255,0.25)')
   grd.addColorStop(1.0, 'rgba(255,255,255,0.0)')
@@ -301,7 +301,7 @@ function updateParticles(effect: Effect) {
 function updateRootTransform(map: mapboxgl.Map) {
   if (!root) return
   const center = map.getCenter()
-  const merc = (mapboxgl as any).MercatorCoordinate.fromLngLat([center.lng, center.lat], 0)
+  const merc = mapboxgl.MercatorCoordinate.fromLngLat([center.lng, center.lat], 0)
   const scale = merc.meterInMercatorCoordinateUnits()
 
   // If camera moved, offset particle positions by inverse delta (camera-anchored volume)
@@ -363,7 +363,7 @@ function addLayer(map: mapboxgl.Map) {
       const effect = (uiState?.effect ?? 'wind') as Effect
       if (uiState?.playing !== false) updateParticles(effect)
       updateSplashes()
-      ;(camera as any).projectionMatrix = new THREE.Matrix4().fromArray(matrix)
+      camera.projectionMatrix = new THREE.Matrix4().fromArray(matrix)
       renderer.state.reset()
       renderer.render(scene, camera)
       mapInstance?.triggerRepaint()

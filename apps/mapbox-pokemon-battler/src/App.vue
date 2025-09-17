@@ -27,7 +27,10 @@ onMounted(() => {
   window.addEventListener('pointermove', motionHandler, { passive: true })
 })
 onBeforeUnmount(() => {
-  if (motionHandler) window.removeEventListener('pointermove', motionHandler as any)
+  if (motionHandler) {
+    window.removeEventListener('pointermove', motionHandler)
+    motionHandler = null
+  }
 })
 </script>
 

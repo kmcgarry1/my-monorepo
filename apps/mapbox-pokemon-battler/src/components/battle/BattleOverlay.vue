@@ -97,6 +97,14 @@ const myHpPercent = computed(() => {
   return Math.max(0, (playerState.value.currentHp / playerState.value.maxHp) * 100)
 })
 
+const playerSpriteUrl = computed(() => {
+  const sprites = playerState.value?.instance.sprites
+  if (!sprites) return ''
+  return sprites.back_default || sprites.front_default || ''
+})
+
+const shouldFlipPlayerSprite = computed(() => !playerState.value?.instance.sprites.back_default)
+
 watch(playerState, async (v) => {
   if (v) {
     anim.playerEnter = false
@@ -127,7 +135,8 @@ function getTypes(p: PokemonInstance): string[] {
 }
 
 function buildBattler(p: PokemonInstance): BattlerState {
-  const stats = Object.fromEntries((p.stats || []).map((s: any) => [s.stat.name, s.base_stat])) as Record<string, number>
+  const statEntries = (p.stats ?? []).map((s) => [s.stat.name, s.base_stat] as const)
+  const stats = Object.fromEntries(statEntries) as Record<string, number>
   const level = p.level ?? 5
   const baseHp = stats.hp ?? 45
   const baseAtk = stats.attack ?? 49
@@ -455,8 +464,8 @@ initBattle()
             <div class="hptext">{{ playerState.currentHp }} / {{ playerState.maxHp }}</div>
           </div>
           <div class="platform platform-me"></div>
-          <img :src="(playerState.instance.sprites as any)?.back_default || playerState.instance.sprites.front_default"
-               :class="{ 'me-sprite': true, 'sprite': true, 'flipped': !(playerState.instance.sprites as any)?.back_default, 'enter-me': anim.playerEnter, 'hit': anim.playerHit }"
+          <img :src="playerSpriteUrl"
+               :class="{ 'me-sprite': true, 'sprite': true, flipped: shouldFlipPlayerSprite, 'enter-me': anim.playerEnter, 'hit': anim.playerHit }"
                alt="me" />
         </div>
       </div>

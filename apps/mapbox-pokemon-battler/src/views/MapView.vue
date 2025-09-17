@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import mapboxgl from 'mapbox-gl'
-import { useStore } from '../store'
+import { useStore, type PokemonInstance } from '../store'
 import BattleOverlay from '../components/battle/BattleOverlay.vue'
 import TeamOverlay from '../components/team/TeamOverlay.vue'
 import PcOverlay from '../components/team/PcOverlay.vue'
@@ -15,7 +15,7 @@ import { useSpawns, type Spawn } from '../composables/useSpawns'
 const store = useStore()
 const teamOpen = ref(false)
 const pcOpen = ref(false)
-const inspectMon = ref<any | null>(null)
+const inspectMon = ref<PokemonInstance | null>(null)
 
 const mapContainer = ref<HTMLDivElement | null>(null)
 const error = ref<string | null>(null)
@@ -25,7 +25,7 @@ const locationInterval = ref<number | null>(null)
 const presetSelected = ref<LightPreset | null>(null)
 
 function ensureAccessToken() {
-  const token = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN as string | undefined
+  const token = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
   if (!token) throw new Error('Missing VITE_MAPBOX_ACCESS_TOKEN')
   mapboxgl.accessToken = token
 }
@@ -124,7 +124,7 @@ watch(
   () => store.battle.inBattle,
   (inBattle) => {
     if (!inBattle) {
-      const outcome = (store.battle as any).outcome
+      const outcome = store.battle.outcome
       if (outcome === 'victory' || outcome === 'caught') releaseSpawn(activeBattleSpawn.value)
       activeBattleSpawn.value = null
     }
@@ -135,14 +135,21 @@ onMounted(() => {
   try {
     ensureAccessToken()
     locateAndInitMap()
-  } catch (e: any) {
-    error.value = e?.message || String(e)
+  } catch (e: unknown) {
+    error.value = e instanceof Error ? e.message : String(e)
   }
 })
 
+function stopLocationTracking() {
+  if (locationInterval.value !== null) {
+    clearInterval(locationInterval.value)
+    locationInterval.value = null
+  }
+}
+
 onBeforeUnmount(() => {
   clearSpawns()
-  if (locationInterval.value) { clearInterval(locationInterval.value); locationInterval.value = null }
+  stopLocationTracking()
 })
 </script>
 
@@ -165,8 +172,8 @@ onBeforeUnmount(() => {
             <div>Types: {{ selected.data.types.map(t=>t.type.name).join(', ') }}</div>
             <StatsBars v-if="selected.data.stats" :stats="selected.data.stats" />
             <div class="row mt-2 gap-2 flex-wrap">
-              <AppButton variant="primary" @click="catchPokemon(selected!)">Catch</AppButton>
-              <AppButton variant="outline" @click="battlePokemon(selected!)">Battle</AppButton>
+              <AppButton variant="primary" @click="selected && catchPokemon(selected)">Catch</AppButton>
+              <AppButton variant="outline" @click="selected && battlePokemon(selected)">Battle</AppButton>
               <AppButton variant="outline" @click="teamOpen = true">Team</AppButton>
             </div>
           </div>
