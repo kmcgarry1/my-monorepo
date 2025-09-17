@@ -18,6 +18,8 @@ export type PokemonBasic = {
   sprites: PokemonSprites
   types: { type: { name: string } }[]
   stats?: { base_stat: number; stat: { name: string } }[]
+  species?: { name: string; url: string }
+  minLevel?: number | null
 }
 
 type Account = { username: string | null }
@@ -136,7 +138,16 @@ function generateMoves(types: string[], count = 4): Move[] {
 
 function toInstance(p: PokemonBasic, level?: number): PokemonInstance {
   const types = p.types?.map((t) => t.type.name) || ['normal']
-  const lvl = level ?? Math.max(3, Math.floor(3 + Math.random() * 15))
+  const fallback = Math.max(3, Math.floor(3 + Math.random() * 15))
+  const speciesMin = typeof p.minLevel === 'number' && Number.isFinite(p.minLevel) ? p.minLevel : null
+  let lvl = level ?? fallback
+  if (!level && speciesMin !== null) {
+    const min = Math.max(3, speciesMin)
+    const spread = Math.max(2, Math.round(min * 0.2))
+    const max = Math.min(100, min + spread)
+    lvl = min + Math.floor(Math.random() * (max - min + 1))
+  }
+  if (speciesMin !== null) lvl = Math.max(lvl, Math.max(3, speciesMin))
   return {
     ...p,
     level: lvl,
