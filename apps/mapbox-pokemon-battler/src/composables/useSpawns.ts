@@ -6,22 +6,47 @@ export type Spawn = { id: number; coord: [number, number]; marker?: any; data?: 
 
 export function useSpawns(getMap: () => any | null, opts?: { onSelect?: (s: Spawn) => void }) {
   const spawns = ref<Spawn[]>([])
+  // Memoize environment lookups by quantized coordinate for a brief period
+  const envCache = new Map<string, { env: 'water' | 'urban' | 'forest' | 'default'; ts: number }>()
+  const ENV_TTL = 60_000 // 60s
 
-  function getEnv(): 'water' | 'urban' | 'forest' | 'default' {
+  function getEnv(coord?: [number, number]): 'water' | 'urban' | 'forest' | 'default' {
     try {
       const map = getMap()
       if (!map) return 'default'
-      const layers = ['water', 'waterway', 'landuse', 'park']
-      const features: any[] = map.queryRenderedFeatures({ layers }) as any
-      if (features.some((f: any) => f.layer && f.layer.id.includes('water'))) return 'water'
-      if (features.some((f: any) => f.layer && f.layer.id.includes('park'))) return 'forest'
-      if (features.some((f: any) => f.layer && f.layer.id.includes('landuse'))) return 'urban'
+      // Grid-quantize coordinate to ~100m to reuse env results nearby
+      const centerLngLat = coord ? new mapboxgl.LngLat(coord[0], coord[1]) : map.getCenter()
+      const q = (v: number) => Math.round(v * 1000) / 1000 // ~111m lat @ equator
+      const key = `${q(centerLngLat.lng)},${q(centerLngLat.lat)}`
+      const cached = envCache.get(key)
+      if (cached && Date.now() - cached.ts < ENV_TTL) return cached.env
+      // Only query layers that actually exist in the active style.
+      const preferred = ['water', 'waterway', 'landuse', 'park']
+      const existing = preferred.filter((id) => {
+        try { return !!map.getLayer(id) } catch { return false }
+      })
+      // Query a very small bbox around the intended coordinate (or map center) to avoid scanning full viewport
+      const pt = map.project(centerLngLat)
+      const pad = 12
+      const bbox: [mapboxgl.PointLike, mapboxgl.PointLike] = [
+        { x: pt.x - pad, y: pt.y - pad },
+        { x: pt.x + pad, y: pt.y + pad },
+      ]
+      const features: any[] = existing.length
+        ? (map.queryRenderedFeatures(bbox, { layers: existing }) as any)
+        : (map.queryRenderedFeatures(bbox) as any)
+      let env: 'water' | 'urban' | 'forest' | 'default' = 'default'
+      if (features.some((f: any) => f.layer && typeof f.layer.id === 'string' && f.layer.id.includes('water'))) env = 'water'
+      else if (features.some((f: any) => f.layer && typeof f.layer.id === 'string' && f.layer.id.includes('park'))) env = 'forest'
+      else if (features.some((f: any) => f.layer && typeof f.layer.id === 'string' && f.layer.id.includes('landuse'))) env = 'urban'
+      envCache.set(key, { env, ts: Date.now() })
+      return env
     } catch {}
     return 'default'
   }
 
-  async function addSpawnAt(coord: [number, number]) {
-    const env = getEnv()
+  async function addSpawnAt(coord: [number, number], envHint?: 'water' | 'urban' | 'forest' | 'default') {
+    const env = envHint ?? getEnv(coord)
     const pokeId = typeWeightedRandom(env)
     const s: Spawn = { id: pokeId, coord }
     spawns.value.push(s)
@@ -32,13 +57,16 @@ export function useSpawns(getMap: () => any | null, opts?: { onSelect?: (s: Spaw
       el.style.width = '40px'
       el.style.height = '40px'
       el.style.borderRadius = '20px'
-      el.style.background = '#ffffffcc'
-      el.style.backdropFilter = 'blur(4px)'
+      el.style.background = '#fff'
+      el.style.border = '1px solid rgba(0,0,0,0.15)'
+      el.style.boxShadow = '0 4px 10px rgba(0,0,0,0.2)'
       el.style.display = 'grid'
       el.style.placeItems = 'center'
       const img = document.createElement('img')
       img.src = data.sprites.front_default || ''
       img.alt = data.name
+      img.loading = 'lazy'
+      img.decoding = 'async'
       img.style.maxWidth = '36px'
       img.style.maxHeight = '36px'
       el.appendChild(img)
@@ -63,7 +91,8 @@ export function useSpawns(getMap: () => any | null, opts?: { onSelect?: (s: Spaw
 
   async function spawnBatch(center: any) {
     const count = 8
-    for (let i = 0; i < count; i++) addSpawnAt(randomCoordAround(center, 200))
+    const env = getEnv([center.lng, center.lat])
+    for (let i = 0; i < count; i++) addSpawnAt(randomCoordAround(center, 200), env)
   }
 
   function clearSpawns() {

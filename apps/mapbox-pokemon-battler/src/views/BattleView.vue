@@ -21,7 +21,7 @@ function toBattler(p: any): Battler {
   }
 }
 
-const myMon = computed(() => store.caught[store.battle.partyIndex] ? toBattler(store.caught[store.battle.partyIndex]) : null)
+const myMon = computed(() => store.team[store.battle.partyIndex] ? toBattler(store.team[store.battle.partyIndex]) : null)
 const wildMon = computed(() => store.battle.wild ? toBattler(store.battle.wild) : null)
 const log = ref<string[]>(["A wild battle started!"])
 const myTurn = ref(true)
@@ -104,9 +104,9 @@ function run() {
           </div>
         </div>
         <div class="row mt-2 gap-2" v-if="$router && $route">
-          <button class="btn" @click="store.setPartyIndex(store.battle.partyIndex - 1)" :disabled="!store.caught.length">Prev</button>
-          <button class="btn" @click="store.setPartyIndex(store.battle.partyIndex + 1)" :disabled="!store.caught.length">Next</button>
-          <span>Party: {{ store.battle.partyIndex + 1 }} / {{ store.caught.length }}</span>
+          <button class="btn" @click="store.setPartyIndex(store.battle.partyIndex - 1)" :disabled="!store.team.length">Prev</button>
+          <button class="btn" @click="store.setPartyIndex(store.battle.partyIndex + 1)" :disabled="!store.team.length">Next</button>
+          <span>Party: {{ store.battle.partyIndex + 1 }} / {{ store.team.length }}</span>
         </div>
       </div>
       <div class="panel" v-if="wildMon">
@@ -128,7 +128,7 @@ function run() {
         <router-link to="/" class="btn">Back to Map</router-link>
       </div>
       <div class="mt-3 max-h-[160px] overflow-auto">
-        <div v-if="!myMon">No caught Pokémon. Capture one to battle!</div>
+        <div v-if="!myMon">No team Pokémon. Capture one to battle!</div>
         <div v-for="(line,i) in log" :key="i">{{ line }}</div>
       </div>
     </div>
@@ -137,3 +137,4 @@ function run() {
 
 <style scoped>
 </style>
+

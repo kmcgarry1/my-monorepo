@@ -56,6 +56,8 @@ export function useMapboxStandard(options: {
       dragRotate: false,
       pitchWithRotate: false,
       attributionControl: true,
+      fadeDuration: 0,
+      renderWorldCopies: false,
     })
     m.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-right')
     m.addControl(new mapboxgl.FullscreenControl())

@@ -28,7 +28,9 @@ type BattleState = {
 
 const state = reactive({
   account: { username: null } as Account,
-  caught: [] as PokemonInstance[],
+  // Team is the active party (max 6). PC is storage.
+  team: [] as PokemonInstance[],
+  pc: [] as PokemonInstance[],
   battle: { inBattle: false, wild: null, partyIndex: 0, outcome: 'ongoing' } as BattleState,
   theme: 'light' as 'light' | 'dark',
   themeMode: 'auto' as 'auto' | 'light' | 'dark',
@@ -135,7 +137,8 @@ export function useStore() {
     theme: state.theme,
     themeMode: state.themeMode,
     account: state.account,
-    caught: state.caught,
+    team: state.team,
+    pc: state.pc,
     battle: state.battle,
     initFromStorage() {
       try {
@@ -143,12 +146,18 @@ export function useStore() {
         if (raw) {
           const parsed = JSON.parse(raw)
           if (parsed.account) state.account.username = parsed.account.username
+          // Migrate legacy 'caught' array into team/pc
           if (Array.isArray(parsed.caught)) {
-            // Ensure legacy entries get level/moves
-            for (const p of parsed.caught) {
-              if (p.level && p.moves) state.caught.push(p)
-              else state.caught.push(toInstance(p))
-            }
+            const all: PokemonInstance[] = []
+            for (const p of parsed.caught) all.push(p.level && p.moves ? p : toInstance(p))
+            state.team.push(...all.slice(0, 6))
+            state.pc.push(...all.slice(6))
+          }
+          if (Array.isArray(parsed.team)) {
+            for (const p of parsed.team) state.team.push(p.level && p.moves ? p : toInstance(p))
+          }
+          if (Array.isArray(parsed.pc)) {
+            for (const p of parsed.pc) state.pc.push(p.level && p.moves ? p : toInstance(p))
           }
           if (parsed.theme === 'dark' || parsed.theme === 'light') state.theme = parsed.theme
           if (parsed.themeMode === 'auto' || parsed.themeMode === 'light' || parsed.themeMode === 'dark') state.themeMode = parsed.themeMode
@@ -161,7 +170,10 @@ export function useStore() {
     },
     persist() {
       try {
-        localStorage.setItem('mpb_state', JSON.stringify({ account: state.account, caught: state.caught, theme: state.theme, themeMode: state.themeMode }))
+        localStorage.setItem(
+          'mpb_state',
+          JSON.stringify({ account: state.account, team: state.team, pc: state.pc, theme: state.theme, themeMode: state.themeMode })
+        )
       } catch {}
     },
     login(username: string) {
@@ -170,26 +182,29 @@ export function useStore() {
     },
     logout() {
       state.account.username = null
-      state.caught.splice(0)
+      state.team.splice(0)
+      state.pc.splice(0)
       this.persist()
     },
     addCaught(p: PokemonBasic) {
-      if (!state.caught.find((x) => x.id === p.id)) {
-        state.caught.push(toInstance(p))
-        this.persist()
-      }
+      // Prevent duplicates across team and pc by ID (simple rule)
+      if (state.team.find((x) => x.id === p.id) || state.pc.find((x) => x.id === p.id)) return
+      const inst = toInstance(p)
+      if (state.team.length < 6) state.team.push(inst)
+      else state.pc.push(inst)
+      this.persist()
     },
     startBattle(wild: PokemonBasic, partyIndex = 0) {
       state.battle.inBattle = true
-      const my = state.caught[partyIndex]
+      const my = state.team[partyIndex]
       const lvl = my ? Math.max(3, Math.min(50, my.level + (Math.floor(Math.random() * 5) - 2))) : undefined
       state.battle.wild = toInstance(wild, lvl)
-      state.battle.partyIndex = Math.min(partyIndex, Math.max(0, state.caught.length - 1))
+      state.battle.partyIndex = Math.min(partyIndex, Math.max(0, state.team.length - 1))
       state.battle.outcome = 'ongoing'
     },
     setPartyIndex(i: number) {
-      if (state.caught.length === 0) return
-      const n = ((i % state.caught.length) + state.caught.length) % state.caught.length
+      if (state.team.length === 0) return
+      const n = ((i % state.team.length) + state.team.length) % state.team.length
       state.battle.partyIndex = n
     },
     endBattle(outcome: BattleOutcome = 'fled') {
@@ -218,6 +233,28 @@ export function useStore() {
       const idx = order.indexOf(state.themeMode)
       const next = order[(idx + 1) % order.length]
       this.setThemeMode(next)
+    },
+    moveTeamToPc(index: number) {
+      if (index < 0 || index >= state.team.length) return
+      const [p] = state.team.splice(index, 1)
+      if (p) state.pc.push(p)
+      // Adjust active index if needed
+      if (state.battle.partyIndex >= state.team.length) state.battle.partyIndex = Math.max(0, state.team.length - 1)
+      this.persist()
+    },
+    movePcToTeam(index: number) {
+      if (index < 0 || index >= state.pc.length) return
+      if (state.team.length >= 6) return
+      const [p] = state.pc.splice(index, 1)
+      if (p) state.team.push(p)
+      this.persist()
+    },
+    swapTeam(i: number, j: number) {
+      if (i < 0 || j < 0 || i >= state.team.length || j >= state.team.length) return
+      const tmp = state.team[i]
+      state.team[i] = state.team[j]
+      state.team[j] = tmp
+      this.persist()
     },
   }
 }

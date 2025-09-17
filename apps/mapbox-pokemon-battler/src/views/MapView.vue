@@ -4,16 +4,17 @@ import mapboxgl from 'mapbox-gl'
 import { useStore } from '../store'
 import BattleOverlay from '../components/battle/BattleOverlay.vue'
 import TeamOverlay from '../components/team/TeamOverlay.vue'
-import HudOverlay from '../components/hud/HudOverlay.vue'
+import PcOverlay from '../components/team/PcOverlay.vue'
+import PokeballMenu from '../components/hud/PokeballMenu.vue'
 import StatsBars from '../components/pokemon/StatsBars.vue'
 import AppButton from '../components/ui/AppButton.vue'
-import ClockOverlay from '../components/hud/ClockOverlay.vue'
 import PokemonInspect from '../components/pokemon/PokemonInspect.vue'
 import { useMapboxStandard, type LightPreset } from '../composables/useMapboxStandard'
 import { useSpawns, type Spawn } from '../composables/useSpawns'
 
 const store = useStore()
 const teamOpen = ref(false)
+const pcOpen = ref(false)
 const inspectMon = ref<any | null>(null)
 
 const mapContainer = ref<HTMLDivElement | null>(null)
@@ -72,7 +73,7 @@ function locateAndInitMap() {
         if (c.distanceTo(last) > 200) { clearSpawns(); spawnBatch(c); last = c }
       })
 
-      // Periodically check device location and keep camera centered
+      // Periodically check device location and keep camera centered (throttled)
       locationInterval.value = window.setInterval(() => {
         navigator.geolocation.getCurrentPosition(
           (pos) => {
@@ -80,7 +81,8 @@ function locateAndInitMap() {
             const lat = pos.coords.latitude
             const current = new mapboxgl.LngLat(lng, lat)
             playerPos.value = current
-            setBoundsAround([lng, lat], 200)
+            // Only expand/reset bounds if moved significantly
+            if (!last || current.distanceTo(last) > 200) setBoundsAround([lng, lat], 200)
             const centerNow = map.value!.getCenter()
             if (centerNow.distanceTo(current) > 50) recenter(current)
             if (current.distanceTo(last) > 200) { clearSpawns(); spawnBatch(current); last = current }
@@ -88,7 +90,7 @@ function locateAndInitMap() {
           () => {},
           { enableHighAccuracy: true, maximumAge: 5000 }
         )
-      }, 5000)
+      }, 6000)
     },
     () => (error.value = 'Location permission is required to play.')
   )
@@ -147,10 +149,11 @@ onBeforeUnmount(() => {
 <template>
   <div class="fullscreen">
     <div ref="mapContainer" class="fullscreen" aria-hidden="true"></div>
-    <div v-if="loading" class="overlay"><div class="panel">Loading map…</div></div>
+    <div v-if="loading" class="overlay"><div class="panel">Loading map...</div></div>
     <div v-if="error" class="overlay"><div class="panel" role="alert">{{ error }}</div></div>
 
-    <div v-if="selected?.data" class="overlay" @click.self="closeOverlay">
+    <PokeballMenu @open-team="teamOpen = true" @open-pc="pcOpen = true" @recenter="recenterToPlayer" />
+<div v-if="selected?.data" class="overlay" @click.self="closeOverlay">
       <div class="panel max-w-[420px]">
         <div class="row justify-between items-start">
           <h3 class="m-0 capitalize">{{ selected.data.name }}</h3>
@@ -171,18 +174,18 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <HudOverlay @open-team="teamOpen = true" @recenter="recenterToPlayer" />
-    <ClockOverlay :selected="(presetSelected ?? 'auto')" @set-auto="() => { setPresetAuto(); presetSelected=null }" @set-preset="(p)=>{ setPresetManual(p); presetSelected=p }" />
+    
     <BattleOverlay v-if="store.battle.inBattle" @open-team="teamOpen=true" />
-    <TeamOverlay v-if="teamOpen" @close="teamOpen=false" @inspect="(p)=>{ inspectMon = p }" />
+    <TeamOverlay v-if="teamOpen" @close="teamOpen=false" @inspect="(p)=>{ inspectMon = p }" />    <PcOverlay v-if="pcOpen" @close="pcOpen=false" />
     <PokemonInspect
       v-if="inspectMon"
       :pokemon="inspectMon"
       @close="inspectMon=null"
-      @set-active="() => { const idx = store.caught.findIndex(c=>c.id===inspectMon.id); if (idx>=0) store.setPartyIndex(idx); inspectMon=null; teamOpen=false }"
+      @set-active="() => { const idx = store.team.findIndex(c=>c.id===inspectMon.id); if (idx>=0) store.setPartyIndex(idx); inspectMon=null; teamOpen=false }"
     />
   </div>
 </template>
 
 <style scoped>
 </style>
+

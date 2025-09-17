@@ -24,7 +24,7 @@ function typeList() {
       </div>
       <div class="grid md:grid-cols-[1fr_1.5fr] grid-cols-1 gap-4">
         <div>
-          <img :src="spriteUrl()" :alt="pokemon.name" class="w-[clamp(180px,28vw,260px)] [image-rendering:pixelated] drop-shadow-[0_8px_18px_rgba(0,0,0,0.35)]" />
+          <img :src="spriteUrl()" :alt="pokemon.name" loading="lazy" decoding="async" class="w-[clamp(180px,28vw,260px)] [image-rendering:pixelated] drop-shadow-[0_8px_18px_rgba(0,0,0,0.35)]" />
           <div class="inline-block mt-2 py-[0.2rem] px-2 rounded-full border border-[var(--panel-border)] bg-[var(--panel-weak)] font-semibold">Lv {{ pokemon.level }}</div>
           <div class="mt-1 opacity-80">Types: {{ typeList() }}</div>
         </div>
@@ -48,5 +48,6 @@ function typeList() {
   </div>
 </template>
 
-<style scoped>\n</style>
+<style scoped>
+</style>
 

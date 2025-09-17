@@ -6,8 +6,8 @@ import AppButton from '../ui/AppButton.vue'
 const emit = defineEmits(['open-team', 'recenter'])
 const store = useStore()
 
-const caughtCount = computed(() => store.caught.length)
-const active = computed(() => store.caught[store.battle.partyIndex])
+const caughtCount = computed(() => store.team.length)
+const active = computed(() => store.team[store.battle.partyIndex])
 const modeLabel = computed(() => (store.themeMode || 'auto').toUpperCase())
 
 function setActive(i: number) {
@@ -22,7 +22,7 @@ function setActive(i: number) {
         <div class="row items-center">
           <div class="font-bold">PokéBattler</div>
           <div class="w-[6px] h-[6px] bg-green-500 rounded-full"></div>
-          <div class="text-[0.9rem] opacity-80">Caught: {{ caughtCount }}</div>
+          <div class="text-[0.9rem] opacity-80">Team: {{ caughtCount }}</div>
         </div>
         <div class="row">
           <AppButton variant="outline" size="sm" @click="store.toggleThemeMode()">Theme: {{ modeLabel }}</AppButton>
@@ -42,10 +42,10 @@ function setActive(i: number) {
       </div>
     </div>
 
-    <div class="panel" v-if="store.caught.length">
+    <div class="panel" v-if="store.team.length">
       <div class="flex gap-[0.4rem]">
         <button
-          v-for="(p,i) in store.caught"
+          v-for="(p,i) in store.team"
           :key="p.id+'-'+i"
           class="relative w-[44px] h-[44px] rounded-lg bg-[var(--button-bg)] border border-[var(--panel-border)] grid place-items-center cursor-pointer"
           :class="i === store.battle.partyIndex ? 'outline outline-2 outline-blue-600' : ''"

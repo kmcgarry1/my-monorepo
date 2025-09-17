@@ -184,7 +184,7 @@ function initBattle() {
   resetBattle()
   const wild = store.battle.wild
   foeState.value = buildBattler(wild)
-  partyStates.value = store.caught.map((p) => buildBattler(p))
+  partyStates.value = store.team.map((p) => buildBattler(p))
   if (!partyStates.value.length) {
     log.value = ['You have no Pokémon able to battle!']
     finishBattle('defeat')
@@ -508,6 +508,7 @@ initBattle()
  </template>
 
 <style scoped>
+@reference "../../style.css";
 .battle { @apply w-[min(92vw,900px)] aspect-[16/9] rounded-2xl shadow-[0_12px_28px_var(--shadow)] grid grid-rows-[1fr_auto_auto] overflow-hidden; background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0) 35%), var(--panel); }
 .field { @apply relative p-3 h-full; }
 /* Place foe top-right, player bottom-left, closer together */
