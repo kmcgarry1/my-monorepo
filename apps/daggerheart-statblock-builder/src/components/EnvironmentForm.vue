@@ -2,14 +2,16 @@
 import type { Environment } from '../types'
 import FeatureEditorList from './FeatureEditorList.vue'
 import { openGlossary } from '../lib/glossaryState'
-import AppCard from './ui/AppCard.vue'
-import AppRow from './ui/AppRow.vue'
-import AppCol from './ui/AppCol.vue'
-import AppInput from './ui/AppInput.vue'
-import AppSelect from './ui/AppSelect.vue'
-import AppTextarea from './ui/AppTextarea.vue'
-import AppFieldLabel from './ui/AppFieldLabel.vue'
-import AppIconButton from './ui/AppIconButton.vue'
+import {
+  AppCard,
+  AppCol,
+  AppFieldLabel,
+  AppIconButton,
+  AppInput,
+  AppRow,
+  AppSelect,
+  AppTextarea
+} from '@my-monorepo/ui'
 
 const props = defineProps<{ environment: Environment }>()
 </script>
@@ -42,7 +44,7 @@ const props = defineProps<{ environment: Environment }>()
       <AppFieldLabel label="Potential Adversaries">
         <AppIconButton name="info" variant="ghost" size="xs" title="Potential Adversaries" @click="openGlossary('potential-adversaries')" />
       </AppFieldLabel>
-      <AppTextarea :model-value="props.environment.potential" @update:modelValue="v => props.environment.potential = v" rows="2" placeholder="e.g., Beasts (Bear, Glass Snake), Jagged Knife Bandits…" />
+        <AppTextarea :model-value="props.environment.potential" @update:modelValue="v => props.environment.potential = v" :rows="2" placeholder="e.g., Beasts (Bear, Glass Snake), Jagged Knife Bandits…" />
     </div>
 
     <FeatureEditorList v-model="props.environment.features" />
@@ -51,7 +53,7 @@ const props = defineProps<{ environment: Environment }>()
       <AppFieldLabel label="GM Prompts">
         <AppIconButton name="info" variant="ghost" size="xs" title="GM Prompts" @click="openGlossary('gm-prompts')" />
       </AppFieldLabel>
-      <AppTextarea :model-value="props.environment.prompts" @update:modelValue="v => props.environment.prompts = v" rows="3" placeholder="Add guiding questions…" />
+        <AppTextarea :model-value="props.environment.prompts" @update:modelValue="v => props.environment.prompts = v" :rows="3" placeholder="Add guiding questions…" />
     </div>
   </AppCard>
 </template>

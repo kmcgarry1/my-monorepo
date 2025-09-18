@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { glossaryOpen, glossaryTerm, closeGlossary } from '../lib/glossaryState'
-import { GLOSSARY, findEntries } from '../lib/glossary'
+import { findEntries } from '../lib/glossary'
 // @ts-ignore
 import srdUrl from '../SRD/Daggerheart-SRD-9-09-25.pdf?url'
 

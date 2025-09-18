@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { toJSONBlob, toMarkdown, downloadBlob } from '../lib/exporters'
 import { hasSaved, clear } from '../lib/persist'
-import { AcidBurrower, RagingRiver } from '../lib/presets'
 import type { Enemy, Environment } from '../types'
 import type { Theme } from '../lib/theme'
 import { openGlossary } from '../lib/glossaryState'
-import AppButton from './ui/AppButton.vue'
-import AppIcon from './ui/AppIcon.vue'
-import AppIconButton from './ui/AppIconButton.vue'
-import AppDropdown from './ui/AppDropdown.vue'
+import {
+  AppButton,
+  AppDropdown,
+  AppIcon,
+  AppIconButton
+} from '@my-monorepo/ui'
 // Static asset URLs for docs
 // Vite will emit these and return URLs at runtime
 // If filenames change, update imports below
@@ -52,6 +53,11 @@ function downloadMarkdown() {
 function printNow() { window.print() }
 
 function clearSaved() { clear() }
+
+function openDoc(which: 'srd' | 'license') {
+  const url = which === 'srd' ? srdUrl : licenseUrl
+  window.open(url, '_blank')
+}
 </script>
 
 <template>
@@ -71,7 +77,7 @@ function clearSaved() { clear() }
       <AppDropdown
         :items="[{label:'Open SRD', value:'srd', icon:'book'}, {label:'License', value:'license', icon:'book'}]"
         button-title="Docs"
-        @select="v => v==='srd' ? window.open(srdUrl, '_blank') : window.open(licenseUrl, '_blank')"
+        @select="v => openDoc(v as 'srd' | 'license')"
       >
         <template #button>
           <AppIcon name="book" />

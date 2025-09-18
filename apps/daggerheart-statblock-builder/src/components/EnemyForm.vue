@@ -4,13 +4,15 @@ import type { Enemy } from '../types'
 import AttackEditorList from './AttackEditorList.vue'
 import FeatureEditorList from './FeatureEditorList.vue'
 import { openGlossary } from '../lib/glossaryState'
-import AppCard from './ui/AppCard.vue'
-import AppRow from './ui/AppRow.vue'
-import AppCol from './ui/AppCol.vue'
-import AppInput from './ui/AppInput.vue'
-import AppSelect from './ui/AppSelect.vue'
-import AppFieldLabel from './ui/AppFieldLabel.vue'
-import AppIconButton from './ui/AppIconButton.vue'
+import {
+  AppCard,
+  AppCol,
+  AppFieldLabel,
+  AppIconButton,
+  AppInput,
+  AppRow,
+  AppSelect
+} from '@my-monorepo/ui'
 
 const props = defineProps<{ enemy: Enemy }>()
 
