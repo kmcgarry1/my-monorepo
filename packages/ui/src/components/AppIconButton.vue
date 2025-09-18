@@ -8,7 +8,7 @@ const props = withDefaults(defineProps<{
 }>(), { variant: 'outline', size: 'sm', title: '' })
 
 const base = 'inline-flex items-center justify-center rounded-md border transition-colors select-none'
-const sizes: Record<string, string> = { xs: 'h-7 w-7', sm: 'h-8 w-8', md: 'h-9 w-9' }
+const sizes: Record<string, string> = { xs: 'h-5 w-5', sm: 'h-6 w-6', md: 'h-7 w-7' }
 const variants: Record<string, string> = {
   default: 'bg-[var(--btn-bg)] text-[var(--btn-fg)] border-[var(--btn-border)] hover:border-[var(--accent)]',
   primary: 'bg-[color:var(--accent)] text-white border-[color:var(--accent)] hover:opacity-90',

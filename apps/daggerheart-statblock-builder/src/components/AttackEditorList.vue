@@ -34,10 +34,7 @@ function updateAttack(idx: number, patch: Partial<Attack>) {
 <template>
   <div class="mt-3">
     <div class="mb-2 flex items-center justify-between">
-      <div class="flex items-center gap-2 text-sm font-semibold text-[var(--fg)]">
-        <AppIcon name="sword" class="text-[var(--accent)]" />
-        <span>Attacks</span>
-      </div>
+      <div class="text-sm font-semibold text-[var(--fg)]">Attacks</div>
       <AppButton variant="primary" size="sm" @click="addAttack">
         <AppIcon name="plus" class="mr-1" />
         Add Attack
@@ -46,17 +43,17 @@ function updateAttack(idx: number, patch: Partial<Attack>) {
     <div v-for="(a, i) in modelValue" :key="a.id" class="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] p-3">
       <AppRow :cols="4" align="start">
         <AppCol>
-          <AppFieldLabel icon="sword" label="Name" />
+          <AppFieldLabel label="Name" />
           <AppInput :model-value="a.name" @update:modelValue="v => updateAttack(i, { name: v })" placeholder="e.g., Claws" />
         </AppCol>
         <AppCol>
-          <AppFieldLabel icon="arrows" label="Range">
+          <AppFieldLabel label="Range">
             <AppIconButton name="info" variant="ghost" size="xs" title="Range Bands" @click="openGlossary('range')" />
           </AppFieldLabel>
           <AppInput :model-value="a.range" @update:modelValue="v => updateAttack(i, { range: v })" placeholder="e.g., Very Close" />
         </AppCol>
         <AppCol>
-          <AppFieldLabel icon="dice" label="Details">
+          <AppFieldLabel label="Details">
             <AppIconButton name="info" variant="ghost" size="xs" title="Dice/Notation" @click="openGlossary('dice')" />
           </AppFieldLabel>
           <AppInput class="font-mono" :model-value="a.details" @update:modelValue="v => updateAttack(i, { details: v })" placeholder="e.g., 1d12+2 phy" />

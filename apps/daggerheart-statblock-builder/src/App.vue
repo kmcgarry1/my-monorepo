@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Enemy, Environment } from './types'
 import BaseDetailsForm from './components/BaseDetailsForm.vue'
 import EnemyForm from './components/EnemyForm.vue'
 import EnvironmentForm from './components/EnvironmentForm.vue'
@@ -21,6 +22,13 @@ const {
   resetAll,
   loadPreset
 } = useStatblockBuilder()
+
+function onImport(payload: { sbType: 'enemy'|'environment'; enemy?: Enemy; environment?: Environment }) {
+  // Switch type and merge payload into reactive state
+  sbType.value = payload.sbType
+  if (payload.sbType === 'enemy' && payload.enemy) Object.assign(enemy, payload.enemy)
+  if (payload.sbType === 'environment' && payload.environment) Object.assign(environment, payload.environment)
+}
 </script>
 
 <template>
@@ -29,7 +37,7 @@ const {
       <h1 style="margin: 0; font-size: 1.6rem;">Daggerheart Statblock Builder</h1>
       <p style="margin:.25rem 0 0; color: var(--muted,#666);">Create Enemy or Environment statblocks. Shared fields + type-specific details.</p>
     </header>
-    <Toolbar :sbType="sbType" :enemy="enemy" :environment="environment" :theme="theme" @update:theme="setTheme" @reset="resetAll" @load-preset="loadPreset" class="toolbar topbar" />
+    <Toolbar :sbType="sbType" :enemy="enemy" :environment="environment" :theme="theme" @update:theme="setTheme" @reset="resetAll" @load-preset="loadPreset" @import="onImport" class="toolbar topbar" />
 
     <div class="layout">
       <div class="editor-col">
