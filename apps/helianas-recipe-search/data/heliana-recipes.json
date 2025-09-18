@@ -1,0 +1,4981 @@
+{
+  "source": "L_Arsene_s_Crafting_Catalogue_-_v1.00.pdf",
+  "generatedAt": "2025-09-17T23:43:31.926Z",
+  "pages": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52
+  ],
+  "recipes": [
+    {
+      "page": 42,
+      "name": "items gain unique magical properties.",
+      "metadata": {
+        "type": "",
+        "valueGp": "",
+        "rarity": "",
+        "att": ""
+      },
+      "components": {
+        "type": "items gain unique magical properties.",
+        "metatag": "",
+        "component": "items gain unique magical properties."
+      },
+      "_raw": [
+        "items gain unique magical properties.",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "tipped nunchuck) are known as ‘monster-forged’",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 43,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "Appendix A (page 436).",
+        "rarity": "",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "Appendix A (page 436).",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 43,
+      "name": "",
+      "metadata": {
+        "type": "ammunition",
+        "valueGp": "25 each",
+        "rarity": "U",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of teeth"
+      },
+      "_raw": [
+        "",
+        "+1 Ammunition",
+        "",
+        "*",
+        "",
+        "",
+        "ammunition",
+        "",
+        "",
+        "25 each",
+        "",
+        "U",
+        "—, C",
+        "",
+        "Beast",
+        "",
+        "",
+        "",
+        "",
+        "Pouch of teeth",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 43,
+      "name": "",
+      "metadata": {
+        "type": "ammunition",
+        "valueGp": "100 each",
+        "rarity": "R",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of teeth"
+      },
+      "_raw": [
+        "",
+        "+2 Ammunition",
+        "",
+        "*",
+        "",
+        "",
+        "ammunition",
+        "",
+        "",
+        "100 each",
+        "",
+        "R",
+        "—, C",
+        "",
+        "Monstrosity",
+        "",
+        "",
+        "",
+        "",
+        "Pouch of teeth",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 43,
+      "name": "",
+      "metadata": {
+        "type": "ammunition",
+        "valueGp": "480 each",
+        "rarity": "V",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of teeth"
+      },
+      "_raw": [
+        "",
+        "+3 Ammunition",
+        "",
+        "*",
+        "",
+        "",
+        "ammunition",
+        "",
+        "",
+        "480 each",
+        "",
+        "V",
+        "—, C",
+        "",
+        "Dragon",
+        "",
+        "",
+        "",
+        "",
+        "Pouch of teeth",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 43,
+      "name": "",
+      "metadata": {
+        "type": "ammunition (generic)",
+        "valueGp": "550 each",
+        "rarity": "V",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Phial of acid/blood/sap or"
+      },
+      "_raw": [
+        "",
+        "Arrow of Slaying (",
+        "",
+        "",
+        "** )",
+        "",
+        "ammunition (generic)",
+        "",
+        "",
+        "550 each",
+        "",
+        "V",
+        "—, C",
+        "",
+        "Multiple**",
+        "",
+        "",
+        "",
+        "",
+        "Phial of acid/blood/sap or",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 43,
+      "name": "42 42",
+      "metadata": {
+        "type": "",
+        "valueGp": "",
+        "rarity": "",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "42 42",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 44,
+      "name": "",
+      "metadata": {
+        "type": "armour (generic)",
+        "valueGp": "1,200",
+        "rarity": "U",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Black pudding",
+        "metatag": "Black pudding",
+        "component": "Membrane"
+      },
+      "_raw": [
+        "",
+        "Acid",
+        "",
+        "armour (generic)",
+        "",
+        "1,200",
+        "",
+        "U",
+        "Req",
+        "Ooze",
+        "Black pudding",
+        "",
+        "Membrane",
+        ""
+      ]
+    },
+    {
+      "page": 44,
+      "name": "",
+      "metadata": {
+        "type": "armour (generic)",
+        "valueGp": "1,200",
+        "rarity": "U R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Ice devil",
+        "metatag": "Ice devil",
+        "component": "Skin"
+      },
+      "_raw": [
+        "",
+        "Cold",
+        "",
+        "armour (generic)",
+        "",
+        "1,200",
+        "##",
+        "U R",
+        "Req",
+        "Fiend",
+        "Ice devil",
+        "",
+        "Skin",
+        ""
+      ]
+    },
+    {
+      "page": 44,
+      "name": "",
+      "metadata": {
+        "type": "armour (generic)",
+        "valueGp": "1,500",
+        "rarity": "U R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Salamander",
+        "metatag": "Salamander",
+        "component": "Bone"
+      },
+      "_raw": [
+        "",
+        "Fire",
+        "",
+        "armour (generic)",
+        "",
+        "1,500",
+        "##",
+        "U R",
+        "Req",
+        "Elemental",
+        "Salamander",
+        "",
+        "Bone",
+        ""
+      ]
+    },
+    {
+      "page": 44,
+      "name": "",
+      "metadata": {
+        "type": "armour (generic)",
+        "valueGp": "1,200",
+        "rarity": "U R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Golem",
+        "metatag": "Golem",
+        "component": "Bone"
+      },
+      "_raw": [
+        "",
+        "Force",
+        "",
+        "armour (generic)",
+        "",
+        "1,200",
+        "##",
+        "U R",
+        "Req",
+        "Construct",
+        "Golem",
+        "",
+        "Bone",
+        ""
+      ]
+    },
+    {
+      "page": 44,
+      "name": "",
+      "metadata": {
+        "type": "armour (generic)",
+        "valueGp": "1,200",
+        "rarity": "U",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Djinni",
+        "metatag": "Djinni",
+        "component": "Bone"
+      },
+      "_raw": [
+        "",
+        "Lightning",
+        "",
+        "armour (generic)",
+        "",
+        "1,200",
+        "",
+        "U",
+        "Req",
+        "Elemental",
+        "Djinni",
+        "",
+        "Bone",
+        ""
+      ]
+    },
+    {
+      "page": 44,
+      "name": "",
+      "metadata": {
+        "type": "armour (generic)",
+        "valueGp": "1,200",
+        "rarity": "U R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Mummy",
+        "metatag": "Mummy",
+        "component": "Undying flesh"
+      },
+      "_raw": [
+        "",
+        "Necrotic",
+        "",
+        "armour (generic)",
+        "",
+        "1,200",
+        "##",
+        "U R",
+        "Req",
+        "Undead",
+        "Mummy",
+        "",
+        "Undying flesh",
+        ""
+      ]
+    },
+    {
+      "page": 44,
+      "name": "",
+      "metadata": {
+        "type": "armour (generic)",
+        "valueGp": "1,500",
+        "rarity": "U R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Naga",
+        "metatag": "Naga",
+        "component": "Liver"
+      },
+      "_raw": [
+        "",
+        "Poison",
+        "",
+        "armour (generic)",
+        "",
+        "1,500",
+        "##",
+        "U R",
+        "Req",
+        "Monstrosity",
+        "Naga",
+        "",
+        "Liver",
+        ""
+      ]
+    },
+    {
+      "page": 44,
+      "name": "",
+      "metadata": {
+        "type": "armour (generic)",
+        "valueGp": "1,100",
+        "rarity": "U",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Aboleth",
+        "metatag": "Aboleth",
+        "component": "Brain"
+      },
+      "_raw": [
+        "",
+        "Psychic",
+        "",
+        "armour (generic)",
+        "",
+        "1,100",
+        "",
+        "U",
+        "Req",
+        "Aberration",
+        "Aboleth",
+        "",
+        "Brain",
+        ""
+      ]
+    },
+    {
+      "page": 44,
+      "name": "",
+      "metadata": {
+        "type": "armour (generic)",
+        "valueGp": "1,100",
+        "rarity": "U R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Planetar",
+        "metatag": "Planetar",
+        "component": "Bone"
+      },
+      "_raw": [
+        "",
+        "Radiant",
+        "",
+        "armour (generic)",
+        "",
+        "1,100",
+        "##",
+        "U R",
+        "Req",
+        "Celestial",
+        "Planetar",
+        "",
+        "Bone",
+        ""
+      ]
+    },
+    {
+      "page": 44,
+      "name": "",
+      "metadata": {
+        "type": "armour (generic)",
+        "valueGp": "1,100",
+        "rarity": "U R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Storm",
+        "metatag": "Storm",
+        "component": "Bone"
+      },
+      "_raw": [
+        "",
+        "Thunder",
+        "",
+        "armour (generic)",
+        "",
+        "1,100",
+        "##",
+        "U R",
+        "Req",
+        "Giant",
+        "Storm",
+        "",
+        "Bone",
+        ""
+      ]
+    },
+    {
+      "page": 45,
+      "name": "",
+      "metadata": {
+        "type": "potion",
+        "valueGp": "50",
+        "rarity": "C",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "Spider",
+        "metatag": "Spider",
+        "component": "Pouch of claws"
+      },
+      "_raw": [
+        "",
+        "Potion of Climbing",
+        "",
+        "",
+        "potion",
+        "",
+        "50",
+        "C",
+        "—, C",
+        "Beast",
+        "Spider",
+        "",
+        "Pouch of claws",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 45,
+      "name": "",
+      "metadata": {
+        "type": "potion",
+        "valueGp": "6,000",
+        "rarity": "V",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "Cloud",
+        "metatag": "Cloud",
+        "component": "Nail"
+      },
+      "_raw": [
+        "",
+        "Potion of Cloud Giant Strength",
+        "",
+        "",
+        "potion",
+        "",
+        "6,000",
+        "V",
+        "—, C",
+        "Giant",
+        "Cloud",
+        "",
+        "Nail",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 45,
+      "name": "",
+      "metadata": {
+        "type": "potion",
+        "valueGp": "270",
+        "rarity": "U R",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "Gnome",
+        "metatag": "Gnome",
+        "component": "Phial of blood"
+      },
+      "_raw": [
+        "",
+        "Potion of Diminution",
+        "",
+        "",
+        "potion",
+        "",
+        "270",
+        "U R",
+        "—, C",
+        "Humanoid",
+        "Gnome",
+        "",
+        "Phial of blood",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 45,
+      "name": "",
+      "metadata": {
+        "type": "potion",
+        "valueGp": "3,000",
+        "rarity": "R",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "Fire",
+        "metatag": "Fire",
+        "component": "Nail"
+      },
+      "_raw": [
+        "",
+        "Potion of Fire Giant Strength",
+        "",
+        "",
+        "potion",
+        "",
+        "3,000",
+        "R",
+        "—, C",
+        "Giant",
+        "Fire",
+        "",
+        "Nail",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 45,
+      "name": "",
+      "metadata": {
+        "type": "potion",
+        "valueGp": "900",
+        "rarity": "R V",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Fat"
+      },
+      "_raw": [
+        "",
+        "Potion of Flying",
+        "",
+        "",
+        "potion",
+        "",
+        "900",
+        "R V",
+        "—, C",
+        "Dragon",
+        "",
+        "",
+        "Fat",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 45,
+      "name": "",
+      "metadata": {
+        "type": "potion",
+        "valueGp": "1,500",
+        "rarity": "R",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "Frost",
+        "metatag": "Frost",
+        "component": "Nail"
+      },
+      "_raw": [
+        "",
+        "Potion of Frost Giant Strength",
+        "",
+        "",
+        "potion",
+        "",
+        "1,500",
+        "R",
+        "—, C",
+        "Giant",
+        "Frost",
+        "",
+        "Nail",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 45,
+      "name": "",
+      "metadata": {
+        "type": "potion",
+        "valueGp": "900",
+        "rarity": "R",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Vesicle"
+      },
+      "_raw": [
+        "",
+        "Potion of Gaseous Form",
+        "",
+        "",
+        "potion",
+        "",
+        "900",
+        "R",
+        "—, C",
+        "Ooze",
+        "",
+        "",
+        "Vesicle",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 45,
+      "name": "",
+      "metadata": {
+        "type": "potion",
+        "valueGp": "250",
+        "rarity": "U",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Liver"
+      },
+      "_raw": [
+        "",
+        "Potion of Greater Healing",
+        "",
+        "",
+        "potion",
+        "",
+        "250",
+        "U",
+        "—, C",
+        "Beast",
+        "",
+        "",
+        "Liver",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 45,
+      "name": "",
+      "metadata": {
+        "type": "potion",
+        "valueGp": "270",
+        "rarity": "U",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Phial of blood"
+      },
+      "_raw": [
+        "",
+        "Potion of Growth",
+        "",
+        "",
+        "potion",
+        "",
+        "270",
+        "U",
+        "—, C",
+        "Giant",
+        "",
+        "",
+        "Phial of blood",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 45,
+      "name": "",
+      "metadata": {
+        "type": "potion",
+        "valueGp": "50",
+        "rarity": "C",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Fat"
+      },
+      "_raw": [
+        "",
+        "Potion of Healing",
+        "",
+        "",
+        "potion",
+        "",
+        "50",
+        "C",
+        "—, C",
+        "Beast",
+        "",
+        "",
+        "Fat",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 45,
+      "name": "",
+      "metadata": {
+        "type": "potion",
+        "valueGp": "180",
+        "rarity": "U R",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Phial of blood"
+      },
+      "_raw": [
+        "",
+        "Potion of Heroism",
+        "",
+        "",
+        "potion",
+        "",
+        "180",
+        "U R",
+        "—, C",
+        "Celestial",
+        "",
+        "",
+        "Phial of blood",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 45,
+      "name": "",
+      "metadata": {
+        "type": "potion",
+        "valueGp": "500",
+        "rarity": "U",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "Hill",
+        "metatag": "Hill",
+        "component": "Nail"
+      },
+      "_raw": [
+        "",
+        "Potion of Hill Giant Strength",
+        "",
+        "",
+        "potion",
+        "",
+        "500",
+        "U",
+        "—, C",
+        "Giant",
+        "Hill",
+        "",
+        "Nail",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 45,
+      "name": "",
+      "metadata": {
+        "type": "potion",
+        "valueGp": "900",
+        "rarity": "R V",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "Duergar",
+        "metatag": "Duergar",
+        "component": "Skin"
+      },
+      "_raw": [
+        "",
+        "Potion of Invisibility",
+        "",
+        "",
+        "potion",
+        "",
+        "900",
+        "R V",
+        "—, C",
+        "Humanoid",
+        "Duergar",
+        "",
+        "Skin",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 45,
+      "name": "",
+      "metadata": {
+        "type": "potion",
+        "valueGp": "180",
+        "rarity": "U R",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "Aboleth",
+        "metatag": "Aboleth",
+        "component": "Phial of mucous"
+      },
+      "_raw": [
+        "",
+        "Potion of Mind Reading",
+        "",
+        "",
+        "potion",
+        "",
+        "180",
+        "U R",
+        "—, C",
+        "Aberration",
+        "Aboleth",
+        "",
+        "Phial of mucous",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 45,
+      "name": "",
+      "metadata": {
+        "type": "potion",
+        "valueGp": "180",
+        "rarity": "U",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Poison gland"
+      },
+      "_raw": [
+        "",
+        "Potion of Poison",
+        "",
+        "",
+        "potion",
+        "",
+        "180",
+        "U",
+        "—, C",
+        "Plant",
+        "",
+        "",
+        "Poison gland",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 46,
+      "name": "",
+      "metadata": {
+        "type": "ring",
+        "valueGp": "12,000",
+        "rarity": "V",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Fungal membrane"
+      },
+      "_raw": [
+        "Ring of Regeneration",
+        "",
+        "",
+        "ring",
+        "",
+        "12,000",
+        "V",
+        "Req",
+        "",
+        "Plant",
+        "",
+        "",
+        "Fungal membrane",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 47,
+      "name": "",
+      "metadata": {
+        "type": "staff, weapon",
+        "valueGp": "12,000",
+        "rarity": "V",
+        "att": "Req+"
+      },
+      "components": {
+        "type": "Ice mephit",
+        "metatag": "Ice mephit",
+        "component": "Volatile mote of water"
+      },
+      "_raw": [
+        "",
+        "Staff of Frost",
+        "",
+        "staff, weapon",
+        "",
+        "12,000",
+        "V",
+        "Req+",
+        "",
+        "Elemental",
+        "Ice mephit",
+        "",
+        "Volatile mote of water",
+        "",
+        "v"
+      ]
+    },
+    {
+      "page": 47,
+      "name": "",
+      "metadata": {
+        "type": "staff, weapon",
+        "valueGp": "6,000",
+        "rarity": "R",
+        "att": "Req+"
+      },
+      "components": {
+        "type": "Unicorn",
+        "metatag": "Unicorn",
+        "component": "Horn"
+      },
+      "_raw": [
+        "",
+        "Staff of Healing",
+        "",
+        "staff, weapon",
+        "",
+        "6,000",
+        "R",
+        "Req+",
+        "",
+        "Celestial",
+        "Unicorn",
+        "",
+        "Horn",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 47,
+      "name": "",
+      "metadata": {
+        "type": "staff, weapon",
+        "valueGp": "65,000",
+        "rarity": "L V",
+        "att": "Req+"
+      },
+      "components": {
+        "type": "Storm",
+        "metatag": "Storm",
+        "component": "Heart"
+      },
+      "_raw": [
+        "",
+        "Staff of Power",
+        "",
+        "staff, weapon",
+        "",
+        "65,000",
+        "L V",
+        "Req+",
+        "",
+        "Giant",
+        "Storm",
+        "",
+        "Heart",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 47,
+      "name": "",
+      "metadata": {
+        "type": "staff, weapon",
+        "valueGp": "12,000",
+        "rarity": "V",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Sprite",
+        "metatag": "Sprite",
+        "component": "Psyche"
+      },
+      "_raw": [
+        "",
+        "Staff of Striking",
+        "",
+        "staff, weapon",
+        "",
+        "12,000",
+        "V",
+        "Req",
+        "",
+        "Fey",
+        "Sprite",
+        "",
+        "Psyche",
+        "v",
+        ""
+      ]
+    },
+    {
+      "page": 47,
+      "name": "",
+      "metadata": {
+        "type": "staff, weapon",
+        "valueGp": "5,000",
+        "rarity": "R",
+        "att": "Req+"
+      },
+      "components": {
+        "type": "Beetle, insect",
+        "metatag": "Beetle, insect",
+        "component": "Stinger"
+      },
+      "_raw": [
+        "",
+        "Staff of Swarming Insects",
+        "",
+        "staff, weapon",
+        "",
+        "5,000",
+        "R",
+        "Req+",
+        "",
+        "Beast",
+        "Beetle, insect",
+        "",
+        "Stinger",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "500",
+        "rarity": "U",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "500",
+        "U",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "2,100",
+        "rarity": "R",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "2,100",
+        "R",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "9,700",
+        "rarity": "V",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "9,700",
+        "V",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "42,000",
+        "rarity": "L",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "42,000",
+        "L",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "1,600",
+        "rarity": "R",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "1,600",
+        "R",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "6,400",
+        "rarity": "V",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "6,400",
+        "V",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "2,600",
+        "rarity": "R",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "2,600",
+        "R",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "9,900",
+        "rarity": "V",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "9,900",
+        "V",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (any sword)",
+        "valueGp": "24,000",
+        "rarity": "L",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of teeth"
+      },
+      "_raw": [
+        "Vorpal Sword",
+        "",
+        "weapon (any sword)",
+        "",
+        "24,000",
+        "L",
+        "Req",
+        "Monstrosity",
+        "",
+        "",
+        "Pouch of teeth",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "400",
+        "rarity": "U",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "400",
+        "U",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (any tommybow)",
+        "valueGp": "1,750",
+        "rarity": "R",
+        "att": "—"
+      },
+      "components": {
+        "type": "Animated",
+        "metatag": "Animated",
+        "component": "Instructions"
+      },
+      "_raw": [
+        "Splinterspray Tommybow",
+        "",
+        "weapon (any tommybow)",
+        "",
+        "1,750",
+        "R",
+        "—",
+        "Construct",
+        "Animated",
+        "",
+        "Instructions",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "8,100",
+        "rarity": "V",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "8,100",
+        "V",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "500",
+        "rarity": "U",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "500",
+        "U",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "9,400",
+        "rarity": "V",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "9,400",
+        "V",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (dagger)",
+        "valueGp": "1,900",
+        "rarity": "R",
+        "att": "—"
+      },
+      "components": {
+        "type": "Vrock",
+        "metatag": "Vrock",
+        "component": "Poison gland"
+      },
+      "_raw": [
+        "Dagger of Venom",
+        "",
+        "weapon (dagger)",
+        "",
+        "1,900",
+        "R",
+        "—",
+        "Fiend",
+        "Vrock",
+        "",
+        "Poison gland",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "600",
+        "rarity": "U",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "600",
+        "U",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "9,600",
+        "rarity": "V",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "9,600",
+        "V",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (generic)",
+        "valueGp": "750",
+        "rarity": "U",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of claws"
+      },
+      "_raw": [
+        "+1 Weapon",
+        "",
+        "weapon (generic)",
+        "",
+        "750",
+        "U",
+        "—",
+        "Beast",
+        "",
+        "",
+        "Pouch of claws",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (generic)",
+        "valueGp": "1,500",
+        "rarity": "R",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of claws"
+      },
+      "_raw": [
+        "+2 Weapon",
+        "",
+        "weapon (generic)",
+        "",
+        "1,500",
+        "R",
+        "—",
+        "Monstrosity",
+        "",
+        "",
+        "Pouch of claws",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (generic)",
+        "valueGp": "6,200",
+        "rarity": "V",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of claws"
+      },
+      "_raw": [
+        "+3 Weapon",
+        "",
+        "weapon (generic)",
+        "",
+        "6,200",
+        "V",
+        "—",
+        "Dragon",
+        "",
+        "",
+        "Pouch of claws",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (generic)",
+        "valueGp": "2,100",
+        "rarity": "R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Bone"
+      },
+      "_raw": [
+        "Berserker Axe",
+        "",
+        "weapon (generic)",
+        "",
+        "2,100",
+        "R",
+        "Req",
+        "Fiend",
+        "",
+        "",
+        "Bone",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (generic)",
+        "valueGp": "2,100",
+        "rarity": "R V",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Flying Sword",
+        "metatag": "Flying Sword",
+        "component": "Lifespark"
+      },
+      "_raw": [
+        "Dancing Sword",
+        "",
+        "weapon (generic)",
+        "",
+        "2,100",
+        "R V",
+        "Req",
+        "Construct",
+        "Flying Sword",
+        "",
+        "Lifespark",
+        "v",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (generic)",
+        "valueGp": "24,000",
+        "rarity": "L",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Lifespark"
+      },
+      "_raw": [
+        "Defender",
+        "",
+        "weapon (generic)",
+        "",
+        "24,000",
+        "L",
+        "Req",
+        "Construct",
+        "",
+        "",
+        "Lifespark",
+        "v",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (generic)",
+        "valueGp": "2,400",
+        "rarity": "R",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Heart"
+      },
+      "_raw": [
+        "Dragon Slayer",
+        "",
+        "weapon (generic)",
+        "",
+        "2,400",
+        "R",
+        "—",
+        "Dragon",
+        "",
+        "",
+        "Heart",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (generic)",
+        "valueGp": "9,400",
+        "rarity": "V R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "*",
+        "metatag": "*",
+        "component": "Breath sac"
+      },
+      "_raw": [
+        "Flame Tongue",
+        "",
+        "weapon (generic)",
+        "",
+        "9,400",
+        "V R",
+        "Req",
+        "Dragon",
+        "*",
+        "",
+        "Breath sac",
+        "v",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (generic)",
+        "valueGp": "9,400",
+        "rarity": "V",
+        "att": "Req"
+      },
+      "components": {
+        "type": "*",
+        "metatag": "*",
+        "component": "Breath sac"
+      },
+      "_raw": [
+        "Frost Brand",
+        "",
+        "weapon (generic)",
+        "",
+        "9,400",
+        "V",
+        "Req",
+        "Dragon",
+        "*",
+        "",
+        "Breath sac",
+        "v",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (generic)",
+        "valueGp": "2,400",
+        "rarity": "R",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Heart"
+      },
+      "_raw": [
+        "Giant Slayer",
+        "",
+        "weapon (generic)",
+        "",
+        "2,400",
+        "R",
+        "—",
+        "Giant",
+        "",
+        "",
+        "Heart",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (generic)",
+        "valueGp": "150,000",
+        "rarity": "L",
+        "att": "Req+"
+      },
+      "components": {
+        "type": "Solar",
+        "metatag": "Solar",
+        "component": "Heart"
+      },
+      "_raw": [
+        "Holy Avenger",
+        "",
+        "weapon (generic)",
+        "",
+        "150,000",
+        "L",
+        "Req+",
+        "Celestial",
+        "Solar",
+        "",
+        "Heart",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (generic)",
+        "valueGp": "170,000",
+        "rarity": "L",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Psyche"
+      },
+      "_raw": [
+        "Luck Blade",
+        "",
+        "weapon (generic)",
+        "",
+        "170,000",
+        "L",
+        "Req",
+        "Fey",
+        "",
+        "",
+        "Psyche",
+        "v",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (generic)",
+        "valueGp": "9,400",
+        "rarity": "V",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Cat",
+        "metatag": "Cat",
+        "component": "Heart"
+      },
+      "_raw": [
+        "Nine Lives Stealer",
+        "",
+        "weapon (generic)",
+        "",
+        "9,400",
+        "V",
+        "Req",
+        "Beast",
+        "Cat",
+        "",
+        "Heart",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (generic)",
+        "valueGp": "2,100",
+        "rarity": "R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Wraith",
+        "metatag": "Wraith",
+        "component": "Ethereal ichor"
+      },
+      "_raw": [
+        "Sword of Life Stealing",
+        "",
+        "weapon (generic)",
+        "",
+        "2,100",
+        "R",
+        "Req",
+        "Undead",
+        "Wraith",
+        "",
+        "Ethereal ichor",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (generic)",
+        "valueGp": "2,100",
+        "rarity": "R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Tooth"
+      },
+      "_raw": [
+        "Sword of Sharpness",
+        "",
+        "weapon (generic)",
+        "",
+        "2,100",
+        "R",
+        "Req",
+        "Giant",
+        "",
+        "",
+        "Tooth",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (generic)",
+        "valueGp": "2,100",
+        "rarity": "R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of teeth"
+      },
+      "_raw": [
+        "Sword of Wounding",
+        "",
+        "weapon (generic)",
+        "",
+        "2,100",
+        "R",
+        "Req",
+        "Humanoid",
+        "",
+        "",
+        "Pouch of teeth",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (generic)",
+        "valueGp": "350",
+        "rarity": "U R",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of teeth"
+      },
+      "_raw": [
+        "Vicious Weapon",
+        "",
+        "weapon (generic)",
+        "",
+        "350",
+        "U R",
+        "—",
+        "Undead",
+        "",
+        "",
+        "Pouch of teeth",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (hand crossbow)",
+        "valueGp": "50",
+        "rarity": "C",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Gears"
+      },
+      "_raw": [
+        "Kobold Wristbow",
+        "",
+        "weapon (hand crossbow)",
+        "",
+        "50",
+        "C",
+        "Req",
+        "Construct",
+        "",
+        "",
+        "Gears",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (javelin)",
+        "valueGp": "1,200",
+        "rarity": "U",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Primordial dust"
+      },
+      "_raw": [
+        "Javelin of Lightning",
+        "",
+        "weapon (javelin)",
+        "",
+        "1,200",
+        "U",
+        "—",
+        "Elemental",
+        "",
+        "",
+        "Primordial dust",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (longbow)",
+        "valueGp": "9,400",
+        "rarity": "V",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Tongue"
+      },
+      "_raw": [
+        "Oathbow",
+        "",
+        "weapon (longbow)",
+        "",
+        "9,400",
+        "V",
+        "Req",
+        "Fey",
+        "",
+        "",
+        "Tongue",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (longsword)",
+        "valueGp": "12,000",
+        "rarity": "V R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of dust"
+      },
+      "_raw": [
+        "Sun Blade",
+        "",
+        "weapon (longsword)",
+        "",
+        "12,000",
+        "V R",
+        "Req",
+        "Celestial",
+        "",
+        "",
+        "Pouch of dust",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (longsword or",
+        "valueGp": "1,600",
+        "rarity": "R",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "weapon (longsword or",
+        "",
+        "1,600",
+        "R",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "greatsword)",
+        "valueGp": "7,800",
+        "rarity": "V",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "greatsword)",
+        "",
+        "7,800",
+        "V",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (mace)",
+        "valueGp": "7,000",
+        "rarity": "R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Marrow"
+      },
+      "_raw": [
+        "Mace of Disruption",
+        "",
+        "weapon (mace)",
+        "",
+        "7,000",
+        "R",
+        "Req",
+        "Undead",
+        "",
+        "",
+        "Marrow",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (mace)",
+        "valueGp": "4,500",
+        "rarity": "R",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Bone"
+      },
+      "_raw": [
+        "Mace of Smiting",
+        "",
+        "weapon (mace)",
+        "",
+        "4,500",
+        "R",
+        "—",
+        "Construct",
+        "",
+        "",
+        "Bone",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (mace)",
+        "valueGp": "7,000",
+        "rarity": "R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Bone"
+      },
+      "_raw": [
+        "Mace of Terror",
+        "",
+        "weapon (mace)",
+        "",
+        "7,000",
+        "R",
+        "Req",
+        "Monstrosity",
+        "",
+        "",
+        "Bone",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (maul)",
+        "valueGp": "16,000",
+        "rarity": "V L",
+        "att": "—"
+      },
+      "components": {
+        "type": "Storm",
+        "metatag": "Storm",
+        "component": "Bone"
+      },
+      "_raw": [
+        "Hammer of Thunderbolts",
+        "",
+        "weapon (maul)",
+        "",
+        "16,000",
+        "V L",
+        "—",
+        "Giant",
+        "Storm",
+        "",
+        "Bone",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "850",
+        "rarity": "U",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "850",
+        "U",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "10,000",
+        "rarity": "V",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "10,000",
+        "V",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (scimitar)",
+        "valueGp": "9,400",
+        "rarity": "V",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of feathers"
+      },
+      "_raw": [
+        "Scimitar of Speed",
+        "",
+        "weapon (scimitar)",
+        "",
+        "9,400",
+        "V",
+        "Req",
+        "Fey",
+        "",
+        "",
+        "Pouch of feathers",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (trident)",
+        "valueGp": "700",
+        "rarity": "U",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Tentacle"
+      },
+      "_raw": [
+        "Trident of Fish Command",
+        "",
+        "weapon (trident)",
+        "",
+        "700",
+        "U",
+        "Req",
+        "Beast",
+        "",
+        "",
+        "Tentacle",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 48,
+      "name": "",
+      "metadata": {
+        "type": "weapon (warhammer)",
+        "valueGp": "18,000",
+        "rarity": "V",
+        "att": "Req+"
+      },
+      "components": {
+        "type": "Stone",
+        "metatag": "Stone",
+        "component": "Tooth"
+      },
+      "_raw": [
+        "Dwarven Thrower",
+        "",
+        "weapon (warhammer)",
+        "",
+        "18,000",
+        "V",
+        "Req+",
+        "Giant",
+        "Stone",
+        "",
+        "Tooth",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 49,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "7,000",
+        "rarity": "R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Mammoth",
+        "metatag": "Mammoth",
+        "component": "Heart"
+      },
+      "_raw": [
+        "",
+        "Amulet of Health",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "7,000",
+        "R",
+        "Req",
+        "Beast",
+        "Mammoth",
+        "",
+        "Heart",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 49,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "1,000",
+        "rarity": "U",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Antenna"
+      },
+      "_raw": [
+        "",
+        "Amulet of Proof against Detection",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "1,000",
+        "U",
+        "Req",
+        "Fey",
+        "",
+        "",
+        "Antenna",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 50,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "9.400",
+        "rarity": "V",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Giant spider",
+        "metatag": "Giant spider",
+        "component": "Chitin"
+      },
+      "_raw": [
+        "Cloak of Arachnida",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "9.400",
+        "V",
+        "Req",
+        "Beast",
+        "Giant spider",
+        "",
+        "Chitin",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 50,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "60,000",
+        "rarity": "L",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pelt"
+      },
+      "_raw": [
+        "Cloak of Displacement",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "60,000",
+        "L",
+        "Req",
+        "Monstrosity",
+        "",
+        "",
+        "Pelt",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 50,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "5,000",
+        "rarity": "R U",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Phial of sap"
+      },
+      "_raw": [
+        "Cloak of Elvenkind",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "5,000",
+        "R U",
+        "Req",
+        "Plant",
+        "",
+        "",
+        "Phial of sap",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 50,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "3,500",
+        "rarity": "R U",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Chitin"
+      },
+      "_raw": [
+        "Cloak of Protection",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "3,500",
+        "R U",
+        "Req",
+        "Beast",
+        "",
+        "",
+        "Chitin",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 50,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "6,000",
+        "rarity": "R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Bat",
+        "metatag": "Bat",
+        "component": "Pelt"
+      },
+      "_raw": [
+        "Cloak of the Bat",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "6,000",
+        "R",
+        "Req",
+        "Beast",
+        "Bat",
+        "",
+        "Pelt",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 50,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "5,000",
+        "rarity": "R",
+        "att": "—"
+      },
+      "components": {
+        "type": "Ray or shark",
+        "metatag": "Ray or shark",
+        "component": "Pelt"
+      },
+      "_raw": [
+        "Cloak of the Manta Ray",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "5,000",
+        "R",
+        "—",
+        "Beast",
+        "Ray or shark",
+        "",
+        "Pelt",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 50,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "9,400",
+        "rarity": "V",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Mechakobold",
+        "metatag": "Mechakobold",
+        "component": "Instruction matrix"
+      },
+      "_raw": [
+        "Crawly Turrit",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "9,400",
+        "V",
+        "Req",
+        "Construct",
+        "Mechakobold",
+        "",
+        "Instruction matrix",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 50,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "28,000",
+        "rarity": "V",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Eye"
+      },
+      "_raw": [
+        "Crystal Ball",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "28,000",
+        "V",
+        "Req",
+        "Celestial",
+        "",
+        "",
+        "Eye",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 50,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "16,000",
+        "rarity": "V",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Instructions"
+      },
+      "_raw": [
+        "Cube of Force",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "16,000",
+        "V",
+        "Req",
+        "Construct",
+        "",
+        "",
+        "Instructions",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 50,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "40,000",
+        "rarity": "L",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Primordial dust"
+      },
+      "_raw": [
+        "Cubic Gate",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "40,000",
+        "L",
+        "—",
+        "Elemental",
+        "",
+        "",
+        "Primordial dust",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 51,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "3,000",
+        "rarity": "R",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Bark"
+      },
+      "_raw": [
+        "",
+        "Folding Boat",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "3,000",
+        "R",
+        "—",
+        "Plant",
+        "",
+        "",
+        "Bark",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 51,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "5,000",
+        "rarity": "R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Ogre",
+        "metatag": "Ogre",
+        "component": "Bone"
+      },
+      "_raw": [
+        "",
+        "Gauntlets of Ogre Power",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "5,000",
+        "R",
+        "Req",
+        "Giant",
+        "Ogre",
+        "",
+        "Bone",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 51,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "5,000",
+        "rarity": "R U",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Fat"
+      },
+      "_raw": [
+        "",
+        "Gem of Brightness",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "5,000",
+        "R U",
+        "—, C",
+        "Celestial",
+        "",
+        "",
+        "Fat",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 51,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "8,000",
+        "rarity": "R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Eye"
+      },
+      "_raw": [
+        "",
+        "Gem of Seeing",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "8,000",
+        "R",
+        "Req",
+        "Celestial",
+        "",
+        "",
+        "Eye",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 51,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "1,500",
+        "rarity": "U",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pelt"
+      },
+      "_raw": [
+        "",
+        "Gloves of Missile Snaring",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "1,500",
+        "U",
+        "Req",
+        "Fey",
+        "",
+        "",
+        "Pelt",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 51,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "900",
+        "rarity": "U",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Shark",
+        "metatag": "Shark",
+        "component": "Pouch of scales"
+      },
+      "_raw": [
+        "",
+        "Gloves of Swimming and",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "900",
+        "U",
+        "Req",
+        "Beast",
+        "Shark",
+        "",
+        "Pouch of scales",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "14,000",
+        "rarity": "V",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Liver"
+      },
+      "_raw": [
+        "Manual of Bodily Health",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "14,000",
+        "V",
+        "",
+        "—",
+        "",
+        "Giant",
+        "",
+        "",
+        "",
+        "Liver",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "8,200",
+        "rarity": "V",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "Clay golem",
+        "metatag": "Clay golem",
+        "component": "Stone"
+      },
+      "_raw": [
+        "Manual of Clay Golems",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "8,200",
+        "V",
+        "",
+        "—, C",
+        "",
+        "Construct",
+        "",
+        "Clay golem",
+        "",
+        "Stone",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "6,200",
+        "rarity": "V",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "Flesh golem",
+        "metatag": "Flesh golem",
+        "component": "Flesh"
+      },
+      "_raw": [
+        "Manual of Flesh Golems",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "6,200",
+        "V",
+        "",
+        "—, C",
+        "",
+        "Construct",
+        "",
+        "Flesh golem",
+        "",
+        "Flesh",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "14,000",
+        "rarity": "V",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Liver"
+      },
+      "_raw": [
+        "Manual of Gainful Exercise",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "14,000",
+        "V",
+        "",
+        "—",
+        "",
+        "Humanoid",
+        "",
+        "",
+        "",
+        "Liver",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "12,200",
+        "rarity": "V",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "Iron golem",
+        "metatag": "Iron golem",
+        "component": "Metal plating"
+      },
+      "_raw": [
+        "Manual of Iron Golems",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "12,200",
+        "V",
+        "",
+        "—, C",
+        "",
+        "Construct",
+        "",
+        "Iron golem",
+        "",
+        "Metal plating",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "14,000",
+        "rarity": "V",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Phial of blood"
+      },
+      "_raw": [
+        "Manual of Quickness of Action",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "14,000",
+        "V",
+        "",
+        "—",
+        "",
+        "Fey",
+        "",
+        "",
+        "",
+        "Phial of blood",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "9,200",
+        "rarity": "V",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "Stone golem",
+        "metatag": "Stone golem",
+        "component": "Stone"
+      },
+      "_raw": [
+        "Manual of Stone Golems",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "9,200",
+        "V",
+        "",
+        "—, C",
+        "",
+        "Construct",
+        "",
+        "Stone golem",
+        "",
+        "Stone",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "8,600",
+        "rarity": "V",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Phial of wax"
+      },
+      "_raw": [
+        "Marvelous Pigments",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "8,600",
+        "V",
+        "",
+        "—, C",
+        "",
+        "Plant",
+        "",
+        "",
+        "",
+        "Phial of wax",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "1,200",
+        "rarity": "U",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Phial of blood"
+      },
+      "_raw": [
+        "Medallion of Thoughts",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "1,200",
+        "U",
+        "",
+        "Req",
+        "",
+        "Aberration",
+        "",
+        "",
+        "",
+        "Phial of blood",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "18,000",
+        "rarity": "V",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Eye"
+      },
+      "_raw": [
+        "Mirror of Life Trapping",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "18,000",
+        "V",
+        "",
+        "—",
+        "",
+        "Undead",
+        "",
+        "",
+        "",
+        "Eye",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "2,300",
+        "rarity": "R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Fungal heart",
+        "metatag": "Fungal heart",
+        "component": "Membrane"
+      },
+      "_raw": [
+        "Mycelial Cloak",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "2,300",
+        "R",
+        "",
+        "Req",
+        "",
+        "Plant",
+        "",
+        "Fungal heart",
+        "",
+        "Membrane",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "1,200",
+        "rarity": "U",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Poison gland"
+      },
+      "_raw": [
+        "Necklace of Adaptation",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "1,200",
+        "U",
+        "",
+        "Req",
+        "",
+        "Monstrosity",
+        "",
+        "",
+        "",
+        "Poison gland",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "400 / bead",
+        "rarity": "U-R",
+        "att": "—"
+      },
+      "components": {
+        "type": "**",
+        "metatag": "**",
+        "component": "Breath sac"
+      },
+      "_raw": [
+        "Necklace of Fireballs*",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "400 / bead",
+        "U-R",
+        "* R",
+        "—",
+        "",
+        "Dragon",
+        "",
+        "**",
+        "",
+        "Breath sac",
+        "v",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "300",
+        "rarity": "U",
+        "att": "Req+"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of teeth"
+      },
+      "_raw": [
+        "",
+        "Prayer Bead, Bless",
+        "",
+        "wondrous item",
+        "",
+        "300",
+        "U",
+        "",
+        "Req+",
+        "",
+        "Celestial",
+        "",
+        "",
+        "",
+        "Pouch of teeth",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "600",
+        "rarity": "U",
+        "att": "Req+"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of teeth"
+      },
+      "_raw": [
+        "",
+        "Prayer Bead, Curing",
+        "",
+        "wondrous item",
+        "",
+        "600",
+        "U",
+        "",
+        "Req+",
+        "",
+        "Celestial",
+        "",
+        "",
+        "",
+        "Pouch of teeth",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "3,200",
+        "rarity": "R",
+        "att": "Req+"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of teeth"
+      },
+      "_raw": [
+        "",
+        "Prayer Bead, Favor",
+        "",
+        "wondrous item",
+        "",
+        "3,200",
+        "R",
+        "",
+        "Req+",
+        "",
+        "Celestial",
+        "",
+        "",
+        "",
+        "Pouch of teeth",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "600",
+        "rarity": "U",
+        "att": "Req+"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of teeth"
+      },
+      "_raw": [
+        "",
+        "Prayer Bead, Smiting",
+        "",
+        "wondrous item",
+        "",
+        "600",
+        "U",
+        "",
+        "Req+",
+        "",
+        "Celestial",
+        "",
+        "",
+        "",
+        "Pouch of teeth",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "6,400",
+        "rarity": "V",
+        "att": "Req+"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of teeth"
+      },
+      "_raw": [
+        "",
+        "Prayer Bead, Summons",
+        "",
+        "wondrous item",
+        "",
+        "6,400",
+        "V",
+        "",
+        "Req+",
+        "",
+        "Celestial",
+        "",
+        "",
+        "",
+        "Pouch of teeth",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "6,400",
+        "rarity": "V",
+        "att": "Req+"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of teeth"
+      },
+      "_raw": [
+        "",
+        "Prayer Bead, Wind Walk",
+        "",
+        "wondrous item",
+        "",
+        "6,400",
+        "V",
+        "",
+        "Req+",
+        "",
+        "Celestial",
+        "",
+        "",
+        "",
+        "Pouch of teeth",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "3,500",
+        "rarity": "R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Polyhedrooze",
+        "metatag": "Polyhedrooze",
+        "component": "Membrane"
+      },
+      "_raw": [
+        "Oozemat Coat",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "3,500",
+        "R",
+        "",
+        "Req",
+        "",
+        "Ooze",
+        "",
+        "Polyhedrooze",
+        "",
+        "Membrane",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "4,000,000",
+        "rarity": "A",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Heart"
+      },
+      "_raw": [
+        "Orb of Dragonkind",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "4,000,000",
+        "A",
+        "",
+        "Req",
+        "",
+        "Dragon",
+        "",
+        "",
+        "",
+        "Heart",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "1,000",
+        "rarity": "U",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of teeth"
+      },
+      "_raw": [
+        "Pearl of Power",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "1,000",
+        "U",
+        "",
+        "Req",
+        "s",
+        "Aberration",
+        "",
+        "",
+        "",
+        "Pouch of teeth",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "400",
+        "rarity": "U",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Heart"
+      },
+      "_raw": [
+        "Periapt of Health",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "400",
+        "U",
+        "",
+        "—",
+        "",
+        "Monstrosity",
+        "",
+        "",
+        "",
+        "Heart",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "5,000",
+        "rarity": "R",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Poison gland"
+      },
+      "_raw": [
+        "Periapt of Proof against Poison",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "5,000",
+        "R",
+        "",
+        "—",
+        "",
+        "Fey",
+        "",
+        "",
+        "",
+        "Poison gland",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "800",
+        "rarity": "U",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Phial of mucous"
+      },
+      "_raw": [
+        "Periapt of Wound Closure",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "800",
+        "U",
+        "",
+        "Req",
+        "",
+        "Ooze",
+        "",
+        "",
+        "",
+        "Phial of mucous",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "800",
+        "rarity": "U",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Bone"
+      },
+      "_raw": [
+        "Pipes of Haunting",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "800",
+        "U",
+        "",
+        "—",
+        "",
+        "Fey",
+        "",
+        "",
+        "",
+        "Bone",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "700",
+        "rarity": "U",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Bone"
+      },
+      "_raw": [
+        "Pipes of the Sewers",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "700",
+        "U",
+        "",
+        "Req",
+        "",
+        "Monstrosity",
+        "",
+        "",
+        "",
+        "Bone",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "2,500",
+        "rarity": "R",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Hide"
+      },
+      "_raw": [
+        "Portable Hole",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "2,500",
+        "R",
+        "",
+        "—",
+        "",
+        "Aberration",
+        "",
+        "",
+        "",
+        "Hide",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "360",
+        "rarity": "U",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of leaves"
+      },
+      "_raw": [
+        "Restorative Ointment",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "360",
+        "U",
+        "",
+        "—, C",
+        "",
+        "Plant",
+        "",
+        "",
+        "",
+        "Pouch of leaves",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "4,000",
+        "rarity": "R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Sphinx",
+        "metatag": "Sphinx",
+        "component": "Eye"
+      },
+      "_raw": [
+        "Robe of Eyes",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "4,000",
+        "R",
+        "",
+        "Req",
+        "",
+        "Monstrosity",
+        "",
+        "Sphinx",
+        "",
+        "Eye",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "9,400",
+        "rarity": "V",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pouch of pollen"
+      },
+      "_raw": [
+        "Robe of Scintillating Colors",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "9,400",
+        "V",
+        "",
+        "Req",
+        "",
+        "Plant",
+        "",
+        "",
+        "",
+        "Pouch of pollen",
+        "",
+        "v",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "18,000",
+        "rarity": "V",
+        "att": "Req"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Eye"
+      },
+      "_raw": [
+        "Robe of Stars",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "18,000",
+        "V",
+        "",
+        "Req",
+        "",
+        "Aberration",
+        "",
+        "",
+        "",
+        "Eye",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "1,250",
+        "rarity": "U",
+        "att": "—, C"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Skin"
+      },
+      "_raw": [
+        "Robe of Useful Items",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "1,250",
+        "U",
+        "",
+        "—, C",
+        "",
+        "Humanoid",
+        "",
+        "",
+        "",
+        "Skin",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "41,600",
+        "rarity": "L",
+        "att": "Req+"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Skin"
+      },
+      "_raw": [
+        "Robe of the Archmagi",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "41,600",
+        "L",
+        "",
+        "Req+",
+        "",
+        "Multiple",
+        "##",
+        "",
+        "",
+        "Skin",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "1,600",
+        "rarity": "R",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "1,600",
+        "R",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "32,000",
+        "rarity": "L",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "32,000",
+        "L",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "2,100",
+        "rarity": "R",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Mechakobold",
+        "metatag": "Mechakobold",
+        "component": "Instruction matrix"
+      },
+      "_raw": [
+        "Rolly Turrit",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "2,100",
+        "R",
+        "",
+        "Req",
+        "",
+        "Construct",
+        "",
+        "Mechakobold",
+        "",
+        "Instruction matrix",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "900",
+        "rarity": "U",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Talon"
+      },
+      "_raw": [
+        "Rope of Climbing",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "900",
+        "U",
+        "",
+        "—",
+        "",
+        "Monstrosity",
+        "",
+        "",
+        "",
+        "Talon",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "2,000",
+        "rarity": "R",
+        "att": "—"
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": "Pincer"
+      },
+      "_raw": [
+        "Rope of Entanglement",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "2,000",
+        "R",
+        "",
+        "—",
+        "",
+        "Monstrosity",
+        "",
+        "",
+        "",
+        "Pincer",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "41,600",
+        "rarity": "L",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Lich",
+        "metatag": "Lich",
+        "component": "Undying heart"
+      },
+      "_raw": [
+        "Scarab of Protection",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "41,600",
+        "L",
+        "",
+        "Req",
+        "",
+        "Undead",
+        "",
+        "Lich",
+        "",
+        "Undying heart",
+        "",
+        "v",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "2,800",
+        "rarity": "R",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "2,800",
+        "R",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "10,000",
+        "rarity": "V",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Magnetite",
+        "metatag": "Magnetite",
+        "component": "Horn"
+      },
+      "_raw": [
+        "Shard Crown",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "10,000",
+        "V",
+        "",
+        "Req",
+        "",
+        "Dragon",
+        "",
+        "Magnetite",
+        "",
+        "Horn",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "41,600",
+        "rarity": "L",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "41,600",
+        "L",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "700",
+        "rarity": "U",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "700",
+        "U",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "",
+        "valueGp": "10,000",
+        "rarity": "V",
+        "att": ""
+      },
+      "components": {
+        "type": "",
+        "metatag": "",
+        "component": ""
+      },
+      "_raw": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "10,000",
+        "V",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "page": 52,
+      "name": "",
+      "metadata": {
+        "type": "wondrous item",
+        "valueGp": "1,500",
+        "rarity": "U",
+        "att": "Req"
+      },
+      "components": {
+        "type": "Spider",
+        "metatag": "Spider",
+        "component": "Pouch of claws"
+      },
+      "_raw": [
+        "Slippers of Spider Climbing",
+        "",
+        "",
+        "wondrous item",
+        "",
+        "1,500",
+        "U",
+        "",
+        "Req",
+        "",
+        "Beast",
+        "",
+        "Spider",
+        "",
+        "Pouch of claws",
+        "",
+        "",
+        ""
+      ]
+    }
+  ]
+}
