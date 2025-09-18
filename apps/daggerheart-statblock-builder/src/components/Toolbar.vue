@@ -4,12 +4,8 @@ import { hasSaved, clear } from '../lib/persist'
 import type { Enemy, Environment } from '../types'
 import type { Theme } from '../lib/theme'
 import { openGlossary } from '../lib/glossaryState'
-import {
-  AppButton,
-  AppDropdown,
-  AppIcon,
-  AppIconButton
-} from '@my-monorepo/ui'
+import { AppButton, AppDropdown, AppIcon, AppIconButton } from '@my-monorepo/ui'
+import { loadAdversariesFromCsv, loadEnvironmentsFromCsv } from '../lib/dataSources'
 // Static asset URLs for docs
 // Vite will emit these and return URLs at runtime
 // If filenames change, update imports below
@@ -31,6 +27,7 @@ const emit = defineEmits<{
   (e: 'reset'): void
   (e: 'load-preset', which: 'acid'|'river'): void
   (e: 'update:theme', v: Theme): void
+  (e: 'import', payload: { sbType: 'enemy'|'environment'; enemy?: Enemy; environment?: Environment }): void
 }>()
 
 function downloadJSON() {
@@ -58,6 +55,17 @@ function openDoc(which: 'srd' | 'license') {
   const url = which === 'srd' ? srdUrl : licenseUrl
   window.open(url, '_blank')
 }
+
+function importFrom(which: 'adversaries'|'environments') {
+  const list = which === 'adversaries' ? loadAdversariesFromCsv() : loadEnvironmentsFromCsv()
+  const names = list.map(it => it.name).filter(Boolean)
+  const picked = prompt(`Type a name to import from ${which}:\n\n` + names.slice(0, 25).join('\n'))
+  if (!picked) return
+  const found = list.find(it => it.name.toLowerCase().includes(picked.toLowerCase()))
+  if (!found) { alert('No match found.'); return }
+  if (found.kind === 'enemy') emit('import', { sbType: 'enemy', enemy: found as any })
+  else emit('import', { sbType: 'environment', environment: found as any })
+}
 </script>
 
 <template>
@@ -72,6 +80,16 @@ function openDoc(which: 'srd' | 'license') {
         <template #button>
           <AppIcon name="sword" />
           <span class="hidden md:inline">Presets</span>
+        </template>
+      </AppDropdown>
+      <AppDropdown
+        :items="[{label:'From Adversaries CSV', value:'adversaries', icon:'sword'}, {label:'From Environments CSV', value:'environments', icon:'book'}]"
+        button-title="Import"
+        @select="v => importFrom(v as any)"
+      >
+        <template #button>
+          <AppIcon name="download" />
+          <span class="hidden md:inline">Import</span>
         </template>
       </AppDropdown>
       <AppDropdown

@@ -1,161 +1,80 @@
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { reactive, computed, ref, watch, onMounted } from 'vue'
 import type { Enemy, Environment } from '../types'
 import { save as persistSave, load as persistLoad } from '../lib/persist'
 import { AcidBurrower, RagingRiver } from '../lib/presets'
 import { applyTheme, getSavedTheme, saveTheme, type Theme } from '../lib/theme'
-
-type StatblockKind = 'enemy' | 'environment'
-
-type PresetKey = 'acid' | 'river'
-
-function createDefaultEnemy(): Enemy {
-  return {
-    kind: 'enemy',
-    name: '',
-    tier: null,
-    description: '',
-    traits: '',
-    archetype: '',
-    rank: '',
-    difficulty: null,
-    thresholds: '',
-    hp: null,
-    stress: null,
-    atkBonus: null,
-    attacks: [],
-    experience: '',
-    tactics: '',
-    features: []
-  }
-}
-
-function createDefaultEnvironment(): Environment {
-  return {
-    kind: 'environment',
-    name: '',
-    tier: null,
-    description: '',
-    traits: '',
-    archetype: '',
-    category: '',
-    difficulty: null,
-    impulses: '',
-    potential: '',
-    prompts: '',
-    features: []
-  }
-}
-
-function clone<T>(value: T): T {
-  if (typeof structuredClone === 'function') {
-    return structuredClone(value)
-  }
-
-  return JSON.parse(JSON.stringify(value)) as T
-}
+import { getRecommendations } from '../lib/recommendations'
 
 export function useStatblockBuilder() {
-  const sbType = ref<StatblockKind>('enemy')
-  const enemy = reactive<Enemy>(createDefaultEnemy())
-  const environment = reactive<Environment>(createDefaultEnvironment())
-  const theme = ref<Theme>('system')
+  const sbType = ref<'enemy' | 'environment'>('enemy')
+
+  const enemy = reactive<Enemy>({
+    kind: 'enemy',
+    name: '', tier: null, description: '', traits: '', archetype: '',
+    rank: '', difficulty: null, thresholds: '', hp: null, stress: null,
+    atkBonus: null, attacks: [], experience: '', tactics: '', features: []
+  })
+
+  const environment = reactive<Environment>({
+    kind: 'environment',
+    name: '', tier: null, description: '', traits: '', archetype: '',
+    category: '', difficulty: null, impulses: '', potential: '', prompts: '',
+    features: []
+  })
 
   const name = computed({
     get: () => (sbType.value === 'enemy' ? enemy.name : environment.name),
-    set: (value: string) => {
-      if (sbType.value === 'enemy') {
-        enemy.name = value
-      } else {
-        environment.name = value
-      }
-    }
+    set: (v: string) => { sbType.value === 'enemy' ? (enemy.name = v) : (environment.name = v) }
   })
-
-  const tier = computed({
+  const tier = computed<number | null>({
     get: () => (sbType.value === 'enemy' ? enemy.tier : environment.tier),
-    set: (value: number | null) => {
-      if (sbType.value === 'enemy') {
-        enemy.tier = value
-      } else {
-        environment.tier = value
-      }
-    }
+    set: (v: number | null) => { sbType.value === 'enemy' ? (enemy.tier = v) : (environment.tier = v) }
   })
-
-  const description = computed({
-    get: () => (sbType.value === 'enemy' ? enemy.description : environment.description),
-    set: (value: string) => {
-      if (sbType.value === 'enemy') {
-        enemy.description = value
-      } else {
-        environment.description = value
-      }
-    }
-  })
-
   const traits = computed({
     get: () => (sbType.value === 'enemy' ? enemy.traits : environment.traits),
-    set: (value: string) => {
-      if (sbType.value === 'enemy') {
-        enemy.traits = value
-      } else {
-        environment.traits = value
-      }
-    }
+    set: (v: string) => { sbType.value === 'enemy' ? (enemy.traits = v) : (environment.traits = v) }
+  })
+  const description = computed({
+    get: () => (sbType.value === 'enemy' ? enemy.description : environment.description),
+    set: (v: string) => { sbType.value === 'enemy' ? (enemy.description = v) : (environment.description = v) }
   })
 
-  function resetEnemy() {
-    Object.assign(enemy, createDefaultEnemy())
-  }
-
-  function resetEnvironment() {
-    Object.assign(environment, createDefaultEnvironment())
+  // Theme state
+  const theme = ref<Theme>('system')
+  function setTheme(t: Theme) {
+    theme.value = t
+    saveTheme(t)
+    applyTheme(t)
   }
 
   function resetAll() {
     sbType.value = 'enemy'
-    resetEnemy()
-    resetEnvironment()
+    Object.assign(enemy, { kind:'enemy', name:'', tier:null, description:'', traits:'', archetype:'', rank:'', difficulty:null, thresholds:'', hp:null, stress:null, atkBonus:null, attacks:[], experience:'', tactics:'', features:[] })
+    Object.assign(environment, { kind:'environment', name:'', tier:null, description:'', traits:'', archetype:'', category:'', difficulty:null, impulses:'', potential:'', prompts:'', features:[] })
   }
 
-  function setTheme(next: Theme) {
-    theme.value = next
-    saveTheme(next)
-    applyTheme(next)
-  }
-
-  function loadPreset(which: PresetKey) {
+  function loadPreset(which: 'acid'|'river') {
     if (which === 'acid') {
       sbType.value = 'enemy'
-      Object.assign(enemy, clone(AcidBurrower))
-      return
+      Object.assign(enemy, JSON.parse(JSON.stringify(AcidBurrower)))
+    } else {
+      sbType.value = 'environment'
+      Object.assign(environment, JSON.parse(JSON.stringify(RagingRiver)))
     }
-
-    sbType.value = 'environment'
-    Object.assign(environment, clone(RagingRiver))
   }
 
-  watch(
-    [sbType, enemy, environment],
-    () => {
-      persistSave({
-        version: 1,
-        sbType: sbType.value,
-        enemy: enemy as Enemy,
-        environment: environment as Environment
-      })
-    },
-    { deep: true }
-  )
+  // Autosave
+  watch([sbType, enemy, environment], () => {
+    persistSave({ version: 1, sbType: sbType.value, enemy: enemy as Enemy, environment: environment as Environment })
+  }, { deep: true })
 
   onMounted(() => {
     setTheme(getSavedTheme())
-
-    const saved = persistLoad()
-    if (saved) {
-      sbType.value = saved.sbType
-      Object.assign(enemy, saved.enemy)
-      Object.assign(environment, saved.environment)
+    const data = persistLoad()
+    if (data) {
+      sbType.value = data.sbType
+      Object.assign(enemy, data.enemy)
+      Object.assign(environment, data.environment)
     }
   })
 
@@ -170,6 +89,7 @@ export function useStatblockBuilder() {
     theme,
     setTheme,
     resetAll,
-    loadPreset
+    loadPreset,
+    recommendations: getRecommendations(),
   }
 }

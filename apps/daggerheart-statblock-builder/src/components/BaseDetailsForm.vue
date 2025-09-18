@@ -36,22 +36,22 @@ const emit = defineEmits<{
 
     <AppRow :cols="2">
       <AppCol>
-        <AppFieldLabel icon="sword" label="Name" />
+        <AppFieldLabel label="Name" />
         <AppInput :model-value="props.name" @update:modelValue="v => emit('update:name', v)" placeholder="e.g., Acid Burrower" />
       </AppCol>
       <AppCol>
-        <AppFieldLabel icon="info" label="Tier" />
+        <AppFieldLabel label="Tier" />
         <AppInput type="number" :model-value="props.tier ?? ''" @update:modelValue="v => emit('update:tier', Number(v) || null)" min="0" max="5" placeholder="e.g., 1" />
       </AppCol>
     </AppRow>
 
     <div class="mt-3">
-      <AppFieldLabel icon="book" label="Description" />
+      <AppFieldLabel label="Description" />
       <AppTextarea :model-value="props.description" @update:modelValue="v => emit('update:description', v)" placeholder="Short descriptive blurb" :rows="2" variant="filled" />
     </div>
 
     <div class="mt-3">
-      <AppFieldLabel icon="info" label="Traits" />
+      <AppFieldLabel label="Traits" />
       <AppTagInput :model-value="props.traits" @update:modelValue="v => emit('update:traits', v)" placeholder="Type a trait and press Enter" />
     </div>
   </AppCard>
