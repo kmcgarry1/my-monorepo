@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { Attack } from '../types'
-import AppRow from './ui/AppRow.vue'
-import AppCol from './ui/AppCol.vue'
-import AppButton from './ui/AppButton.vue'
-import AppInput from './ui/AppInput.vue'
-import AppFieldLabel from './ui/AppFieldLabel.vue'
-import AppIconButton from './ui/AppIconButton.vue'
+import {
+  AppButton,
+  AppCol,
+  AppFieldLabel,
+  AppIconButton,
+  AppInput,
+  AppRow
+} from '@my-monorepo/ui'
 import { openGlossary } from '../lib/glossaryState'
 
 const props = withDefaults(defineProps<{ modelValue: Attack[] }>(), { })

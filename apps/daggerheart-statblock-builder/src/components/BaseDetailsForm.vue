@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import AppCard from './ui/AppCard.vue'
-import AppRow from './ui/AppRow.vue'
-import AppCol from './ui/AppCol.vue'
-import AppInput from './ui/AppInput.vue'
-import AppTextarea from './ui/AppTextarea.vue'
-import AppButtonGroup from './ui/AppButtonGroup.vue'
-import AppFieldLabel from './ui/AppFieldLabel.vue'
-import AppTagInput from './ui/AppTagInput.vue'
+import {
+  AppButtonGroup,
+  AppCard,
+  AppCol,
+  AppFieldLabel,
+  AppInput,
+  AppRow,
+  AppTagInput,
+  AppTextarea
+} from '@my-monorepo/ui'
 
 const props = defineProps<{
   sbType: 'enemy' | 'environment'
@@ -45,7 +47,7 @@ const emit = defineEmits<{
 
     <div class="mt-3">
       <AppFieldLabel icon="book" label="Description" />
-      <AppTextarea :model-value="props.description" @update:modelValue="v => emit('update:description', v)" placeholder="Short descriptive blurb" rows="2" variant="filled" />
+      <AppTextarea :model-value="props.description" @update:modelValue="v => emit('update:description', v)" placeholder="Short descriptive blurb" :rows="2" variant="filled" />
     </div>
 
     <div class="mt-3">

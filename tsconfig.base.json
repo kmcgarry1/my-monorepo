@@ -10,7 +10,9 @@
     "baseUrl": ".",
     "paths": {
       "@utils/*": ["packages/utils/src/*"],
-      "@ui/*": ["packages/ui/src/*"]
+      "@ui/*": ["packages/ui/src/*"],
+      "@my-monorepo/ui": ["packages/ui/src/index.ts"],
+      "@my-monorepo/ui/*": ["packages/ui/src/*"]
     }
   }
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Enemy, Environment } from '../types'
-import AppBadge from './ui/AppBadge.vue'
+import { AppBadge } from '@my-monorepo/ui'
 const props = defineProps<{
   sbType: 'enemy' | 'environment'
   enemy: Enemy
