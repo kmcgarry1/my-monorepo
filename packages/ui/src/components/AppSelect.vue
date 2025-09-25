@@ -6,11 +6,13 @@ const props = withDefaults(defineProps<{
   options?: Option[]
   variant?: 'outline' | 'filled' | 'ghost'
   invalid?: boolean
-}>(), { options: () => [], variant: 'outline', invalid: false })
+  size?: 'sm'|'md'|'lg'
+}>(), { options: () => [], variant: 'outline', invalid: false, size: 'md' })
 const emit = defineEmits<{ (e: 'update:modelValue', v: string): void }>()
 
 const klass = computed(() => {
-  const base = 'w-full rounded-[var(--radius-sm)] border px-2.5 py-2 text-sm transition-all duration-150 text-[color:var(--fg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[color:var(--surface)]'
+  const size = props.size === 'sm' ? 'px-2.5 py-1.5 text-[0.68rem]' : props.size === 'lg' ? 'px-3.5 py-2.5 text-[0.82rem]' : 'px-2.5 py-2 text-[0.75rem]'
+  const base = `w-full rounded-[var(--radius-sm)] border ${size} transition-all duration-150 text-[color:var(--fg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[color:var(--surface)]`
   const palette = props.variant === 'filled'
     ? 'bg-[color:var(--surface-veil)] border-[color:var(--border)]'
     : props.variant === 'ghost'

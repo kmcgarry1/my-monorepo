@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import type { Feature, FeatureTag } from '../types'
 import { openGlossary } from '../lib/glossaryState'
+import {
+  AppButton,
+  AppCol,
+  AppFieldLabel,
+  AppIcon,
+  AppIconButton,
+  AppInput,
+  AppRow,
+  AppSelect,
+  AppTextarea,
+} from '@my-monorepo/ui'
 
-const props = defineProps<{
-  modelValue: Feature[]
-}>()
-
-const emit = defineEmits<{
-  (e: 'update:modelValue', v: Feature[]): void
-}>()
+const props = defineProps<{ modelValue: Feature[] }>()
+const emit = defineEmits<{ (e: 'update:modelValue', v: Feature[]): void }>()
 
 let nextId = 1
 
@@ -28,37 +34,60 @@ function updateFeature(idx: number, patch: Partial<Feature>) {
 </script>
 
 <template>
-  <div style="margin-top:1rem;">
-    <div style="display:flex; align-items:center; justify-content:space-between;">
-      <h3 style="margin:0; font-size:1rem;">Features</h3>
-      <button type="button" @click="addFeature">Add Feature</button>
+  <div class="mt-3">
+    <div class="mb-2 flex items-center justify-between">
+      <div class="flex items-center gap-2 text-sm font-semibold text-[color:var(--fg)]">
+        <AppIcon name="palette" class="text-[color:var(--accent)]" />
+        <span>Features</span>
+      </div>
+      <AppButton variant="primary" size="sm" @click="addFeature">
+        <AppIcon name="plus" class="mr-1" />
+        Add Feature
+      </AppButton>
     </div>
-    <div v-for="(f, i) in modelValue" :key="f.id" class="feature-row" style="border:1px solid #e5e7eb; border-radius:.5rem; padding:.5rem; margin-top:.5rem;">
-      <div class="row">
-        <div>
-          <label>Name</label>
-          <input :value="f.name" @input="updateFeature(i, { name: ($event.target as HTMLInputElement).value })" placeholder="Feature name" style="width:100%; padding:.5rem;" />
-        </div>
-        <div>
-          <label>Tag <button type="button" class="ml-1" style="color: var(--link); text-decoration: underline; text-decoration-style: dotted;" @click="openGlossary(f.tag.toLowerCase())">what's this?</button></label>
-          <select :value="f.tag" @change="updateFeature(i, { tag: (($event.target as HTMLSelectElement).value as FeatureTag) })" style="width:100%; padding:.45rem;">
-            <option>Passive</option>
-            <option>Action</option>
-            <option>Reaction</option>
-          </select>
-        </div>
-        <div>
-          <label>Cost/Trigger <button type="button" class="ml-1" style="color: var(--link); text-decoration: underline; text-decoration-style: dotted;" @click="openGlossary('fear')">Fear</button> · <button type="button" class="ml-1" style="color: var(--link); text-decoration: underline; text-decoration-style: dotted;" @click="openGlossary('stress')">Stress</button></label>
-          <input :value="f.cost" @input="updateFeature(i, { cost: ($event.target as HTMLInputElement).value })" placeholder="e.g., Spend a Fear, Mark Stress" style="width:100%; padding:.5rem;" />
-        </div>
-        <div style="display:flex; align-items:flex-end">
-          <button type="button" @click="removeFeature(f.id)" style="height:2.4rem;">Remove</button>
+
+    <TransitionGroup
+      tag="div"
+      enter-active-class="transition duration-150 ease-out"
+      enter-from-class="opacity-0 -translate-y-1"
+      enter-to-class="opacity-100 translate-y-0"
+      leave-active-class="transition duration-100 ease-in"
+      leave-from-class="opacity-100 translate-y-0"
+      leave-to-class="opacity-0 -translate-y-1"
+      move-class="transition-transform duration-150"
+    >
+      <div v-for="(f, i) in props.modelValue" :key="f.id" class="rounded-[var(--radius-md)] border border-[color:var(--border)] bg-[color:var(--surface-veil)] p-3">
+        <AppRow :cols="4" align="start">
+          <AppCol>
+            <AppFieldLabel label="Name" />
+            <AppInput :model-value="f.name" @update:modelValue="v => updateFeature(i, { name: v })" placeholder="Feature name" />
+          </AppCol>
+          <AppCol>
+            <AppFieldLabel label="Tag">
+              <AppIconButton name="info" variant="ghost" size="xs" title="Tag" @click="openGlossary(f.tag.toLowerCase())" />
+            </AppFieldLabel>
+            <AppSelect :model-value="f.tag" @update:modelValue="v => updateFeature(i, { tag: v as FeatureTag })" :options="[{label:'Passive', value:'Passive'}, {label:'Action', value:'Action'}, {label:'Reaction', value:'Reaction'}]" />
+          </AppCol>
+          <AppCol>
+            <AppFieldLabel label="Cost/Trigger">
+              <AppIconButton name="info" variant="ghost" size="xs" title="Glossary" @click="openGlossary('stress')" />
+            </AppFieldLabel>
+            <AppInput :model-value="f.cost" @update:modelValue="v => updateFeature(i, { cost: v })" placeholder="e.g., Spend a Fear, Mark Stress" />
+          </AppCol>
+          <AppCol>
+            <div class="mt-6 flex items-start justify-end">
+              <AppButton variant="danger" size="sm" @click="removeFeature(f.id)">
+                <AppIcon name="trash" class="mr-1" />
+                Remove
+              </AppButton>
+            </div>
+          </AppCol>
+        </AppRow>
+        <div class="mt-3">
+          <AppFieldLabel label="Text" />
+          <AppTextarea :rows="3" :model-value="f.text" @update:modelValue="v => updateFeature(i, { text: v })" placeholder="Describe the feature..." />
         </div>
       </div>
-      <div style="margin-top:.5rem;">
-        <label>Text</label>
-        <textarea :value="f.text" @input="updateFeature(i, { text: ($event.target as HTMLTextAreaElement).value })" rows="3" placeholder="Describe the feature…" style="width:100%; padding:.5rem;"></textarea>
-      </div>
-    </div>
+    </TransitionGroup>
   </div>
 </template>

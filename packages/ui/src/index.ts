@@ -15,3 +15,6 @@ export { default as AppText } from './components/AppText.vue'
 export { default as AppTextarea } from './components/AppTextarea.vue'
 
 export * from '@my-monorepo/design-tokens'
+export * from './utils/variants'
+export * from './utils/motion'
+export * from './types'

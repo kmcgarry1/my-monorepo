@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import BaseDetailsForm from './components/BaseDetailsForm.vue'
-import EnemyForm from './components/EnemyForm.vue'
-import EnvironmentForm from './components/EnvironmentForm.vue'
+import WizardBuilder from './components/WizardBuilder.vue'
 import StatblockPreview from './components/StatblockPreview.vue'
 import Toolbar from './components/Toolbar.vue'
 import PrintableStatblock from './components/PrintableStatblock.vue'
@@ -24,27 +22,27 @@ const {
 </script>
 
 <template>
-  <div class="app" style="max-width: 1100px; margin: 2rem auto; padding: 0 1rem;">
-    <header class="header">
-      <h1 style="margin: 0; font-size: 1.6rem;">Daggerheart Statblock Builder</h1>
-      <p style="margin:.25rem 0 0; color: var(--muted,#666);">Create Enemy or Environment statblocks. Shared fields + type-specific details.</p>
+  <div class="mx-auto max-w-6xl px-4 py-6">
+    <header class="mb-3">
+      <h1 class="m-0 text-xl font-semibold">Daggerheart Statblock Builder</h1>
+      <p class="m-0 mt-1 text-[color:var(--muted)]">Create Enemy or Environment statblocks. Shared fields + type-specific details.</p>
     </header>
+
     <Toolbar :sbType="sbType" :enemy="enemy" :environment="environment" :theme="theme" @update:theme="setTheme" @reset="resetAll" @load-preset="loadPreset" class="toolbar topbar" />
 
-    <div class="layout">
-      <div class="editor-col">
-        <BaseDetailsForm
+    <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+      <div>
+        <WizardBuilder
           v-model:sbType="sbType"
           v-model:name="name"
           v-model:tier="tier"
           v-model:description="description"
           v-model:traits="traits"
+          :enemy="enemy"
+          :environment="environment"
         />
-
-        <EnemyForm v-if="sbType==='enemy'" :enemy="enemy" />
-        <EnvironmentForm v-else :environment="environment" />
       </div>
-      <div class="preview-col">
+      <div>
         <StatblockPreview :sbType="sbType" :enemy="enemy" :environment="environment" />
       </div>
     </div>

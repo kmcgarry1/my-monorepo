@@ -6,7 +6,9 @@ import AppIcon from './AppIcon.vue'
 const props = withDefaults(defineProps<{
   modelValue?: string
   placeholder?: string
-}>(), { modelValue: '', placeholder: 'Add and press Enter…' })
+  variant?: 'outline'|'filled'|'ghost'
+  size?: 'sm'|'md'|'lg'
+}>(), { modelValue: '', placeholder: 'Add and press Enter...', variant: 'outline', size: 'md' })
 const emit = defineEmits<{ (e:'update:modelValue', v:string): void }>()
 
 const input = ref('')
@@ -41,10 +43,20 @@ function onKey(e: KeyboardEvent) {
     emit('update:modelValue', valueStr.value)
   }
 }
+const wrapperClass = computed(() => {
+  const size = props.size === 'sm' ? 'px-2 py-1.5 text-[0.68rem]' : props.size === 'lg' ? 'px-3 py-2.5 text-[0.82rem]' : 'px-2.5 py-2 text-[0.75rem]'
+  const base = `flex flex-wrap items-center gap-1 rounded-[var(--radius-sm)] border shadow-[var(--shadow-soft)] ${size}`
+  const palette = props.variant === 'filled'
+    ? 'bg-[color:var(--surface-veil)] border-[color:var(--border)]'
+    : props.variant === 'ghost'
+    ? 'bg-transparent border-transparent focus-within:border-[color:var(--accent)]'
+    : 'bg-[color:var(--surface-translucent)] border-[color:var(--btn-border)]'
+  return [base, palette].join(' ')
+})
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center gap-1 rounded-[var(--radius-sm)] border border-[color:var(--btn-border)] bg-[color:var(--surface-translucent)] px-2.5 py-2 shadow-[var(--shadow-soft)]">
+  <div :class="wrapperClass">
     <AppBadge v-for="(t, i) in tags" :key="t" variant="neutral">
       <span>{{ t }}</span>
       <button
@@ -59,7 +71,7 @@ function onKey(e: KeyboardEvent) {
       v-model="input"
       :placeholder="props.placeholder"
       @keydown="onKey"
-      class="flex-1 bg-transparent px-2 py-1 text-sm text-[color:var(--fg)] placeholder:text-[color:var(--muted)] focus-visible:outline-none"
+      class="flex-1 bg-transparent px-2 py-1 text-[color:var(--fg)] placeholder:text-[color:var(--muted)] focus-visible:outline-none"
     />
   </div>
 </template>

@@ -166,23 +166,25 @@ importers:
         specifier: ^3.0.5
         version: 3.0.7(typescript@5.8.3)
 
-  packages/ui:
-    dependencies:
-      '@my-monorepo/design-tokens':
-        specifier: workspace:*
-        version: link:../design-tokens
-      vue:
-        specifier: ^3.5.0
-        version: 3.5.21(typescript@5.8.3)
-
-  packages/design-tokens:
-    dependencies: {}
+  packages/design-tokens: {}
 
   packages/theme:
     dependencies:
       '@my-monorepo/design-tokens':
         specifier: workspace:*
         version: link:../design-tokens
+
+  packages/ui:
+    dependencies:
+      '@heroicons/vue':
+        specifier: ^2.1.5
+        version: 2.2.0(vue@3.5.21(typescript@5.8.3))
+      '@my-monorepo/design-tokens':
+        specifier: workspace:*
+        version: link:../design-tokens
+      vue:
+        specifier: ^3.5.0
+        version: 3.5.21(typescript@5.8.3)
 
 packages:
 
@@ -362,6 +364,11 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@heroicons/vue@2.2.0':
+    resolution: {integrity: sha512-G3dbSxoeEKqbi/DFalhRxJU4mTXJn7GwZ7ae8NuEQzd1bqdd0jAbdaBZlHPcvPD2xI1iGzNVB4k20Un2AguYPw==}
+    peerDependencies:
+      vue: '>= 3'
 
   '@isaacs/balanced-match@4.0.1':
     resolution: {integrity: sha512-yzMTt9lEb8Gv7zRioUilSglI0c0smZ9k5D65677DLWLtWJaXIS3CqcGyUFByYKlnUj6TkjLVs54fBl6+TiGQDQ==}
@@ -1328,6 +1335,10 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.10':
     optional: true
+
+  '@heroicons/vue@2.2.0(vue@3.5.21(typescript@5.8.3))':
+    dependencies:
+      vue: 3.5.21(typescript@5.8.3)
 
   '@isaacs/balanced-match@4.0.1': {}
 

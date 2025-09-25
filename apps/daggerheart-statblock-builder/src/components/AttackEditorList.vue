@@ -43,7 +43,17 @@ function updateAttack(idx: number, patch: Partial<Attack>) {
         Add Attack
       </AppButton>
     </div>
-    <div v-for="(a, i) in modelValue" :key="a.id" class="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] p-3">
+    <TransitionGroup
+      tag="div"
+      enter-active-class="transition duration-150 ease-out"
+      enter-from-class="opacity-0 -translate-y-1"
+      enter-to-class="opacity-100 translate-y-0"
+      leave-active-class="transition duration-100 ease-in"
+      leave-from-class="opacity-100 translate-y-0"
+      leave-to-class="opacity-0 -translate-y-1"
+      move-class="transition-transform duration-150"
+    >
+    <div v-for="(a, i) in modelValue" :key="a.id" class="rounded-[var(--radius-md)] border border-[var(--border)] bg-[color:var(--surface-veil)] p-3">
       <AppRow :cols="4" align="start">
         <AppCol>
           <AppFieldLabel icon="sword" label="Name" />
@@ -72,5 +82,6 @@ function updateAttack(idx: number, patch: Partial<Attack>) {
         </AppCol>
       </AppRow>
     </div>
+    </TransitionGroup>
   </div>
 </template>
