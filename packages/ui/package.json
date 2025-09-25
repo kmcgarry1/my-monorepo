@@ -15,6 +15,7 @@
     "vue": "^3.5.0"
   },
   "dependencies": {
-    "@my-monorepo/design-tokens": "workspace:*"
+    "@my-monorepo/design-tokens": "workspace:*",
+    "@heroicons/vue": "^2.1.5"
   }
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Enemy, Environment } from '../types'
-import { AppBadge } from '@my-monorepo/ui'
+import { AppBadge, AppCard, AppText } from '@my-monorepo/ui'
 const props = defineProps<{
   sbType: 'enemy' | 'environment'
   enemy: Enemy
@@ -20,10 +20,9 @@ const title = computed(() => {
 </script>
 
 <template>
-  <section class="card statblock" :class="props.sbType">
-    <h2 style="margin-top:0; font-size:1.1rem;">Preview</h2>
+  <AppCard :title="'Preview'" variant="elevated" padding="md">
     <div>
-      <h3 style="margin:.25rem 0 .5rem;">{{ title }}</h3>
+      <h3 class="mb-2 mt-1 text-base font-semibold">{{ title }}</h3>
       <AppText v-if="(props.sbType==='enemy' ? props.enemy.description : props.environment.description)" variant="lead" class="mt-1">
         {{ props.sbType==='enemy' ? props.enemy.description : props.environment.description }}
       </AppText>
@@ -76,5 +75,5 @@ const title = computed(() => {
         </div>
       </template>
     </div>
-  </section>
+  </AppCard>
 </template>
