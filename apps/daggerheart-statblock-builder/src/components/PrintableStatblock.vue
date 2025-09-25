@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Enemy, Environment } from '../types'
+import { getTierGuide } from '../lib/tierGuides'
 
 const props = defineProps<{
   sbType: 'enemy' | 'environment'
@@ -12,10 +13,19 @@ const title = computed(() => {
   const isEnemy = props.sbType === 'enemy'
   const sb = isEnemy ? props.enemy : props.environment
   const parts = [sb.name || (isEnemy ? 'New Enemy' : 'New Environment')]
-  if (sb.tier != null && sb.tier !== ('' as any)) parts.push(`Tier ${sb.tier}`)
+  if (sb.tier != null && sb.tier !== ('' as any)) {
+    const guide = getTierGuide(sb.tier as number)
+    parts.push(guide ? guide.title : `Tier ${sb.tier}`)
+  }
   if (isEnemy && props.enemy.rank) parts.push(props.enemy.rank)
   if (!isEnemy && props.environment.category) parts.push(props.environment.category)
   return parts.join(' • ')
+})
+
+const archetype = computed(() => {
+  const isEnemy = props.sbType === 'enemy'
+  const sb = isEnemy ? props.enemy : props.environment
+  return sb.archetype
 })
 </script>
 
@@ -23,6 +33,7 @@ const title = computed(() => {
   <div class="print-root">
     <div class="block statblock" :class="props.sbType">
       <h1 class="title">{{ title }}</h1>
+      <p v-if="archetype" class="subtitle">{{ archetype }}</p>
       <p v-if="(props.sbType==='enemy' ? props.enemy.description : props.environment.description)" class="desc">
         {{ props.sbType==='enemy' ? props.enemy.description : props.environment.description }}
       </p>
@@ -72,6 +83,7 @@ const title = computed(() => {
 .print-root { display: none; }
 .block { page-break-inside: avoid; }
 .title { font-size: 24pt; margin: 0 0 .2in; }
+.subtitle { margin: 0 0 .1in; font-style: italic; color: #555; }
 .desc { margin: 0 0 .15in; }
 .meta { color: #555; margin: 0 0 .1in; }
 .feature { margin: .05in 0; }

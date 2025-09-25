@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import BaseDetailsForm from './BaseDetailsForm.vue'
-import EnemyForm from './EnemyForm.vue'
-import EnvironmentForm from './EnvironmentForm.vue'
+import TierSelectionStep from './TierSelectionStep.vue'
+import EnemyProfileForm from './EnemyProfileForm.vue'
+import EnemyAbilitiesForm from './EnemyAbilitiesForm.vue'
+import EnvironmentProfileForm from './EnvironmentProfileForm.vue'
+import EnvironmentFeaturesForm from './EnvironmentFeaturesForm.vue'
 import type { Enemy, Environment } from '../types'
 import { fadeSlideUp } from '@my-monorepo/ui'
-import { AppBadge, AppButton, AppCard, AppIcon } from '@my-monorepo/ui'
+import { AppButton, AppCard, AppIcon } from '@my-monorepo/ui'
 
 const props = defineProps<{
   sbType: 'enemy' | 'environment'
   enemy: Enemy
   environment: Environment
   name: string
+  archetype: string
   tier: number | null
   description: string
   traits: string
@@ -20,6 +24,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'update:sbType', v: 'enemy' | 'environment'): void
   (e: 'update:name', v: string): void
+  (e: 'update:archetype', v: string): void
   (e: 'update:tier', v: number | null): void
   (e: 'update:description', v: string): void
   (e: 'update:traits', v: string): void
@@ -27,8 +32,18 @@ const emit = defineEmits<{
 
 const current = ref(0)
 const steps = computed(() => [
-  { key: 'basics', label: 'Basics', icon: 'info' as const },
-  { key: 'details', label: props.sbType === 'enemy' ? 'Enemy' : 'Environment', icon: props.sbType === 'enemy' ? 'sword' as const : 'book' as const },
+  { key: 'tier', label: 'Tier', icon: 'info' as const },
+  { key: 'identity', label: 'Identity', icon: 'book' as const },
+  {
+    key: 'profile',
+    label: props.sbType === 'enemy' ? 'Threat' : 'Profile',
+    icon: props.sbType === 'enemy' ? ('sword' as const) : ('book' as const)
+  },
+  {
+    key: 'abilities',
+    label: props.sbType === 'enemy' ? 'Abilities' : 'Features',
+    icon: 'palette' as const
+  },
   { key: 'review', label: 'Review', icon: 'print' as const },
 ])
 
@@ -66,26 +81,38 @@ const atLast = computed(() => current.value === steps.value.length - 1)
         mode="out-in"
       >
         <div :key="steps[current].key">
-          <template v-if="steps[current].key==='basics'">
-            <BaseDetailsForm
+          <template v-if="steps[current].key==='tier'">
+            <TierSelectionStep
               :sbType="props.sbType"
-              :name="props.name"
               :tier="props.tier"
+              @update:sbType="v => emit('update:sbType', v)"
+              @update:tier="v => emit('update:tier', v)"
+            />
+          </template>
+          <template v-else-if="steps[current].key==='identity'">
+            <BaseDetailsForm
+              :name="props.name"
+              :archetype="props.archetype"
               :description="props.description"
               :traits="props.traits"
-              @update:sbType="v => emit('update:sbType', v)"
               @update:name="v => emit('update:name', v)"
-              @update:tier="v => emit('update:tier', v)"
+              @update:archetype="v => emit('update:archetype', v)"
               @update:description="v => emit('update:description', v)"
               @update:traits="v => emit('update:traits', v)"
             />
           </template>
-          <template v-else-if="steps[current].key==='details'">
-            <EnemyForm v-if="props.sbType==='enemy'" :enemy="props.enemy" />
-            <EnvironmentForm v-else :environment="props.environment" />
+          <template v-else-if="steps[current].key==='profile'">
+            <EnemyProfileForm v-if="props.sbType==='enemy'" :enemy="props.enemy" :tier="props.tier" />
+            <EnvironmentProfileForm v-else :environment="props.environment" :tier="props.tier" />
+          </template>
+          <template v-else-if="steps[current].key==='abilities'">
+            <EnemyAbilitiesForm v-if="props.sbType==='enemy'" :enemy="props.enemy" :tier="props.tier" />
+            <EnvironmentFeaturesForm v-else :environment="props.environment" :tier="props.tier" />
           </template>
           <template v-else>
-            <div class="text-[color:var(--muted)]">Use the preview panel to the right to review your statblock. Export options are in the top toolbar.</div>
+            <div class="text-[color:var(--muted)]">
+              Use the preview panel to the right to review and sanity-check your build. Export options and printable output live in the top toolbar.
+            </div>
           </template>
         </div>
       </Transition>

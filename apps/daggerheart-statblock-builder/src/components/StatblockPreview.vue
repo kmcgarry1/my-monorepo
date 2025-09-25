@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import type { Enemy, Environment } from '../types'
 import { AppBadge, AppCard, AppText } from '@my-monorepo/ui'
+import { getTierGuide } from '../lib/tierGuides'
 const props = defineProps<{
   sbType: 'enemy' | 'environment'
   enemy: Enemy
@@ -12,10 +13,19 @@ const title = computed(() => {
   const isEnemy = props.sbType === 'enemy'
   const sb = isEnemy ? props.enemy : props.environment
   const parts = [sb.name || (isEnemy ? 'New Enemy' : 'New Environment')]
-  if (sb.tier != null && sb.tier !== ('' as any)) parts.push(`— Tier ${sb.tier}`)
+  if (sb.tier != null && sb.tier !== ('' as any)) {
+    const info = getTierGuide(sb.tier as number)
+    parts.push(`— ${info ? info.title : `Tier ${sb.tier}`}`)
+  }
   if (isEnemy && props.enemy.rank) parts.push(props.enemy.rank)
   if (!isEnemy && props.environment.category) parts.push(props.environment.category)
   return parts.join(' ')
+})
+
+const archetype = computed(() => {
+  const isEnemy = props.sbType === 'enemy'
+  const sb = isEnemy ? props.enemy : props.environment
+  return sb.archetype
 })
 </script>
 
@@ -23,6 +33,7 @@ const title = computed(() => {
   <AppCard :title="'Preview'" variant="elevated" padding="md">
     <div>
       <h3 class="mb-2 mt-1 text-base font-semibold">{{ title }}</h3>
+      <p v-if="archetype" class="m-0 text-sm italic text-[color:var(--muted)]">{{ archetype }}</p>
       <AppText v-if="(props.sbType==='enemy' ? props.enemy.description : props.environment.description)" variant="lead" class="mt-1">
         {{ props.sbType==='enemy' ? props.enemy.description : props.environment.description }}
       </AppText>

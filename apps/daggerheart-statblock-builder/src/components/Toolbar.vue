@@ -62,7 +62,7 @@ function openDoc(which: 'srd' | 'license') {
 }
 
 const themeItems = computed(() => [
-  { label: 'System', value: 'system', icon: 'palette' },
+  { label: 'System', value: 'system', icon: 'palette' as const },
   ...themeOptions.map((opt) => ({ label: opt.label, value: opt.value, icon: 'palette' as const }))
 ])
 </script>

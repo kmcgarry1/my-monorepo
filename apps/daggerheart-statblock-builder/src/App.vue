@@ -11,6 +11,7 @@ const {
   enemy,
   environment,
   name,
+  archetype,
   tier,
   description,
   traits,
@@ -35,6 +36,7 @@ const {
         <WizardBuilder
           v-model:sbType="sbType"
           v-model:name="name"
+          v-model:archetype="archetype"
           v-model:tier="tier"
           v-model:description="description"
           v-model:traits="traits"

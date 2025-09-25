@@ -9,7 +9,7 @@ const props = withDefaults(defineProps<{
   title?: string
 }>(), { variant: 'outline', size: 'sm', title: '' })
 
-const iconSizeMap: Record<string, import('./AppIcon.vue')['default'] extends any ? 'xs'|'sm'|'md'|'lg'|'xl'|'inline' : never> = {
+const iconSizeMap: Record<string, 'xs'|'sm'|'md'|'lg'|'xl'|'inline'> = {
   xs: 'xs',
   sm: 'sm',
   md: 'md',

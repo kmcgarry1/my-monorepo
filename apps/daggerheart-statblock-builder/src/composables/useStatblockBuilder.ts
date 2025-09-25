@@ -104,6 +104,17 @@ export function useStatblockBuilder() {
     }
   })
 
+  const archetype = computed({
+    get: () => (sbType.value === 'enemy' ? enemy.archetype : environment.archetype),
+    set: (value: string) => {
+      if (sbType.value === 'enemy') {
+        enemy.archetype = value
+      } else {
+        environment.archetype = value
+      }
+    }
+  })
+
   function resetEnemy() {
     Object.assign(enemy, createDefaultEnemy())
   }
@@ -167,6 +178,7 @@ export function useStatblockBuilder() {
     tier,
     description,
     traits,
+    archetype,
     theme,
     setTheme,
     resetAll,
