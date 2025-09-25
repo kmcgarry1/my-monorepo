@@ -6,12 +6,12 @@ const props = withDefaults(defineProps<{
 }>(), { as: 'p', variant: 'body', class: '' })
 
 const map: Record<string, string> = {
-  body: 'text-[var(--fg)]',
-  muted: 'text-[var(--muted)]',
-  caption: 'text-xs text-[var(--muted)] uppercase tracking-wide',
-  mono: 'font-mono',
-  small: 'text-sm',
-  lead: 'text-base text-[var(--muted)]',
+  body: 'text-[color:var(--fg)] leading-relaxed',
+  muted: 'text-[color:var(--muted)] leading-relaxed',
+  caption: 'text-[0.62rem] uppercase tracking-[0.32em] text-[color:var(--muted)]',
+  mono: 'font-mono text-sm text-[color:var(--accent-strong)]',
+  small: 'text-sm text-[color:var(--fg)]',
+  lead: 'text-base text-[color:var(--accent-weak)]',
 }
 </script>
 

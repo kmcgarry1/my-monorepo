@@ -4,16 +4,16 @@ const props = withDefaults(defineProps<{
 }>(), { variant: 'neutral' })
 
 const map: Record<string, string> = {
-  default: 'bg-[var(--surface-2)] text-[var(--fg)] border-[var(--border)]',
-  accent: 'bg-[var(--accent-weak)] text-[var(--fg)] border-[var(--accent)]',
-  neutral: 'bg-[var(--surface-2)] text-[var(--muted)] border-[var(--border)]',
-  danger: 'bg-red-100 text-red-700 border-red-300 dark:bg-red-900/30 dark:text-red-200 dark:border-red-700',
-  success: 'bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-200 dark:border-emerald-700',
+  default: 'bg-[color:var(--surface-veil)] text-[color:var(--fg)] border-[color:var(--border)]',
+  accent: 'bg-[color:var(--accent-weak)] text-[color:var(--accent)] border-[color:var(--accent)]',
+  neutral: 'bg-[color:var(--surface-translucent)] text-[color:var(--muted)] border-[color:var(--border-muted)]',
+  danger: 'bg-[color:var(--danger-soft)] text-[color:var(--enemy-accent)] border-[color:var(--danger-border)]',
+  success: 'bg-[color:var(--success-soft)] text-[color:var(--env-accent)] border-[color:var(--success-border)]',
 }
 </script>
 
 <template>
-  <span :class="['inline-flex items-center rounded border px-2 py-0.5 text-xs', map[props.variant]]">
+  <span :class="['inline-flex items-center gap-1 rounded-[var(--radius-pill)] border px-3 py-1 text-[0.62rem] font-semibold uppercase tracking-[0.24em]', map[props.variant]]">
     <slot />
   </span>
 </template>

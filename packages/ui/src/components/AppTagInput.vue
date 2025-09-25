@@ -44,10 +44,14 @@ function onKey(e: KeyboardEvent) {
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center gap-1 rounded-md border border-[var(--btn-border)] bg-[var(--surface)] px-2 py-1">
+  <div class="flex flex-wrap items-center gap-1 rounded-[var(--radius-sm)] border border-[color:var(--btn-border)] bg-[color:var(--surface-translucent)] px-2.5 py-2 shadow-[var(--shadow-soft)]">
     <AppBadge v-for="(t, i) in tags" :key="t" variant="neutral">
       <span>{{ t }}</span>
-      <button type="button" class="ml-1 inline-flex rounded p-0.5 hover:bg-black/10 dark:hover:bg-white/10" @click="removeAt(i)">
+      <button
+        type="button"
+        class="ml-1 inline-flex items-center justify-center rounded-[var(--radius-xs)] p-0.5 text-[color:var(--muted)] transition-colors hover:bg-[color:var(--surface-veil)] hover:text-[color:var(--fg)]"
+        @click="removeAt(i)"
+      >
         <AppIcon name="x" />
       </button>
     </AppBadge>
@@ -55,7 +59,7 @@ function onKey(e: KeyboardEvent) {
       v-model="input"
       :placeholder="props.placeholder"
       @keydown="onKey"
-      class="flex-1 bg-transparent px-2 py-1 text-sm text-[var(--fg)] outline-none"
+      class="flex-1 bg-transparent px-2 py-1 text-sm text-[color:var(--fg)] placeholder:text-[color:var(--muted)] focus-visible:outline-none"
     />
   </div>
 </template>

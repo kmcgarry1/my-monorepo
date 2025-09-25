@@ -31,11 +31,22 @@ function choose(v: string) {
 
 <template>
   <div ref="root" class="relative inline-flex">
-    <button :title="props.buttonTitle" type="button" @click="open = !open" class="inline-flex items-center gap-1 rounded-md border border-[var(--btn-border)] bg-[var(--btn-bg)] px-2.5 py-1.5 text-sm text-[var(--btn-fg)] hover:border-[var(--accent)]">
+    <button
+      :title="props.buttonTitle"
+      type="button"
+      @click="open = !open"
+      class="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[color:var(--btn-border)] bg-[color:var(--btn-bg)] px-3 py-2 text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-[color:var(--btn-fg)] transition-all duration-200 shadow-[var(--shadow-button)] hover:border-[color:var(--accent)] hover:shadow-[var(--shadow-button-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--surface)]"
+    >
       <slot name="button" />
     </button>
-    <div v-if="open" :class="['absolute z-50 mt-2 w-48 overflow-hidden rounded-md border border-[var(--border)] bg-[var(--surface)] shadow-lg', props.align==='right' ? 'right-0' : 'left-0']">
-      <button v-for="it in props.items" :key="it.value" type="button" @click="choose(it.value)" class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-[var(--surface-2)]">
+    <div v-if="open" :class="['absolute z-50 mt-2 w-52 overflow-hidden rounded-[var(--radius-md)] border border-[color:var(--border)] bg-[color:var(--surface-panel)] shadow-[var(--shadow-elevated)] backdrop-blur-lg', props.align==='right' ? 'right-0' : 'left-0']">
+      <button
+        v-for="it in props.items"
+        :key="it.value"
+        type="button"
+        @click="choose(it.value)"
+        class="flex w-full items-center gap-3 px-3 py-2 text-left text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-[color:var(--fg)] transition-colors hover:bg-[color:var(--surface-veil)] focus-visible:outline-none focus-visible:bg-[color:var(--surface-veil)]"
+      >
         <AppIcon v-if="it.icon" :name="it.icon" />
         <span>{{ it.label }}</span>
       </button>

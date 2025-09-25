@@ -1,5 +1,5 @@
 {
-  "name": "@my-monorepo/ui",
+  "name": "@my-monorepo/design-tokens",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -10,11 +10,5 @@
       "import": "./src/index.ts"
     },
     "./*": "./src/*"
-  },
-  "peerDependencies": {
-    "vue": "^3.5.0"
-  },
-  "dependencies": {
-    "@my-monorepo/design-tokens": "workspace:*"
   }
 }
