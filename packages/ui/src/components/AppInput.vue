@@ -10,13 +10,13 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{ (e: 'update:modelValue', v: any): void }>()
 
 const klass = computed(() => {
-  const base = 'w-full rounded-md border px-3 py-2 text-sm outline-none ring-0 transition-colors'
+  const base = 'w-full rounded-[var(--radius-sm)] border px-3 py-2 text-sm transition-all duration-150 text-[color:var(--fg)] placeholder:text-[color:var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[color:var(--surface)]'
   const palette = props.variant === 'filled'
-    ? 'bg-[var(--surface-2)] text-[var(--fg)] border-[var(--border)] focus:border-[var(--accent)]'
+    ? 'bg-[color:var(--surface-veil)] border-[color:var(--border)]'
     : props.variant === 'ghost'
-    ? 'bg-transparent text-[var(--fg)] border-transparent focus:border-[var(--accent)]'
-    : 'bg-[var(--surface)] text-[var(--fg)] border-[var(--btn-border)] focus:border-[var(--accent)]'
-  const invalid = props.invalid ? 'border-red-500 focus:border-red-500' : ''
+    ? 'bg-transparent border-transparent focus-visible:border-[color:var(--accent)]'
+    : 'bg-[color:var(--surface-translucent)] border-[color:var(--btn-border)]'
+  const invalid = props.invalid ? 'border-[rgba(251,113,133,0.6)] focus-visible:ring-[rgba(251,113,133,0.4)] focus-visible:border-[rgba(251,113,133,0.9)]' : ''
   return [base, palette, invalid].join(' ')
 })
 </script>

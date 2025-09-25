@@ -11,6 +11,7 @@
     "csv:from-json": "node scripts/json-to-csv.mjs"
   },
   "dependencies": {
+    "@my-monorepo/theme": "workspace:*",
     "minisearch": "^7.1.0",
     "vue": "^3.5.18"
   },

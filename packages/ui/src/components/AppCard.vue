@@ -3,7 +3,7 @@ defineProps<{ title?: string }>()
 </script>
 
 <template>
-  <section class="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm">
+  <section class="rounded-[var(--radius-lg)] border border-[color:var(--border)] bg-[color:var(--surface-panel)] p-5 shadow-[var(--shadow-card)] backdrop-blur-md">
     <h2 v-if="title" class="mb-3 text-base font-semibold">{{ title }}</h2>
     <slot />
   </section>

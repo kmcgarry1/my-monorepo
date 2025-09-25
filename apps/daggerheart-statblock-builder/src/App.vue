@@ -56,9 +56,3 @@ const {
   </div>
 </template>
 
-<style scoped>
-:root { --muted: #666; }
-@media (prefers-color-scheme: dark) {
-  :root { --muted: #aaa; }
-}
-</style>

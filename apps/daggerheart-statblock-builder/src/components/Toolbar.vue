@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { toJSONBlob, toMarkdown, downloadBlob } from '../lib/exporters'
 import { hasSaved, clear } from '../lib/persist'
 import type { Enemy, Environment } from '../types'
 import type { Theme } from '../lib/theme'
+import { themeOptions } from '@my-monorepo/theme'
 import { openGlossary } from '../lib/glossaryState'
 import {
   AppButton,
@@ -58,6 +60,11 @@ function openDoc(which: 'srd' | 'license') {
   const url = which === 'srd' ? srdUrl : licenseUrl
   window.open(url, '_blank')
 }
+
+const themeItems = computed(() => [
+  { label: 'System', value: 'system', icon: 'palette' },
+  ...themeOptions.map((opt) => ({ label: opt.label, value: opt.value, icon: 'palette' as const }))
+])
 </script>
 
 <template>
@@ -105,13 +112,7 @@ function openDoc(which: 'srd' | 'license') {
       </AppDropdown>
 
       <AppDropdown
-        :items="[
-          {label:'System', value:'system', icon:'palette'},
-          {label:'Slate', value:'slate', icon:'palette'},
-          {label:'Parchment', value:'parchment', icon:'palette'},
-          {label:'Emerald', value:'emerald', icon:'palette'},
-          {label:'Midnight', value:'midnight', icon:'palette'}
-        ]"
+        :items="themeItems"
         button-title="Theme"
         align="right"
         @select="v => emit('update:theme', v as Theme)"

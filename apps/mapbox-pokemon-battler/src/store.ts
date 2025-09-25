@@ -1,4 +1,5 @@
 import { reactive } from 'vue'
+import { applyTheme as applyGlobalTheme, defaultThemeName, themeOptions, type ThemeName } from '@my-monorepo/theme'
 
 export type OfficialArtwork = {
   front_default?: string | null
@@ -40,14 +41,27 @@ type BattleState = {
   outcome: BattleOutcome
 }
 
+const themeNameSet = new Set<ThemeName>(themeOptions.map((opt) => opt.value))
+const legacyThemeMap: Record<string, ThemeName> = {
+  light: 'synthwave-dawn',
+  dark: 'neon-noir',
+}
+const themeCycle: Array<'auto' | ThemeName> = ['auto', ...themeOptions.map((opt) => opt.value)]
+
+function normalizeTheme(value: unknown): ThemeName | null {
+  if (typeof value !== 'string') return null
+  if (value in legacyThemeMap) return legacyThemeMap[value]
+  return themeNameSet.has(value as ThemeName) ? (value as ThemeName) : null
+}
+
 const state = reactive({
   account: { username: null } as Account,
   // Team is the active party (max 6). PC is storage.
   team: [] as PokemonInstance[],
   pc: [] as PokemonInstance[],
   battle: { inBattle: false, wild: null, partyIndex: 0, outcome: 'ongoing' } as BattleState,
-  theme: 'light' as 'light' | 'dark',
-  themeMode: 'auto' as 'auto' | 'light' | 'dark',
+  theme: defaultThemeName as ThemeName,
+  themeMode: 'auto' as 'auto' | ThemeName,
 })
 
 const defaultMovesByType: Record<string, Move[]> = {
@@ -156,6 +170,18 @@ function toInstance(p: PokemonBasic, level?: number): PokemonInstance {
 }
 
 export function useStore() {
+  const computeTimeThemeValue = (): ThemeName => {
+    const hour = new Date().getHours()
+    return hour >= 6 && hour < 18 ? 'synthwave-dawn' : 'neon-noir'
+  }
+
+  const syncTheme = (persist = true) => {
+    const mode = state.themeMode
+    const next = mode === 'auto' ? computeTimeThemeValue() : mode
+    state.theme = next
+    applyGlobalTheme(next, { persist })
+  }
+
   return {
     theme: state.theme,
     themeMode: state.themeMode,
@@ -164,10 +190,11 @@ export function useStore() {
     pc: state.pc,
     battle: state.battle,
     initFromStorage() {
+      let parsed: any = null
       try {
         const raw = localStorage.getItem('mpb_state')
         if (raw) {
-          const parsed = JSON.parse(raw)
+          parsed = JSON.parse(raw)
           if (parsed.account) state.account.username = parsed.account.username
           // Migrate legacy 'caught' array into team/pc
           if (Array.isArray(parsed.caught)) {
@@ -182,14 +209,20 @@ export function useStore() {
           if (Array.isArray(parsed.pc)) {
             for (const p of parsed.pc) state.pc.push(p.level && p.moves ? p : toInstance(p))
           }
-          if (parsed.theme === 'dark' || parsed.theme === 'light') state.theme = parsed.theme
-          if (parsed.themeMode === 'auto' || parsed.themeMode === 'light' || parsed.themeMode === 'dark') state.themeMode = parsed.themeMode
         }
       } catch {}
-      // apply theme on init
-      try {
-        document.documentElement.classList.toggle('dark', state.theme === 'dark')
-      } catch {}
+
+      const storedTheme = normalizeTheme(parsed?.theme)
+      if (storedTheme) state.theme = storedTheme
+
+      const modeRaw = parsed?.themeMode
+      if (modeRaw === 'auto') state.themeMode = 'auto'
+      else {
+        const normalizedMode = normalizeTheme(modeRaw)
+        if (normalizedMode) state.themeMode = normalizedMode
+      }
+
+      syncTheme(false)
     },
     persist() {
       try {
@@ -235,26 +268,20 @@ export function useStore() {
       state.battle.inBattle = false
       state.battle.wild = null
     },
-    setTheme(theme: 'light' | 'dark') {
-      state.theme = theme
-      try { document.documentElement.classList.toggle('dark', theme === 'dark') } catch {}
-      this.persist()
+    setTheme(theme: ThemeName) {
+      this.setThemeMode(theme)
     },
-    computeTimeTheme(): 'light' | 'dark' {
-      const hour = new Date().getHours()
-      // Gold/Silver rough day/night split: day 6:00-17:59, night 18:00-5:59
-      return hour >= 6 && hour < 18 ? 'light' : 'dark'
+    computeTimeTheme(): ThemeName {
+      return computeTimeThemeValue()
     },
-    setThemeMode(mode: 'auto' | 'light' | 'dark') {
+    setThemeMode(mode: 'auto' | ThemeName) {
       state.themeMode = mode
-      const next = mode === 'auto' ? this.computeTimeTheme() : (mode as 'light' | 'dark')
-      this.setTheme(next)
+      syncTheme()
       this.persist()
     },
     toggleThemeMode() {
-      const order: Array<'auto' | 'light' | 'dark'> = ['auto', 'light', 'dark']
-      const idx = order.indexOf(state.themeMode)
-      const next = order[(idx + 1) % order.length]
+      const idx = themeCycle.indexOf(state.themeMode)
+      const next = themeCycle[(idx + 1) % themeCycle.length]
       this.setThemeMode(next)
     },
     moveTeamToPc(index: number) {

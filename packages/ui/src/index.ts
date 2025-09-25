@@ -13,3 +13,5 @@ export { default as AppSelect } from './components/AppSelect.vue'
 export { default as AppTagInput } from './components/AppTagInput.vue'
 export { default as AppText } from './components/AppText.vue'
 export { default as AppTextarea } from './components/AppTextarea.vue'
+
+export * from '@my-monorepo/design-tokens'

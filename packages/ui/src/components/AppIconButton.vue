@@ -7,15 +7,15 @@ const props = withDefaults(defineProps<{
   title?: string
 }>(), { variant: 'outline', size: 'sm', title: '' })
 
-const base = 'inline-flex items-center justify-center rounded-md border transition-colors select-none'
+const base = 'inline-flex items-center justify-center rounded-[var(--radius-sm)] border border-[color:var(--btn-border)] bg-[color:var(--btn-bg)] text-[color:var(--btn-fg)] transition-all duration-200 select-none shadow-[var(--shadow-button)] hover:border-[color:var(--accent)] hover:shadow-[var(--shadow-button-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--accent)] focus-visible:ring-offset-[color:var(--surface)] active:translate-y-[1px]'
 const sizes: Record<string, string> = { xs: 'h-7 w-7', sm: 'h-8 w-8', md: 'h-9 w-9' }
 const variants: Record<string, string> = {
-  default: 'bg-[var(--btn-bg)] text-[var(--btn-fg)] border-[var(--btn-border)] hover:border-[var(--accent)]',
-  primary: 'bg-[color:var(--accent)] text-white border-[color:var(--accent)] hover:opacity-90',
-  secondary: 'bg-[var(--surface-2)] text-[var(--fg)] border-[var(--border)] hover:border-[var(--accent)]',
-  danger: 'bg-red-600 text-white border-red-600 hover:opacity-90',
-  ghost: 'bg-transparent text-[var(--fg)] border-transparent hover:border-[var(--border)]',
-  outline: 'bg-transparent text-[var(--fg)] border-[var(--btn-border)] hover:border-[var(--accent)]',
+  default: '',
+  primary: 'bg-[color:var(--accent)] text-[color:var(--bg)] border-[color:var(--accent)] shadow-[var(--shadow-button-hover)] hover:shadow-[var(--shadow-button-hover)] focus-visible:ring-[color:var(--accent-strong)]',
+  secondary: 'bg-[color:var(--surface-veil)] text-[color:var(--fg)] border-[color:var(--border)]',
+  danger: 'bg-[#fb7185] text-white border-[#fb7185] shadow-[var(--shadow-button-hover)] focus-visible:ring-[rgba(251,113,133,0.5)]',
+  ghost: 'bg-transparent text-[color:var(--fg)] border-transparent shadow-none hover:border-[color:var(--border)] hover:bg-[color:var(--surface-translucent)] hover:shadow-none focus-visible:ring-[color:var(--accent-weak)]',
+  outline: 'bg-transparent text-[color:var(--fg)] border-[color:var(--border)] shadow-none hover:border-[color:var(--accent)] hover:shadow-none',
 }
 </script>
 

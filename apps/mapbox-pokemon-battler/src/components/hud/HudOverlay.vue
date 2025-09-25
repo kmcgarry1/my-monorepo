@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useStore } from '../../store'
+import { themeOptions } from '@my-monorepo/theme'
 import AppButton from '../ui/AppButton.vue'
 
 const emit = defineEmits(['open-team', 'recenter'])
@@ -8,7 +9,11 @@ const store = useStore()
 
 const caughtCount = computed(() => store.team.length)
 const active = computed(() => store.team[store.battle.partyIndex])
-const modeLabel = computed(() => (store.themeMode || 'auto').toUpperCase())
+const modeLabel = computed(() => {
+  if (store.themeMode === 'auto') return 'AUTO'
+  const meta = themeOptions.find((opt) => opt.value === store.themeMode)
+  return meta ? meta.label : store.themeMode.toUpperCase()
+})
 
 function setActive(i: number) {
   store.setPartyIndex(i)
