@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { AppCard } from '@my-monorepo/ui'
 import WizardBuilder from './components/WizardBuilder.vue'
 import StatblockPreview from './components/StatblockPreview.vue'
 import Toolbar from './components/Toolbar.vue'
@@ -11,6 +12,7 @@ const {
   enemy,
   environment,
   name,
+  archetype,
   tier,
   description,
   traits,
@@ -32,15 +34,18 @@ const {
 
     <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
       <div>
-        <WizardBuilder
-          v-model:sbType="sbType"
-          v-model:name="name"
-          v-model:tier="tier"
-          v-model:description="description"
-          v-model:traits="traits"
-          :enemy="enemy"
-          :environment="environment"
-        />
+        <AppCard variant="elevated" padding="lg" class="h-full">
+          <WizardBuilder
+            v-model:sbType="sbType"
+            v-model:name="name"
+            v-model:archetype="archetype"
+            v-model:tier="tier"
+            v-model:description="description"
+            v-model:traits="traits"
+            :enemy="enemy"
+            :environment="environment"
+          />
+        </AppCard>
       </div>
       <div>
         <StatblockPreview :sbType="sbType" :enemy="enemy" :environment="environment" />

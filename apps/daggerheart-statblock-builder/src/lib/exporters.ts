@@ -1,4 +1,5 @@
 import type { Enemy, Environment } from '../types'
+import { getTierGuide } from './tierGuides'
 
 export function toJSONBlob(sbType: 'enemy'|'environment', enemy: Enemy, environment: Environment): Blob {
   const data = { version: 1, sbType, enemy, environment }
@@ -24,9 +25,11 @@ export function toMarkdown(sbType: 'enemy'|'environment', enemy: Enemy, environm
       const body = f.text ? `\n  ${f.text}` : ''
       return header + body
     }).join('\n')
+    const tierName = enemy.tier != null ? getTierGuide(enemy.tier)?.title ?? `Tier ${enemy.tier}` : ''
 
     return `# ${enemy.name || 'New Enemy'}\n\n` +
-      `${enemy.tier ? `Tier ${enemy.tier} ` : ''}${enemy.rank || ''}`.trim() + `\n\n` +
+      `${[tierName, enemy.rank || ''].filter(Boolean).join(' ')}`.trim() + `\n\n` +
+      `${enemy.archetype ? `Archetype: ${enemy.archetype}\n\n` : ''}` +
       `${enemy.description ? enemy.description + '\n\n' : ''}` +
       `${enemy.tactics ? `Motives & Tactics: ${enemy.tactics}\n\n` : ''}` +
       `Difficulty: ${enemy.difficulty ?? '—'} | Thresholds: ${enemy.thresholds || '—'} | HP: ${enemy.hp ?? '—'} | Stress: ${enemy.stress ?? '—'}\n\n` +
@@ -43,8 +46,11 @@ export function toMarkdown(sbType: 'enemy'|'environment', enemy: Enemy, environm
     return header + body
   }).join('\n')
 
+  const tierName = environment.tier != null ? getTierGuide(environment.tier)?.title ?? `Tier ${environment.tier}` : ''
+
   return `# ${environment.name || 'New Environment'}\n\n` +
-    `${environment.tier ? `Tier ${environment.tier} ` : ''}${environment.category || ''}`.trim() + `\n\n` +
+    `${[tierName, environment.category || ''].filter(Boolean).join(' ')}`.trim() + `\n\n` +
+    `${environment.archetype ? `Archetype: ${environment.archetype}\n\n` : ''}` +
     `${environment.description ? environment.description + '\n\n' : ''}` +
     `Impulses: ${environment.impulses || '—'}\n\n` +
     `Difficulty: ${environment.difficulty ?? '—'}\n\n` +
