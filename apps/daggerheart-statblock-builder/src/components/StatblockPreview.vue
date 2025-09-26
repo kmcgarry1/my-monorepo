@@ -86,7 +86,7 @@ const hasDetailContent = computed(() => {
 </script>
 
 <template>
-  <AppCard padding="lg" class="preview-card">
+  <AppCard padding="lg" variant="elevated" class="preview-card">
     <header class="preview-header">
       <div>
         <p class="preview-eyebrow">{{ isEnemy ? 'Enemy statblock' : 'Environment statblock' }}</p>
