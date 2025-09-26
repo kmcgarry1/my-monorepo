@@ -8,6 +8,7 @@ import { themeOptions } from '@my-monorepo/theme'
 import { openGlossary } from '../lib/glossaryState'
 import {
   AppButton,
+  AppCard,
   AppDropdown,
   AppIcon,
   AppIconButton
@@ -68,7 +69,7 @@ const themeItems = computed(() => [
 </script>
 
 <template>
-  <div class="toolbar">
+  <AppCard padding="sm" variant="elevated" class="toolbar">
     <div class="left items-center gap-1">
       <AppIconButton name="plus" variant="primary" title="New" @click="emit('reset')" />
       <AppDropdown
@@ -125,15 +126,23 @@ const themeItems = computed(() => [
 
       <AppButton v-if="hasSaved()" variant="subtle" size="sm" @click="clearSaved">Clear</AppButton>
     </div>
-  </div>
+  </AppCard>
 </template>
 
 <style scoped>
-.toolbar { display:flex; gap:.5rem; justify-content:space-between; align-items:center; padding:.5rem; border:1px solid var(--border); border-radius:.5rem; margin-bottom:1rem; background: var(--surface); backdrop-filter: blur(6px); }
-.left, .right { display:flex; align-items:center; gap:.5rem; flex-wrap: wrap; }
-.group { display:flex; align-items:center; gap:.5rem; }
-/* Light button-like links for docs */
-.btn-like { display:inline-flex; align-items:center; gap:.25rem; border:1px solid var(--btn-border); background: var(--btn-bg); color: var(--btn-fg); padding:.35rem .55rem; border-radius:.375rem; text-decoration:none; }
-.btn-like:hover { border-color: var(--accent); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme]) .toolbar { background: var(--surface); border-color: var(--border); } }
+.toolbar {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.left,
+.right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
 </style>

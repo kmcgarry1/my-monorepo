@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { AppButton, AppCard, AppIconButton } from '@my-monorepo/ui'
+import { AppButton, AppCard, AppIconButton, AppText } from '@my-monorepo/ui'
 import WizardBuilder from './components/WizardBuilder.vue'
 import StatblockPreview from './components/StatblockPreview.vue'
 import Toolbar from './components/Toolbar.vue'
@@ -105,27 +105,35 @@ onBeforeUnmount(() => {
     <div class="app-backdrop" aria-hidden="true" />
 
     <div class="app-container">
-      <header class="hero-card glass-panel">
+      <AppCard padding="lg" variant="elevated" class="hero-card">
         <div class="hero-content">
-          <p class="eyebrow">Currently editing</p>
-          <h1>{{ displayName }}</h1>
-          <p class="lead">{{ summaryMessage }}</p>
+          <AppText variant="caption" tone="muted" class="eyebrow">Currently editing</AppText>
+          <AppText as="h1" size="lg" class="hero-title">{{ displayName }}</AppText>
+          <AppText variant="lead" class="lead">{{ summaryMessage }}</AppText>
           <div v-if="summaryMeta.length" class="hero-meta">
-            <div v-for="item in summaryMeta" :key="item.label" class="hero-chip">
-              <span class="label">{{ item.label }}</span>
-              <span class="value">{{ item.value }}</span>
-            </div>
+            <AppCard
+              v-for="item in summaryMeta"
+              :key="item.label"
+              variant="ghost"
+              padding="sm"
+              class="hero-chip"
+            >
+              <AppText variant="caption" tone="muted" class="label">{{ item.label }}</AppText>
+              <AppText as="span" size="md" class="value">{{ item.value }}</AppText>
+            </AppCard>
           </div>
           <div class="hero-actions">
             <AppButton size="lg" variant="primary" @click="openWizard">Launch guided builder</AppButton>
             <AppButton size="lg" variant="subtle" @click="resetAll">Start fresh</AppButton>
           </div>
-          <p class="meta-note">Saved automatically — export whenever you're ready using the toolbar below.</p>
+          <AppText variant="muted" size="sm" class="meta-note">
+            Saved automatically — export whenever you're ready using the toolbar below.
+          </AppText>
         </div>
-      </header>
+      </AppCard>
 
       <Toolbar
-        class="topbar glass-panel"
+        class="topbar"
         :sbType="sbType"
         :enemy="enemy"
         :environment="environment"
@@ -137,24 +145,46 @@ onBeforeUnmount(() => {
 
       <main class="content-grid">
         <section class="info-stack">
-          <AppCard padding="lg" class="glass-panel">
-            <h2 class="section-title">Quick summary</h2>
-            <p class="section-subtitle">Use the guided modal to capture every detail. This panel updates as you go.</p>
+          <AppCard padding="lg" variant="elevated" class="summary-card">
+            <AppText as="h2" class="section-title">Quick summary</AppText>
+            <AppText variant="muted" size="sm" class="section-subtitle">
+              Use the guided modal to capture every detail. This panel updates as you go.
+            </AppText>
             <div v-if="summaryMeta.length" class="summary-grid">
-              <div v-for="item in summaryMeta" :key="item.label" class="summary-item">
-                <span class="summary-label">{{ item.label }}</span>
-                <span class="summary-value">{{ item.value }}</span>
-              </div>
+              <AppCard
+                v-for="item in summaryMeta"
+                :key="item.label"
+                variant="ghost"
+                padding="sm"
+                class="summary-item"
+              >
+                <AppText variant="caption" tone="muted">{{ item.label }}</AppText>
+                <AppText as="span" class="summary-value">{{ item.value }}</AppText>
+              </AppCard>
             </div>
-            <p v-else class="empty-state">No details yet — open the builder to get started.</p>
+            <AppText v-else variant="muted" class="empty-state">
+              No details yet — open the builder to get started.
+            </AppText>
           </AppCard>
 
-          <AppCard padding="lg" class="glass-panel">
-            <h2 class="section-title">Workflow tips</h2>
+          <AppCard padding="lg" variant="elevated" class="tips-card">
+            <AppText as="h2" class="section-title">Workflow tips</AppText>
             <ul class="tips-list">
-              <li>Step through the wizard to keep vital stats grouped by purpose.</li>
-              <li>Switch between enemy and environment tiers without losing progress.</li>
-              <li>Use the glossary from the toolbar whenever you need official wording.</li>
+              <li>
+                <AppText variant="muted" size="sm">
+                  Step through the wizard to keep vital stats grouped by purpose.
+                </AppText>
+              </li>
+              <li>
+                <AppText variant="muted" size="sm">
+                  Switch between enemy and environment tiers without losing progress.
+                </AppText>
+              </li>
+              <li>
+                <AppText variant="muted" size="sm">
+                  Use the glossary from the toolbar whenever you need official wording.
+                </AppText>
+              </li>
             </ul>
           </AppCard>
         </section>
@@ -174,7 +204,7 @@ onBeforeUnmount(() => {
         aria-label="Daggerheart statblock builder"
         @click.self="closeWizard"
       >
-        <div class="wizard-dialog glass-panel">
+        <div class="wizard-dialog">
           <header class="wizard-header">
             <div>
               <p class="eyebrow">Guided builder</p>
@@ -236,16 +266,12 @@ onBeforeUnmount(() => {
   gap: 1.75rem;
 }
 
-.glass-panel {
-  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
-  background: color-mix(in srgb, var(--surface-translucent) 88%, transparent);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-card);
-  backdrop-filter: blur(18px);
-}
-
 .hero-card {
-  padding: 2.5rem 2.25rem;
+  padding: clamp(2rem, 4vw, 3rem);
+  background: radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%)
+      no-repeat,
+    color-mix(in srgb, var(--surface-panel) 92%, transparent);
+  box-shadow: var(--shadow-elevated);
 }
 
 .hero-content {
@@ -256,22 +282,16 @@ onBeforeUnmount(() => {
 
 .eyebrow {
   margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 0.75rem;
-  color: color-mix(in srgb, var(--muted) 82%, transparent);
 }
 
-h1 {
+.hero-title {
   margin: 0;
-  font-size: clamp(1.75rem, 3vw + 1rem, 2.5rem);
+  font-size: clamp(1.85rem, 3vw + 1.25rem, 2.75rem);
   font-weight: 700;
 }
 
 .lead {
   margin: 0;
-  color: color-mix(in srgb, var(--muted) 90%, transparent);
-  font-size: 1rem;
   max-width: 36rem;
 }
 
@@ -284,18 +304,10 @@ h1 {
 .hero-chip {
   display: inline-flex;
   flex-direction: column;
-  gap: 0.1rem;
-  padding: 0.65rem 0.85rem;
+  gap: 0.35rem;
   border-radius: var(--radius-md);
   border: 1px solid color-mix(in srgb, var(--btn-border) 70%, transparent);
-  background: color-mix(in srgb, var(--surface-veil) 75%, transparent);
-}
-
-.hero-chip .label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: color-mix(in srgb, var(--muted) 86%, transparent);
+  background: color-mix(in srgb, var(--surface-veil) 78%, transparent);
 }
 
 .hero-chip .value {
@@ -312,8 +324,6 @@ h1 {
 
 .meta-note {
   margin: 0;
-  color: color-mix(in srgb, var(--muted) 82%, transparent);
-  font-size: 0.85rem;
 }
 
 .content-grid {
@@ -345,21 +355,18 @@ h1 {
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 }
 
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .summary-item {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  padding: 0.75rem;
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--surface-veil) 75%, transparent);
-  border: 1px solid color-mix(in srgb, var(--btn-border) 60%, transparent);
-}
-
-.summary-label {
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--muted) 80%, transparent);
+  border: 1px solid color-mix(in srgb, var(--btn-border) 62%, transparent);
+  background: color-mix(in srgb, var(--surface-veil) 80%, transparent);
 }
 
 .summary-value {
@@ -369,7 +376,12 @@ h1 {
 
 .empty-state {
   margin: 0;
-  color: color-mix(in srgb, var(--muted) 88%, transparent);
+}
+
+.tips-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .tips-list {
@@ -378,7 +390,6 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
-  color: color-mix(in srgb, var(--muted) 85%, transparent);
 }
 
 .preview-column {
@@ -406,6 +417,11 @@ h1 {
   flex-direction: column;
   gap: 1.25rem;
   padding: 1.75rem;
+  border-radius: var(--radius-xl);
+  border: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
+  background: color-mix(in srgb, var(--surface-translucent) 90%, transparent);
+  box-shadow: var(--shadow-elevated);
+  backdrop-filter: blur(20px);
 }
 
 .wizard-header {
@@ -468,8 +484,7 @@ h1 {
 
 @media print {
   .app-container,
-  .wizard-overlay,
-  .glass-panel {
+  .wizard-overlay {
     display: none !important;
   }
 
