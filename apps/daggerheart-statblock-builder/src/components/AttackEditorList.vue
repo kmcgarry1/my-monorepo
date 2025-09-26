@@ -1,29 +1,47 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import type { Attack } from '../types'
 import {
   AppButton,
   AppCol,
   AppFieldLabel,
+  AppIcon,
   AppIconButton,
   AppInput,
   AppRow
 } from '@my-monorepo/ui'
 import { openGlossary } from '../lib/glossaryState'
 
-const props = withDefaults(defineProps<{ modelValue: Attack[] }>(), { })
+const props = withDefaults(defineProps<{ modelValue: Attack[] }>(), {})
 const emit = defineEmits<{ (e: 'update:modelValue', v: Attack[]): void }>()
 
-let nextId = ref(1)
+const nextId = ref(1)
+
+function syncNextId(list: Attack[]) {
+  const highest = list.reduce((max, attack) => (typeof attack.id === 'number' && attack.id > max ? attack.id : max), 0)
+  const candidate = highest + 1
+  if (candidate > nextId.value) nextId.value = candidate
+}
+
+watch(
+  () => props.modelValue,
+  (list) => {
+    syncNextId(list)
+  },
+  { immediate: true, deep: true }
+)
 
 function addAttack() {
   const list = props.modelValue.slice()
-  list.push({ id: nextId.value++, name: '', range: '', details: '' })
+  const id = nextId.value++
+  list.push({ id, name: '', range: '', details: '' })
   emit('update:modelValue', list)
 }
+
 function removeAttack(id: number) {
-  emit('update:modelValue', props.modelValue.filter(a => a.id !== id))
+  emit('update:modelValue', props.modelValue.filter((a) => a.id !== id))
 }
+
 function updateAttack(idx: number, patch: Partial<Attack>) {
   const list = props.modelValue.slice()
   list[idx] = { ...list[idx], ...patch }
