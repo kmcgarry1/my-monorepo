@@ -24,7 +24,7 @@ const paddingClass = computed(() => props.padding === 'sm' ? 'p-4' : props.paddi
 </script>
 
 <template>
-  <section :class="cx('rounded-[var(--radius-lg)] transition-shadow duration-[var(--transition-short)] backdrop-blur-sm', variantClass.value, paddingClass.value)">
+  <section :class="cx('rounded-[var(--radius-lg)] transition-shadow duration-[var(--transition-short)] backdrop-blur-sm', variantClass, paddingClass)">
     <header v-if="props.title" class="mb-4">
       <h2 class="font-semibold text-[1.05rem] tracking-[0.04em] text-[color:var(--md-sys-color-on-surface)]">{{ props.title }}</h2>
     </header>

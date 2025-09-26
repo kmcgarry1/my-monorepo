@@ -22,17 +22,13 @@ a:hover {
 
 .toolbar {
   position: sticky;
-  top: 1rem;
-  z-index: 25;
+  top: clamp(1.25rem, 6vw, 2.25rem);
+  z-index: 30;
   border-radius: var(--radius-xl);
-  border: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
-  background: color-mix(in srgb, var(--surface-translucent) 90%, transparent);
-  box-shadow: var(--shadow-card);
-  backdrop-filter: blur(16px);
-}
-
-.toolbar.topbar {
-  margin-top: -1.5rem;
+  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  background: color-mix(in srgb, var(--surface-translucent) 94%, transparent);
+  box-shadow: var(--shadow-elevated);
+  backdrop-filter: blur(18px);
 }
 
 .print-only {

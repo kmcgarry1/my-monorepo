@@ -86,7 +86,7 @@ const hasDetailContent = computed(() => {
 </script>
 
 <template>
-  <AppCard padding="lg" variant="elevated" class="preview-card">
+  <AppCard padding="lg" variant="surface" class="preview-card">
     <header class="preview-header">
       <div>
         <p class="preview-eyebrow">{{ isEnemy ? 'Enemy statblock' : 'Environment statblock' }}</p>
@@ -99,7 +99,7 @@ const hasDetailContent = computed(() => {
       </div>
     </header>
 
-    <AppText v-if="description" variant="lead" class="preview-description">{{ description }}</AppText>
+    <AppText v-if="description" variant="body" size="md" class="preview-description">{{ description }}</AppText>
 
     <div v-if="traits.length" class="preview-traits">
       <AppBadge v-for="trait in traits" :key="trait" variant="neutral">{{ trait }}</AppBadge>

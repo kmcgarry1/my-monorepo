@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { AppButton, AppCard, AppIconButton, AppText } from '@my-monorepo/ui'
+import { AppBadge, AppButton, AppCard, AppCol, AppIconButton, AppRow, AppText } from '@my-monorepo/ui'
 import WizardBuilder from './components/WizardBuilder.vue'
 import StatblockPreview from './components/StatblockPreview.vue'
 import Toolbar from './components/Toolbar.vue'
@@ -28,6 +28,7 @@ const showWizard = ref(false)
 const wizardKey = ref(0)
 
 const isEnemy = computed(() => sbType.value === 'enemy')
+const typeLabel = computed(() => (isEnemy.value ? 'Enemy' : 'Environment'))
 const displayName = computed(() => {
   const label = (name.value || '').trim()
   if (label) return label
@@ -54,6 +55,19 @@ const summaryMeta = computed(() => {
   }
 
   return items
+})
+
+const highlightedMeta = computed(() => summaryMeta.value.filter((item) => item.label !== 'Tier').slice(0, 4))
+const tierStatus = computed(() => (tierGuide.value ? tierGuide.value.title : 'Tier pending'))
+
+const tierCallout = computed(() => {
+  if (!tierGuide.value) return null
+
+  return {
+    heading: tierGuide.value.title,
+    summary: tierGuide.value.summary,
+    focus: isEnemy.value ? tierGuide.value.enemyFocus : tierGuide.value.environmentFocus
+  }
 })
 
 const summaryMessage = computed(() => {
@@ -101,39 +115,43 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="app-wrapper">
-    <div class="app-backdrop" aria-hidden="true" />
+  <div class="app-shell">
+    <div class="shell-aura" aria-hidden="true" />
 
-    <div class="app-container">
-      <AppCard padding="lg" variant="elevated" class="hero-card">
-        <div class="hero-content">
-          <AppText variant="caption" tone="muted" class="eyebrow">Currently editing</AppText>
-          <AppText as="h1" size="lg" class="hero-title">{{ displayName }}</AppText>
-          <AppText variant="lead" class="lead">{{ summaryMessage }}</AppText>
-          <div v-if="summaryMeta.length" class="hero-meta">
-            <AppCard
-              v-for="item in summaryMeta"
-              :key="item.label"
-              variant="ghost"
-              padding="sm"
-              class="hero-chip"
-            >
-              <AppText variant="caption" tone="muted" class="label">{{ item.label }}</AppText>
-              <AppText as="span" size="md" class="value">{{ item.value }}</AppText>
-            </AppCard>
+    <div class="page-container">
+      <AppCard padding="lg" variant="surface" class="hero-card">
+        <div class="hero-grid">
+          <div class="hero-main">
+            <AppBadge size="xs" variant="neutral" class="hero-eyebrow">Currently editing</AppBadge>
+            <div class="hero-title-row">
+              <AppText as="h1" size="lg" class="hero-title">{{ displayName }}</AppText>
+              <AppBadge variant="accent" size="sm">{{ typeLabel }}</AppBadge>
+            </div>
+            <AppText variant="body" size="lg" class="hero-lead">{{ summaryMessage }}</AppText>
+            <AppText variant="muted" size="sm" class="meta-note">
+              Saved automatically — export whenever you're ready using the toolbar.
+            </AppText>
           </div>
           <div class="hero-actions">
             <AppButton size="lg" variant="primary" @click="openWizard">Launch guided builder</AppButton>
-            <AppButton size="lg" variant="subtle" @click="resetAll">Start fresh</AppButton>
+            <AppButton size="lg" variant="surface" @click="resetAll">Start fresh</AppButton>
           </div>
-          <AppText variant="muted" size="sm" class="meta-note">
-            Saved automatically — export whenever you're ready using the toolbar below.
-          </AppText>
+        </div>
+
+        <div class="hero-highlights">
+          <div class="highlight-card">
+            <span class="highlight-label">Tier status</span>
+            <span class="highlight-value">{{ tierStatus }}</span>
+          </div>
+          <div v-for="item in highlightedMeta" :key="item.label" class="highlight-card">
+            <span class="highlight-label">{{ item.label }}</span>
+            <span class="highlight-value">{{ item.value }}</span>
+          </div>
         </div>
       </AppCard>
 
       <Toolbar
-        class="topbar"
+        class="builder-toolbar"
         :sbType="sbType"
         :enemy="enemy"
         :environment="environment"
@@ -143,56 +161,68 @@ onBeforeUnmount(() => {
         @load-preset="loadPreset"
       />
 
-      <main class="content-grid">
-        <section class="info-stack">
-          <AppCard padding="lg" variant="elevated" class="summary-card">
-            <AppText as="h2" class="section-title">Quick summary</AppText>
-            <AppText variant="muted" size="sm" class="section-subtitle">
-              Use the guided modal to capture every detail. This panel updates as you go.
-            </AppText>
-            <div v-if="summaryMeta.length" class="summary-grid">
-              <AppCard
-                v-for="item in summaryMeta"
-                :key="item.label"
-                variant="ghost"
-                padding="sm"
-                class="summary-item"
-              >
-                <AppText variant="caption" tone="muted">{{ item.label }}</AppText>
-                <AppText as="span" class="summary-value">{{ item.value }}</AppText>
+      <AppRow class="main-grid" :cols="3" gap="lg">
+        <AppCol :span="2">
+          <AppRow class="insight-grid" :cols="2" gap="lg">
+            <AppCol :span="2">
+              <AppCard padding="lg" variant="surface" class="summary-card">
+                <AppText as="h2" variant="title" class="section-title">Quick summary</AppText>
+                <AppText variant="muted" size="sm" class="section-subtitle">
+                  Use the guided modal to capture every detail. This panel updates as you go.
+                </AppText>
+                <div v-if="summaryMeta.length" class="summary-grid">
+                  <div v-for="item in summaryMeta" :key="item.label" class="summary-item">
+                    <span class="summary-label">{{ item.label }}</span>
+                    <span class="summary-value">{{ item.value }}</span>
+                  </div>
+                </div>
+                <AppText v-else variant="muted" class="empty-state">
+                  No details yet — open the builder to get started.
+                </AppText>
               </AppCard>
-            </div>
-            <AppText v-else variant="muted" class="empty-state">
-              No details yet — open the builder to get started.
-            </AppText>
-          </AppCard>
+            </AppCol>
 
-          <AppCard padding="lg" variant="elevated" class="tips-card">
-            <AppText as="h2" class="section-title">Workflow tips</AppText>
-            <ul class="tips-list">
-              <li>
-                <AppText variant="muted" size="sm">
-                  Step through the wizard to keep vital stats grouped by purpose.
-                </AppText>
-              </li>
-              <li>
-                <AppText variant="muted" size="sm">
-                  Switch between enemy and environment tiers without losing progress.
-                </AppText>
-              </li>
-              <li>
-                <AppText variant="muted" size="sm">
-                  Use the glossary from the toolbar whenever you need official wording.
-                </AppText>
-              </li>
-            </ul>
-          </AppCard>
-        </section>
+            <AppCol :span="tierCallout ? 1 : 2">
+              <AppCard padding="lg" variant="surface" class="tips-card">
+                <AppText as="h2" variant="title" class="section-title">Workflow tips</AppText>
+                <ul class="tips-list">
+                  <li>
+                    <AppText variant="muted" size="sm">
+                      Step through the wizard to keep vital stats grouped by purpose.
+                    </AppText>
+                  </li>
+                  <li>
+                    <AppText variant="muted" size="sm">
+                      Switch between enemy and environment tiers without losing progress.
+                    </AppText>
+                  </li>
+                  <li>
+                    <AppText variant="muted" size="sm">
+                      Use the glossary from the toolbar whenever you need official wording.
+                    </AppText>
+                  </li>
+                </ul>
+              </AppCard>
+            </AppCol>
 
-        <section class="preview-column">
+            <AppCol v-if="tierCallout" :span="1">
+              <AppCard padding="lg" variant="surface" class="tier-card">
+                <AppBadge size="xs" variant="accent" class="tier-badge">Tier insights</AppBadge>
+                <AppText as="h3" variant="title" class="tier-heading">{{ tierCallout.heading }}</AppText>
+                <AppText variant="muted" size="sm" class="tier-summary">{{ tierCallout.summary }}</AppText>
+                <div class="tier-focus">
+                  <AppBadge size="xs" variant="neutral">{{ typeLabel }} focus</AppBadge>
+                  <AppText variant="body" size="sm">{{ tierCallout.focus }}</AppText>
+                </div>
+              </AppCard>
+            </AppCol>
+          </AppRow>
+        </AppCol>
+
+        <AppCol :span="1" class="preview-column">
           <StatblockPreview :sbType="sbType" :enemy="enemy" :environment="environment" />
-        </section>
-      </main>
+        </AppCol>
+      </AppRow>
     </div>
 
     <Transition name="wizard-fade">
@@ -238,81 +268,96 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.app-wrapper {
+.app-shell {
   position: relative;
   min-height: 100vh;
-  background: radial-gradient(circle at top, color-mix(in srgb, var(--accent) 10%, transparent), transparent 55%),
+  padding: clamp(3rem, 8vw, 5rem) 0 5rem;
+  background: radial-gradient(circle at top, color-mix(in srgb, var(--accent) 14%, transparent), transparent 55%),
+    radial-gradient(circle at bottom, color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent), transparent 70%),
     var(--bg);
-  padding-bottom: 4rem;
 }
 
-.app-backdrop {
+.shell-aura {
   position: absolute;
   inset: 0;
-  background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%);
-  opacity: 0.35;
-  filter: saturate(120%);
+  background: linear-gradient(120deg, color-mix(in srgb, var(--accent) 12%, transparent), transparent 60%);
+  opacity: 0.4;
+  filter: saturate(115%);
   pointer-events: none;
 }
 
-.app-container {
+.page-container {
   position: relative;
   z-index: 1;
   margin: 0 auto;
-  max-width: 1120px;
-  padding: 3.5rem 1.5rem 0;
+  max-width: 1180px;
+  padding: 0 clamp(1.25rem, 6vw, 2.75rem);
   display: flex;
   flex-direction: column;
   gap: 1.75rem;
 }
 
 .hero-card {
-  padding: clamp(2rem, 4vw, 3rem);
-  background: radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%)
-      no-repeat,
-    color-mix(in srgb, var(--surface-panel) 92%, transparent);
-  box-shadow: var(--shadow-elevated);
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 95%, transparent);
 }
 
-.hero-content {
+.hero-card::after {
+  content: '';
+  position: absolute;
+  inset: -40% -10% auto;
+  height: 60%;
+  background: radial-gradient(circle at top, color-mix(in srgb, var(--accent) 28%, transparent), transparent 70%);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.hero-grid {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.5rem;
+}
+
+.hero-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .eyebrow {
   margin: 0;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--muted) 82%, transparent);
+}
+
+.hero-eyebrow {
+  align-self: flex-start;
+}
+
+.hero-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .hero-title {
   margin: 0;
-  font-size: clamp(1.85rem, 3vw + 1.25rem, 2.75rem);
+  font-size: clamp(2.1rem, 3vw + 1.25rem, 3.25rem);
   font-weight: 700;
 }
 
-.lead {
+.hero-lead {
   margin: 0;
-  max-width: 36rem;
+  max-width: 46rem;
 }
 
-.hero-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.hero-chip {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  border-radius: var(--radius-md);
-  border: 1px solid color-mix(in srgb, var(--btn-border) 70%, transparent);
-  background: color-mix(in srgb, var(--surface-veil) 78%, transparent);
-}
-
-.hero-chip .value {
-  font-weight: 600;
-  font-size: 0.95rem;
+.meta-note {
+  margin: 0;
 }
 
 .hero-actions {
@@ -322,56 +367,81 @@ onBeforeUnmount(() => {
   align-items: center;
 }
 
-.meta-note {
-  margin: 0;
-}
-
-.content-grid {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.info-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.section-title {
-  margin: 0;
-  font-size: 1.15rem;
-  font-weight: 600;
-}
-
-.section-subtitle {
-  margin: 0.35rem 0 1.25rem;
-  color: color-mix(in srgb, var(--muted) 90%, transparent);
-  font-size: 0.9rem;
-}
-
-.summary-grid {
+.hero-highlights {
+  position: relative;
+  margin-top: 1.5rem;
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.highlight-card {
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface-veil) 85%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.highlight-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--muted) 85%, transparent);
+}
+
+.highlight-value {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.main-grid {
+  align-items: flex-start;
 }
 
 .summary-card {
   display: flex;
   flex-direction: column;
+  gap: 1.25rem;
+}
+
+.section-title {
+  margin: 0;
+}
+
+.section-subtitle {
+  margin: 0;
+}
+
+.summary-grid {
+  display: grid;
   gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
 }
 
 .summary-item {
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--surface-veil) 82%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  border: 1px solid color-mix(in srgb, var(--btn-border) 62%, transparent);
-  background: color-mix(in srgb, var(--surface-veil) 80%, transparent);
+}
+
+.summary-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--muted) 83%, transparent);
 }
 
 .summary-value {
-  font-weight: 600;
   font-size: 1rem;
+  font-weight: 600;
 }
 
 .empty-state {
@@ -392,9 +462,37 @@ onBeforeUnmount(() => {
   gap: 0.65rem;
 }
 
+.tier-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tier-heading {
+  margin: 0;
+}
+
+.tier-summary {
+  margin: 0;
+}
+
+.tier-focus {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--surface-veil) 80%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+}
+
+.tier-focus :deep(p) {
+  margin: 0;
+}
+
 .preview-column {
   position: sticky;
-  top: 1.5rem;
+  top: 2rem;
   align-self: flex-start;
 }
 
@@ -405,7 +503,7 @@ onBeforeUnmount(() => {
   justify-content: center;
   align-items: center;
   padding: clamp(1rem, 4vw, 2.5rem);
-  background: color-mix(in srgb, var(--surface-translucent) 82%, rgba(10, 10, 18, 0.55));
+  background: color-mix(in srgb, var(--surface-translucent) 85%, rgba(10, 10, 18, 0.6));
   backdrop-filter: blur(22px);
   z-index: 50;
 }
@@ -419,7 +517,7 @@ onBeforeUnmount(() => {
   padding: 1.75rem;
   border-radius: var(--radius-xl);
   border: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
-  background: color-mix(in srgb, var(--surface-translucent) 90%, transparent);
+  background: color-mix(in srgb, var(--surface-translucent) 92%, transparent);
   box-shadow: var(--shadow-elevated);
   backdrop-filter: blur(20px);
 }
@@ -458,21 +556,18 @@ onBeforeUnmount(() => {
 }
 
 @media (min-width: 980px) {
-  .content-grid {
-    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  .hero-grid {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .hero-actions {
+    align-items: flex-end;
   }
 }
 
 @media (max-width: 768px) {
-  .app-container {
-    padding-inline: 1rem;
-    padding-top: 2.5rem;
-  }
-
-  .hero-card {
-    padding: 2rem 1.5rem;
-  }
-
   .preview-column {
     position: static;
   }
@@ -483,7 +578,7 @@ onBeforeUnmount(() => {
 }
 
 @media print {
-  .app-container,
+  .page-container,
   .wizard-overlay {
     display: none !important;
   }
