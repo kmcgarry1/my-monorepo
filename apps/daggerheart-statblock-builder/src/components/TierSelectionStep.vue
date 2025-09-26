@@ -23,51 +23,106 @@ const selectedGuide = computed(() => getTierGuide(props.tier ?? defaultTier))
 </script>
 
 <template>
-  <AppCard title="Tier & Scope">
-    <div class="mb-3">
+  <AppCard
+    title="Tier & Scope"
+    subtitle="Choose the statblock type and tier to unlock tuned recommendations."
+    variant="surface"
+  >
+    <div class="field-cluster">
       <AppFieldLabel icon="info" label="Statblock Type" />
-      <AppButtonGroup :options="[{ label: 'Enemy', value: 'enemy' }, { label: 'Environment', value: 'environment' }]" :model-value="props.sbType" @update:modelValue="v => emit('update:sbType', v as 'enemy' | 'environment')" />
+      <AppButtonGroup
+        :options="[
+          { label: 'Enemy', value: 'enemy' },
+          { label: 'Environment', value: 'environment' }
+        ]"
+        :model-value="props.sbType"
+        @update:modelValue="v => emit('update:sbType', v as 'enemy' | 'environment')"
+      />
     </div>
 
-    <div>
+    <div class="field-cluster">
       <AppFieldLabel icon="book" label="Tier" />
-      <AppButtonGroup :options="tierOptions" :model-value="String(props.tier ?? defaultTier)" @update:modelValue="v => emit('update:tier', Number(v))" />
+      <AppButtonGroup
+        :options="tierOptions"
+        :model-value="String(props.tier ?? defaultTier)"
+        @update:modelValue="v => emit('update:tier', Number(v))"
+      />
     </div>
 
-    <div v-if="selectedGuide" class="mt-4">
-      <p class="summary">{{ selectedGuide.summary }}</p>
-      <AppRow :cols="2" class="mt-3">
+    <section v-if="selectedGuide" class="guide-panel">
+      <header class="guide-header">
+        <span class="guide-tier">{{ selectedGuide.title }}</span>
+        <p class="guide-summary">{{ selectedGuide.summary }}</p>
+      </header>
+      <AppRow :cols="2" class="guide-grid">
         <AppCol>
-          <h4>Enemies</h4>
+          <h4>Enemy focus</h4>
           <p class="focus">{{ selectedGuide.enemyFocus }}</p>
         </AppCol>
         <AppCol>
-          <h4>Environments</h4>
+          <h4>Environment focus</h4>
           <p class="focus">{{ selectedGuide.environmentFocus }}</p>
         </AppCol>
       </AppRow>
-    </div>
+    </section>
   </AppCard>
 </template>
 
 <style scoped>
-.summary {
+.field-cluster {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.guide-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 82%, transparent);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 70%, transparent);
+}
+
+.guide-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.guide-tier {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--md-sys-color-primary) 85%, transparent);
+}
+
+.guide-summary {
   margin: 0;
-  color: var(--muted);
-  font-size: 0.9rem;
+  color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 90%, transparent);
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+.guide-grid {
+  gap: 1rem;
 }
 
 .focus {
   margin: 0;
-  color: var(--fg);
+  color: color-mix(in srgb, var(--md-sys-color-on-surface) 92%, transparent);
   font-size: 0.85rem;
+  line-height: 1.45;
 }
 
 h4 {
-  margin: 0 0 0.25rem;
-  font-size: 0.85rem;
+  margin: 0 0 0.35rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  text-transform: uppercase;
   letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--md-sys-color-on-surface) 90%, transparent);
 }
 </style>

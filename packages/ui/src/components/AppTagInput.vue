@@ -74,7 +74,7 @@ const variantClass = computed(() => {
 })
 
 const wrapperClass = computed(() => [
-  'flex flex-wrap items-center gap-1 rounded-[var(--radius-md)] shadow-[var(--shadow-level1)] transition-shadow duration-[var(--transition-short)] focus-within:shadow-[var(--shadow-level2)]',
+  'flex flex-wrap items-center gap-1 rounded-[var(--radius-md)] shadow-[var(--shadow-level1)] transition-shadow duration-[var(--motion-duration-sm)] focus-within:shadow-[var(--shadow-level2)]',
   sizeClass.value,
   variantClass.value
 ].join(' '))
@@ -86,7 +86,7 @@ const wrapperClass = computed(() => [
       <span>{{ t }}</span>
       <button
         type="button"
-        class="ml-1 inline-flex items-center justify-center rounded-[var(--radius-xs)] p-0.5 text-[color:var(--md-sys-color-on-surface-variant)] transition-colors duration-[var(--transition-short)] hover:bg-[color:var(--md-comp-button-ghost-hover-layer)] hover:text-[color:var(--md-sys-color-on-surface)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--md-comp-focus-ring)] focus-visible:ring-offset-1 focus-visible:ring-offset-[color:var(--md-sys-color-surface)]"
+        class="ml-1 inline-flex items-center justify-center rounded-[var(--radius-xs)] p-0.5 text-[color:var(--md-sys-color-on-surface-variant)] transition-colors duration-[var(--motion-duration-sm)] hover:bg-[color:var(--md-comp-button-ghost-hover-layer)] hover:text-[color:var(--md-sys-color-on-surface)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--md-comp-focus-ring)] focus-visible:ring-offset-1 focus-visible:ring-offset-[color:var(--md-sys-color-surface)]"
         @click="removeAt(i)"
       >
         <AppIcon name="x" size="xs" />

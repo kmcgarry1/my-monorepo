@@ -2,7 +2,8 @@ export function cx(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(' ')
 }
 
-const easeStandard = 'cubic-bezier(0.2, 0, 0, 1)'
+const easeStandard = 'ease-[var(--motion-easing-standard)]'
+const durationSM = 'duration-[var(--motion-duration-sm)]'
 
 // Button sizes follow Material 3 specs
 export const btnSizes: Record<string, string> = {
@@ -118,8 +119,8 @@ export const btnVariants: Record<string, string> = {
 
 export const btnBase = [
   'relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-[var(--radius-md)] border select-none',
-  `font-medium uppercase transition-[box-shadow,transform,background-color,color] duration-[var(--transition-short)] ease-[${easeStandard}]`,
-  'before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:bg-[color:var(--_state-layer-color,transparent)] before:opacity-0 before:transition-opacity before:duration-[var(--transition-short)]',
+  `font-medium uppercase transition-[box-shadow,transform,background-color,color] ${durationSM} ${easeStandard}`,
+  'before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:bg-[color:var(--_state-layer-color,transparent)] before:opacity-0 before:transition-opacity before:duration-[var(--motion-duration-sm)]',
   'hover:before:opacity-[var(--md-comp-state-layer-opacity-hover)] focus-visible:before:opacity-[var(--md-comp-state-layer-opacity-focus)] active:before:opacity-[var(--md-comp-state-layer-opacity-pressed)]',
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-comp-focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--md-sys-color-surface)]',
   'active:translate-y-[1px] disabled:pointer-events-none disabled:opacity-60'

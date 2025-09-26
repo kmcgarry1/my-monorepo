@@ -15,7 +15,7 @@ const emit = defineEmits<{ (e: 'open-wizard'): void; (e: 'reset'): void }>()
 </script>
 
 <template>
-  <AppCard padding="lg" variant="surface" class="hero-card">
+  <AppCard padding="lg" variant="elevated" class="hero-card">
     <div class="hero-grid">
       <div class="hero-main">
         <AppBadge size="xs" variant="neutral" class="hero-eyebrow">Currently editing</AppBadge>
