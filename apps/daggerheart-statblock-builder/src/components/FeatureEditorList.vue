@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import type { Feature, FeatureTag } from '../types'
 import { openGlossary } from '../lib/glossaryState'
 import {
@@ -16,16 +17,33 @@ import {
 const props = defineProps<{ modelValue: Feature[] }>()
 const emit = defineEmits<{ (e: 'update:modelValue', v: Feature[]): void }>()
 
-let nextId = 1
+const nextId = ref(1)
+
+function syncNextId(list: Feature[]) {
+  const highest = list.reduce((max, feature) => (typeof feature.id === 'number' && feature.id > max ? feature.id : max), 0)
+  const candidate = highest + 1
+  if (candidate > nextId.value) nextId.value = candidate
+}
+
+watch(
+  () => props.modelValue,
+  (list) => {
+    syncNextId(list)
+  },
+  { immediate: true, deep: true }
+)
 
 function addFeature() {
   const list = props.modelValue.slice()
-  list.push({ id: nextId++, name: '', tag: 'Passive', cost: '', text: '' })
+  const id = nextId.value++
+  list.push({ id, name: '', tag: 'Passive', cost: '', text: '' })
   emit('update:modelValue', list)
 }
+
 function removeFeature(id: number) {
-  emit('update:modelValue', props.modelValue.filter(f => f.id !== id))
+  emit('update:modelValue', props.modelValue.filter((f) => f.id !== id))
 }
+
 function updateFeature(idx: number, patch: Partial<Feature>) {
   const list = props.modelValue.slice()
   list[idx] = { ...list[idx], ...patch }
