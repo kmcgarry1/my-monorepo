@@ -95,7 +95,7 @@ function itemClass(active: boolean) {
 </script>
 
 <template>
-  <div :class="cx('inline-flex overflow-hidden rounded-[var(--radius-md)] backdrop-blur-sm', containerClass.value)">
+  <div :class="cx('inline-flex overflow-hidden rounded-[var(--radius-md)] backdrop-blur-sm', containerClass)">
     <button
       v-for="opt in props.options"
       :key="opt.value"
