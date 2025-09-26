@@ -2,24 +2,52 @@
 import { computed } from 'vue'
 import AppIcon from './AppIcon.vue'
 import { btnBase, btnVariants, iconBtnSizes, cx } from '../utils/variants'
+import type { ButtonVariant, IconButtonSize } from '../types'
+
 const props = withDefaults(defineProps<{
   name: 'sword'|'arrows'|'dice'|'plus'|'trash'|'book'|'info'|'download'|'copy'|'print'|'x'|'palette'
-  variant?: 'default'|'primary'|'secondary'|'danger'|'ghost'|'outline'|'subtle'|'accent'
-  size?: 'xs'|'sm'|'md'|'lg'
+  variant?: ButtonVariant
+  size?: IconButtonSize
   title?: string
-}>(), { variant: 'outline', size: 'sm', title: '' })
+}>(), { variant: 'outlined', size: 'sm', title: '' })
 
-const iconSizeMap: Record<string, 'xs'|'sm'|'md'|'lg'|'xl'|'inline'> = {
+const iconSizeMap: Record<IconButtonSize, 'xs'|'sm'|'md'|'lg'|'xl'|'inline'> = {
   xs: 'xs',
   sm: 'sm',
   md: 'md',
-  lg: 'lg',
+  lg: 'lg'
 }
-const variantKey = computed(() => props.variant === 'accent' ? 'primary' : props.variant)
+
+const aliasMap: Record<ButtonVariant, keyof typeof btnVariants> = {
+  filled: 'filled',
+  tonal: 'tonal',
+  'filled-tonal': 'tonal',
+  outlined: 'outlined',
+  outline: 'outlined',
+  text: 'text',
+  elevated: 'elevated',
+  surface: 'surface',
+  ghost: 'ghost',
+  danger: 'danger',
+  success: 'success',
+  default: 'elevated',
+  primary: 'filled',
+  secondary: 'tonal',
+  accent: 'filled',
+  subtle: 'surface'
+}
+
+const normalizedVariant = computed(() => aliasMap[props.variant] ?? 'outlined')
+
+const klass = computed(() => cx(
+  btnBase,
+  iconBtnSizes[props.size],
+  btnVariants[normalizedVariant.value] ?? btnVariants.outlined
+))
 </script>
 
 <template>
-  <button :title="props.title" :class="cx(btnBase, iconBtnSizes[props.size], btnVariants[variantKey])">
+  <button :title="props.title" :aria-label="props.title || props.name" :class="klass">
     <AppIcon :name="props.name" :size="iconSizeMap[props.size]" />
   </button>
 </template>
