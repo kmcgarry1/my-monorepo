@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import {
+import { 
   InformationCircleIcon,
   BookOpenIcon,
   TrashIcon,
@@ -14,7 +14,7 @@ import {
   XMarkIcon,
   PaintBrushIcon,
 } from '@heroicons/vue/24/outline'
-import {
+import { 
   InformationCircleIcon as InformationCircleIconSolid,
   BookOpenIcon as BookOpenIconSolid,
   TrashIcon as TrashIconSolid,
@@ -29,10 +29,9 @@ import {
   PaintBrushIcon as PaintBrushIconSolid,
 } from '@heroicons/vue/24/solid'
 
+import type { IconColor, IconSize, IconWeight } from '../types'
+
 type IconName = 'sword'|'arrows'|'dice'|'plus'|'trash'|'book'|'info'|'download'|'copy'|'print'|'x'|'palette'
-type IconSize = 'xs'|'sm'|'md'|'lg'|'xl'|'inline'
-type IconColor = 'default'|'muted'|'accent'|'danger'|'fg'|'bg'
-type IconWeight = 'outline'|'solid'
 
 const props = withDefaults(
   defineProps<{
@@ -56,11 +55,13 @@ const sizeClass = computed(() => ({
 
 const colorClass = computed(() => ({
   default: '',
-  muted: 'text-[color:var(--muted)]',
-  accent: 'text-[color:var(--accent)]',
-  danger: 'text-[#fb7185]',
-  fg: 'text-[color:var(--fg)]',
-  bg: 'text-[color:var(--bg)]',
+  muted: 'text-[color:var(--md-sys-color-on-surface-variant)]',
+  accent: 'text-[color:var(--md-sys-color-primary)]',
+  primary: 'text-[color:var(--md-sys-color-primary)]',
+  danger: 'text-[color:var(--md-sys-color-error)]',
+  success: 'text-[color:var(--md-sys-color-success)]',
+  fg: 'text-[color:var(--md-sys-color-on-surface)]',
+  bg: 'text-[color:var(--md-sys-color-surface)]',
 }[props.color]))
 
 // Provide explicit dimensions via style to avoid environments

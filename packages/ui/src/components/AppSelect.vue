@@ -1,31 +1,63 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import type { ControlVariant, ControlSize } from '../types'
+
 type Option = { label: string; value: string }
+
 const props = withDefaults(defineProps<{
   modelValue?: string
   options?: Option[]
-  variant?: 'outline' | 'filled' | 'ghost'
+  variant?: ControlVariant
   invalid?: boolean
-  size?: 'sm'|'md'|'lg'
-}>(), { options: () => [], variant: 'outline', invalid: false, size: 'md' })
+  size?: ControlSize
+}>(), { options: () => [], variant: 'outlined', invalid: false, size: 'md' })
+
 const emit = defineEmits<{ (e: 'update:modelValue', v: string): void }>()
 
-const klass = computed(() => {
-  const size = props.size === 'sm' ? 'px-2.5 py-1.5 text-[0.68rem]' : props.size === 'lg' ? 'px-3.5 py-2.5 text-[0.82rem]' : 'px-2.5 py-2 text-[0.75rem]'
-  const base = `w-full rounded-[var(--radius-sm)] border ${size} transition-all duration-150 text-[color:var(--fg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)] focus-visible:ring-offset-1 focus-visible:ring-offset-[color:var(--surface)]`
-  const palette = props.variant === 'filled'
-    ? 'bg-[color:var(--surface-veil)] border-[color:var(--border)]'
-    : props.variant === 'ghost'
-    ? 'bg-transparent border-transparent focus-visible:border-[color:var(--accent)] text-[color:var(--fg)]'
-    : 'bg-[color:var(--surface-translucent)] border-[color:var(--btn-border)] text-[color:var(--fg)]'
-  const invalid = props.invalid ? 'border-[rgba(251,113,133,0.6)] focus-visible:ring-[rgba(251,113,133,0.4)] focus-visible:border-[rgba(251,113,133,0.9)]' : ''
-  return [base, palette, invalid].join(' ')
+const sizeClass = computed(() => {
+  switch (props.size) {
+    case 'sm':
+      return 'px-3 py-2 text-[0.75rem]'
+    case 'lg':
+      return 'px-4 py-3 text-[0.88rem]'
+    default:
+      return 'px-3.5 py-2.5 text-[0.82rem]'
+  }
 })
+
+const variantClass = computed(() => {
+  const alias: Record<ControlVariant, ControlVariant> = {
+    filled: 'filled',
+    outlined: 'outlined',
+    outline: 'outlined',
+    text: 'text'
+  }
+  const key = alias[props.variant] ?? 'outlined'
+  const map: Record<string, string> = {
+    filled: 'bg-[color:var(--md-comp-field-container)] border border-transparent focus-visible:ring-offset-[color:var(--md-comp-field-container)] hover:bg-[color:color-mix(in_srgb,var(--md-comp-field-container) 96%, var(--md-sys-color-surface-tint) 4%)]',
+    outlined: 'bg-transparent border border-[color:var(--md-comp-field-outline)] hover:border-[color:var(--md-sys-color-primary)] focus-visible:ring-offset-[color:var(--md-sys-color-surface)]',
+    text: 'rounded-b-none border-x-0 border-t-0 border-b border-[color:var(--md-comp-field-outline)] px-0 bg-transparent focus-visible:ring-offset-0 hover:border-[color:var(--md-sys-color-primary)]'
+  }
+  return map[key] ?? map.outlined
+})
+
+const invalidClass = computed(() => props.invalid
+  ? 'border-[color:var(--md-sys-color-error)] focus-visible:ring-[color:var(--md-sys-color-error)] focus-visible:ring-offset-[color:var(--md-sys-color-error-container)]'
+  : '')
+
+const klass = computed(() => [
+  'w-full rounded-[var(--radius-md)] transition-all duration-[var(--transition-short)] text-[color:var(--md-comp-field-on-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-comp-focus-ring)]',
+  sizeClass.value,
+  variantClass.value,
+  invalidClass.value
+].join(' '))
 </script>
 
 <template>
   <select
     :value="props.modelValue ?? ''"
+    :data-variant="props.variant"
+    :aria-invalid="props.invalid ? 'true' : 'false'"
     @change="emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
     :class="klass"
   >
@@ -33,5 +65,4 @@ const klass = computed(() => {
     <option v-for="o in props.options" :key="o.value" :value="o.value">{{ o.label }}</option>
     <slot />
   </select>
-  
 </template>

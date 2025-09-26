@@ -2,13 +2,15 @@
 import { ref, watch, computed } from 'vue'
 import AppBadge from './AppBadge.vue'
 import AppIcon from './AppIcon.vue'
+import type { ControlVariant, ControlSize } from '../types'
 
 const props = withDefaults(defineProps<{
   modelValue?: string
   placeholder?: string
-  variant?: 'outline'|'filled'|'ghost'
-  size?: 'sm'|'md'|'lg'
-}>(), { modelValue: '', placeholder: 'Add and press Enter...', variant: 'outline', size: 'md' })
+  variant?: ControlVariant
+  size?: ControlSize
+}>(), { modelValue: '', placeholder: 'Add and press Enter…', variant: 'outlined', size: 'md' })
+
 const emit = defineEmits<{ (e:'update:modelValue', v:string): void }>()
 
 const input = ref('')
@@ -43,36 +45,58 @@ function onKey(e: KeyboardEvent) {
     emit('update:modelValue', valueStr.value)
   }
 }
-const wrapperClass = computed(() => {
-  const size = props.size === 'sm' ? 'px-2 py-1.5 text-[0.68rem]' : props.size === 'lg' ? 'px-3 py-2.5 text-[0.82rem]' : 'px-2.5 py-2 text-[0.75rem]'
-  const base = `flex flex-wrap items-center gap-1 rounded-[var(--radius-sm)] border shadow-[var(--shadow-soft)] ${size}`
-  const palette = props.variant === 'filled'
-    ? 'bg-[color:var(--surface-veil)] border-[color:var(--border)]'
-    : props.variant === 'ghost'
-    ? 'bg-transparent border-transparent focus-within:border-[color:var(--accent)]'
-    : 'bg-[color:var(--surface-translucent)] border-[color:var(--btn-border)]'
-  return [base, palette].join(' ')
+
+const sizeClass = computed(() => {
+  switch (props.size) {
+    case 'sm':
+      return 'px-3 py-2 text-[0.75rem]'
+    case 'lg':
+      return 'px-4 py-3 text-[0.88rem]'
+    default:
+      return 'px-3.5 py-2.5 text-[0.82rem]'
+  }
 })
+
+const variantClass = computed(() => {
+  const alias: Record<ControlVariant, ControlVariant> = {
+    filled: 'filled',
+    outlined: 'outlined',
+    outline: 'outlined',
+    text: 'text'
+  }
+  const key = alias[props.variant] ?? 'outlined'
+  const map: Record<string, string> = {
+    filled: 'bg-[color:var(--md-comp-field-container)] border border-transparent focus-within:ring-2 focus-within:ring-[color:var(--md-comp-focus-ring)] focus-within:ring-offset-[color:var(--md-comp-field-container)] hover:bg-[color:color-mix(in_srgb,var(--md-comp-field-container) 96%, var(--md-sys-color-surface-tint) 4%)]',
+    outlined: 'bg-transparent border border-[color:var(--md-comp-field-outline)] focus-within:ring-2 focus-within:ring-[color:var(--md-comp-focus-ring)] focus-within:ring-offset-[color:var(--md-sys-color-surface)] hover:border-[color:var(--md-sys-color-primary)]',
+    text: 'rounded-b-none border-x-0 border-t-0 border-b border-[color:var(--md-comp-field-outline)] px-0 bg-transparent focus-within:ring-2 focus-within:ring-[color:var(--md-comp-focus-ring)] focus-within:ring-offset-0 hover:border-[color:var(--md-sys-color-primary)]'
+  }
+  return map[key] ?? map.outlined
+})
+
+const wrapperClass = computed(() => [
+  'flex flex-wrap items-center gap-1 rounded-[var(--radius-md)] shadow-[var(--shadow-level1)] transition-shadow duration-[var(--transition-short)] focus-within:shadow-[var(--shadow-level2)]',
+  sizeClass.value,
+  variantClass.value
+].join(' '))
 </script>
 
 <template>
   <div :class="wrapperClass">
-    <AppBadge v-for="(t, i) in tags" :key="t" variant="neutral">
+    <AppBadge v-for="(t, i) in tags" :key="t" variant="neutral" size="sm">
       <span>{{ t }}</span>
       <button
         type="button"
-        class="ml-1 inline-flex items-center justify-center rounded-[var(--radius-xs)] p-0.5 text-[color:var(--muted)] transition-colors hover:bg-[color:var(--surface-veil)] hover:text-[color:var(--fg)]"
+        class="ml-1 inline-flex items-center justify-center rounded-[var(--radius-xs)] p-0.5 text-[color:var(--md-sys-color-on-surface-variant)] transition-colors duration-[var(--transition-short)] hover:bg-[color:var(--md-comp-button-ghost-hover-layer)] hover:text-[color:var(--md-sys-color-on-surface)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--md-comp-focus-ring)] focus-visible:ring-offset-1 focus-visible:ring-offset-[color:var(--md-sys-color-surface)]"
         @click="removeAt(i)"
       >
-        <AppIcon name="x" />
+        <AppIcon name="x" size="xs" />
       </button>
     </AppBadge>
     <input
       v-model="input"
       :placeholder="props.placeholder"
       @keydown="onKey"
-      class="flex-1 bg-transparent px-2 py-1 text-[color:var(--fg)] placeholder:text-[color:var(--muted)] focus-visible:outline-none"
+      class="flex-1 bg-transparent px-2 py-1 text-[color:var(--md-comp-field-on-surface)] placeholder:text-[color:var(--md-comp-field-placeholder)] focus-visible:outline-none"
     />
   </div>
 </template>
-

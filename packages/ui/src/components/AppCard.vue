@@ -1,21 +1,33 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { cx } from '../utils/variants'
+
 const props = withDefaults(defineProps<{
   title?: string
-  variant?: 'default'|'elevated'|'ghost'
+  variant?: 'filled'|'elevated'|'outlined'|'surface'|'ghost'|'default'
   padding?: 'sm'|'md'|'lg'
-}>(), { variant: 'default', padding: 'md' })
+}>(), { variant: 'elevated', padding: 'md' })
+
+const variantClass = computed(() => {
+  const map: Record<string, string> = {
+    filled: 'bg-[color:var(--md-sys-color-surface)] text-[color:var(--md-sys-color-on-surface)] border border-[color:var(--md-sys-color-outline-variant)] shadow-[var(--shadow-level1)]',
+    surface: 'bg-[color:var(--md-sys-color-surface-container)] text-[color:var(--md-sys-color-on-surface)] border border-[color:var(--md-sys-color-outline-variant)] shadow-[var(--shadow-level1)]',
+    elevated: 'bg-[color:var(--md-sys-color-surface-container-high)] text-[color:var(--md-sys-color-on-surface)] border border-[color:var(--md-sys-color-outline-variant)] shadow-[var(--shadow-level2)]',
+    outlined: 'bg-[color:var(--md-sys-color-surface)] text-[color:var(--md-sys-color-on-surface)] border border-[color:var(--md-sys-color-outline)] shadow-none',
+    ghost: 'bg-transparent border border-transparent shadow-none',
+    default: 'bg-[color:var(--md-sys-color-surface-container)] text-[color:var(--md-sys-color-on-surface)] border border-[color:var(--md-sys-color-outline-variant)] shadow-[var(--shadow-level1)]'
+  }
+  return map[props.variant] ?? map.elevated
+})
+
+const paddingClass = computed(() => props.padding === 'sm' ? 'p-4' : props.padding === 'lg' ? 'p-8' : 'p-6')
 </script>
 
 <template>
-  <section :class="[
-    'rounded-[var(--radius-lg)] backdrop-blur-md',
-    props.variant==='ghost' ? 'border-transparent bg-transparent shadow-none' : '',
-    props.variant==='elevated' ? 'border border-[color:var(--border)] bg-[color:var(--surface-panel)] shadow-[var(--shadow-elevated)]' : '',
-    props.variant==='default' ? 'border border-[color:var(--border)] bg-[color:var(--surface-panel)] shadow-[var(--shadow-card)]' : '',
-    props.padding==='sm' ? 'p-3' : (props.padding==='lg' ? 'p-6' : 'p-5')
-  ]">
-    <h2 v-if="props.title" class="mb-3 text-base font-semibold">{{ props.title }}</h2>
+  <section :class="cx('rounded-[var(--radius-lg)] transition-shadow duration-[var(--transition-short)] backdrop-blur-sm', variantClass.value, paddingClass.value)">
+    <header v-if="props.title" class="mb-4">
+      <h2 class="font-semibold text-[1.05rem] tracking-[0.04em] text-[color:var(--md-sys-color-on-surface)]">{{ props.title }}</h2>
+    </header>
     <slot />
   </section>
 </template>
-
