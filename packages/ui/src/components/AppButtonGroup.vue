@@ -89,7 +89,7 @@ function palette(active: boolean) {
 }
 
 function itemClass(active: boolean) {
-  const base = 'px-3 transition-all duration-[var(--transition-short)] uppercase tracking-[0.12em] font-semibold border-r last:border-r-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--md-comp-focus-ring)] focus-visible:ring-offset-1 focus-visible:ring-offset-[color:var(--md-sys-color-surface)]'
+  const base = 'px-3 transition-all duration-[var(--motion-duration-sm)] uppercase tracking-[0.12em] font-semibold border-r last:border-r-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--md-comp-focus-ring)] focus-visible:ring-offset-1 focus-visible:ring-offset-[color:var(--md-sys-color-surface)]'
   return cx(base, sizeClass.value, palette(active))
 }
 </script>

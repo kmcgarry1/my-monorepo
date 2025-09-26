@@ -45,7 +45,7 @@ const invalidClass = computed(() => props.invalid
   : '')
 
 const klass = computed(() => [
-  'w-full rounded-[var(--radius-md)] transition-all duration-[var(--transition-short)] text-[color:var(--md-comp-field-on-surface)] placeholder:text-[color:var(--md-comp-field-placeholder)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-comp-focus-ring)]',
+  'w-full rounded-[var(--radius-md)] transition-all duration-[var(--motion-duration-sm)] text-[color:var(--md-comp-field-on-surface)] placeholder:text-[color:var(--md-comp-field-placeholder)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--md-comp-focus-ring)]',
   sizeClass.value,
   variantClass.value,
   invalidClass.value

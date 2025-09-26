@@ -11,29 +11,37 @@ const guidance = computed(() => getEnvironmentTierGuidance(props.tier, props.env
 </script>
 
 <template>
-  <AppCard title="Features & Prompts">
-    <p v-if="guidance" class="intro">{{ guidance.features }}</p>
+  <AppCard
+    title="Features &amp; Prompts"
+    :subtitle="guidance?.features"
+    variant="surface"
+  >
     <FeatureEditorList v-model="props.environment.features" />
-    <div class="mt-3">
+    <div class="field-cluster">
       <AppFieldLabel label="GM Prompts">
         <AppIconButton name="info" variant="ghost" size="xs" title="GM Prompts" @click="openGlossary('gm-prompts')" />
       </AppFieldLabel>
-      <AppTextarea :model-value="props.environment.prompts" @update:modelValue="v => props.environment.prompts = v" :rows="3" placeholder="Add guiding questions…" />
+      <AppTextarea
+        :model-value="props.environment.prompts"
+        @update:modelValue="v => props.environment.prompts = v"
+        :rows="3"
+        placeholder="Add guiding questions..."
+      />
       <p v-if="guidance" class="hint">{{ guidance.prompts }}</p>
     </div>
   </AppCard>
 </template>
 
 <style scoped>
-.intro {
-  margin: 0 0 0.75rem;
-  color: var(--muted);
-  font-size: 0.85rem;
+.field-cluster {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
 }
 
 .hint {
-  margin-top: 0.35rem;
-  color: var(--muted);
+  margin: 0;
   font-size: 0.75rem;
+  color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 92%, transparent);
 }
 </style>

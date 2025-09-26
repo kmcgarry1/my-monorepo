@@ -11,17 +11,12 @@ const guidance = computed(() => getEnemyTierGuidance(props.tier, props.enemy.ran
 </script>
 
 <template>
-  <AppCard title="Abilities & Features">
-    <p v-if="guidance" class="intro">{{ guidance.features }}</p>
+  <AppCard
+    title="Abilities &amp; Features"
+    :subtitle="guidance?.features"
+    variant="surface"
+  >
     <AttackEditorList v-model="props.enemy.attacks" />
     <FeatureEditorList v-model="props.enemy.features" />
   </AppCard>
 </template>
-
-<style scoped>
-.intro {
-  margin: 0 0 0.75rem;
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-</style>

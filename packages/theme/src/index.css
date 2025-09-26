@@ -7,6 +7,15 @@
   --font-display: 'Google Sans Display', 'Roboto Flex', 'Segoe UI', system-ui, sans-serif;
   --font-mono: 'Roboto Mono', 'JetBrains Mono', 'Fira Code', 'SFMono-Regular', 'Source Code Pro', monospace;
 
+  --space-xxs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 2.5rem;
+  --space-3xl: 3.5rem;
+
   --radius-xs: 0.25rem;
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
@@ -14,17 +23,101 @@
   --radius-xl: 1.5rem;
   --radius-pill: 999px;
 
-  --shadow-level1: 0 1px 2px 0 rgba(15, 23, 42, 0.08), 0 1px 3px 1px rgba(15, 23, 42, 0.12);
-  --shadow-level2: 0 2px 6px 2px rgba(15, 23, 42, 0.08), 0 2px 4px -1px rgba(15, 23, 42, 0.12);
-  --shadow-level3: 0 6px 10px 4px rgba(15, 23, 42, 0.1), 0 2px 4px -1px rgba(15, 23, 42, 0.12);
-  --shadow-level4: 0 8px 12px 6px rgba(15, 23, 42, 0.12), 0 4px 6px -2px rgba(15, 23, 42, 0.16);
-  --shadow-level5: 0 12px 20px 8px rgba(15, 23, 42, 0.14), 0 6px 8px -4px rgba(15, 23, 42, 0.2);
+  --shadow-level1: 0 1px 2px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-level2: 0 4px 8px rgba(15, 23, 42, 0.1), 0 2px 6px rgba(15, 23, 42, 0.06);
+  --shadow-level3: 0 8px 16px rgba(15, 23, 42, 0.12), 0 6px 10px rgba(15, 23, 42, 0.08);
+  --shadow-level4: 0 12px 20px rgba(15, 23, 42, 0.14), 0 6px 12px rgba(15, 23, 42, 0.08);
+  --shadow-level5: 0 20px 32px rgba(15, 23, 42, 0.18), 0 12px 24px rgba(15, 23, 42, 0.1);
 
-  --transition-micro: 120ms cubic-bezier(0.2, 0, 0, 1);
-  --transition-short: 160ms cubic-bezier(0.2, 0, 0, 1);
-  --transition-medium: 220ms cubic-bezier(0.2, 0, 0, 1);
-  --transition-long: 320ms cubic-bezier(0.2, 0, 0, 1);
-  --transition-emphasized: 220ms cubic-bezier(0.05, 0.7, 0.1, 1);
+  --motion-duration-xs: 120ms;
+  --motion-duration-sm: 160ms;
+  --motion-duration-md: 220ms;
+  --motion-duration-lg: 320ms;
+  --motion-duration-xl: 480ms;
+
+  --motion-delay-sm: 45ms;
+  --motion-delay-md: 90ms;
+
+  --motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --motion-easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  --motion-easing-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+
+  --transition-micro: var(--motion-duration-xs);
+  --transition-short: var(--motion-duration-sm);
+  --transition-medium: var(--motion-duration-md);
+  --transition-long: var(--motion-duration-lg);
+  --transition-emphasized: var(--motion-duration-md);
+
+  --ease-standard: var(--motion-easing-standard);
+  --ease-emphasized: var(--motion-easing-emphasized);
+
+  --type-display-lg-size: 3.5625rem;
+  --type-display-lg-line: 4rem;
+  --type-display-lg-weight: 400;
+  --type-display-lg-tracking: -0.015em;
+  --type-display-md-size: 2.8125rem;
+  --type-display-md-line: 3.25rem;
+  --type-display-md-weight: 400;
+  --type-display-md-tracking: 0em;
+  --type-display-sm-size: 2.25rem;
+  --type-display-sm-line: 2.75rem;
+  --type-display-sm-weight: 400;
+  --type-display-sm-tracking: 0em;
+
+  --type-headline-lg-size: 2rem;
+  --type-headline-lg-line: 2.5rem;
+  --type-headline-lg-weight: 400;
+  --type-headline-lg-tracking: 0em;
+  --type-headline-md-size: 1.75rem;
+  --type-headline-md-line: 2.25rem;
+  --type-headline-md-weight: 400;
+  --type-headline-md-tracking: 0em;
+  --type-headline-sm-size: 1.5rem;
+  --type-headline-sm-line: 2rem;
+  --type-headline-sm-weight: 400;
+  --type-headline-sm-tracking: 0em;
+
+  --type-title-lg-size: 1.375rem;
+  --type-title-lg-line: 1.75rem;
+  --type-title-lg-weight: 600;
+  --type-title-lg-tracking: 0em;
+  --type-title-md-size: 1.125rem;
+  --type-title-md-line: 1.5rem;
+  --type-title-md-weight: 600;
+  --type-title-md-tracking: 0.01em;
+  --type-title-sm-size: 1rem;
+  --type-title-sm-line: 1.4rem;
+  --type-title-sm-weight: 600;
+  --type-title-sm-tracking: 0.01em;
+
+  --type-body-lg-size: 1rem;
+  --type-body-lg-line: 1.6rem;
+  --type-body-lg-weight: 400;
+  --type-body-lg-tracking: 0.01em;
+  --type-body-md-size: 0.875rem;
+  --type-body-md-line: 1.45rem;
+  --type-body-md-weight: 400;
+  --type-body-md-tracking: 0.015em;
+  --type-body-sm-size: 0.75rem;
+  --type-body-sm-line: 1.3rem;
+  --type-body-sm-weight: 400;
+  --type-body-sm-tracking: 0.02em;
+
+  --type-label-lg-size: 0.875rem;
+  --type-label-lg-line: 1.25rem;
+  --type-label-lg-weight: 600;
+  --type-label-lg-tracking: 0.01em;
+  --type-label-md-size: 0.75rem;
+  --type-label-md-line: 1rem;
+  --type-label-md-weight: 600;
+  --type-label-md-tracking: 0.04em;
+  --type-label-sm-size: 0.6875rem;
+  --type-label-sm-line: 1rem;
+  --type-label-sm-weight: 600;
+  --type-label-sm-tracking: 0.08em;
 
   /* Default theme values mirror material-indigo for SSR */
   --md-sys-color-primary: #6750A4;
@@ -94,7 +187,7 @@
   --md-comp-button-success-container-hover: color-mix(in srgb, var(--md-comp-button-success-container) 92%, var(--md-sys-color-on-success) 8%);
   --md-comp-button-ghost-hover-layer: color-mix(in srgb, var(--md-comp-button-ghost-label) 10%, transparent);
 
-  --md-comp-field-container: color-mix(in srgb, var(--md-sys-color-surface) 88%, var(--md-sys-color-surface-variant) 12%);
+  --md-comp-field-container: color-mix(in srgb, var(--md-sys-color-surface) 92%, var(--md-sys-color-surface-variant) 8%);
   --md-comp-field-outline: var(--md-sys-color-outline);
   --md-comp-field-on-surface: var(--md-sys-color-on-surface);
   --md-comp-field-placeholder: var(--md-sys-color-on-surface-variant);
@@ -105,8 +198,8 @@
   --muted: var(--md-sys-color-on-surface-variant);
   --surface: var(--md-sys-color-surface);
   --surface-2: var(--md-sys-color-surface-container);
-  --surface-translucent: color-mix(in srgb, var(--md-sys-color-surface) 92%, transparent);
-  --surface-veil: color-mix(in srgb, var(--md-sys-color-surface) 82%, transparent);
+  --surface-translucent: color-mix(in srgb, var(--md-sys-color-surface) 94%, transparent);
+  --surface-veil: color-mix(in srgb, var(--md-sys-color-surface) 78%, transparent);
   --surface-panel: var(--md-sys-color-surface-container-high);
   --border: var(--md-sys-color-outline-variant);
   --border-soft: var(--md-sys-color-outline-variant);
@@ -160,7 +253,7 @@ body {
 a {
   color: var(--md-comp-button-text-label);
   text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
-  transition: color var(--transition-short), text-decoration-color var(--transition-short);
+  transition: color var(--motion-duration-sm) var(--motion-easing-standard), text-decoration-color var(--motion-duration-sm) var(--motion-easing-standard);
 }
 
 a:hover {

@@ -17,26 +17,56 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <AppCard title="Identity">
-    <AppRow :cols="2">
+  <AppCard
+    title="Identity"
+    subtitle="Establish who this statblock is and the impression it should leave."
+    variant="elevated"
+  >
+    <AppRow :cols="2" class="gap-4">
       <AppCol>
         <AppFieldLabel icon="sword" label="Name" />
-        <AppInput :model-value="props.name" @update:modelValue="v => emit('update:name', v)" placeholder="e.g., Acid Burrower" />
+        <AppInput
+          :model-value="props.name"
+          @update:modelValue="v => emit('update:name', v)"
+          placeholder="e.g., Acid Burrower"
+        />
       </AppCol>
       <AppCol>
         <AppFieldLabel icon="book" label="Archetype" />
-        <AppInput :model-value="props.archetype" @update:modelValue="v => emit('update:archetype', v)" placeholder="e.g., Ancient Burrowing Horror" />
+        <AppInput
+          :model-value="props.archetype"
+          @update:modelValue="v => emit('update:archetype', v)"
+          placeholder="e.g., Ancient Burrowing Horror"
+        />
       </AppCol>
     </AppRow>
 
-    <div class="mt-3">
+    <div class="stack">
       <AppFieldLabel icon="book" label="Description" />
-      <AppTextarea :model-value="props.description" @update:modelValue="v => emit('update:description', v)" placeholder="Short descriptive blurb" :rows="2" variant="filled" />
+      <AppTextarea
+        :model-value="props.description"
+        @update:modelValue="v => emit('update:description', v)"
+        placeholder="Short descriptive blurb"
+        :rows="2"
+        variant="filled"
+      />
     </div>
 
-    <div class="mt-3">
+    <div class="stack">
       <AppFieldLabel icon="info" label="Traits" />
-      <AppTagInput :model-value="props.traits" @update:modelValue="v => emit('update:traits', v)" placeholder="Type a trait and press Enter" />
+      <AppTagInput
+        :model-value="props.traits"
+        @update:modelValue="v => emit('update:traits', v)"
+        placeholder="Type a trait and press Enter"
+      />
     </div>
   </AppCard>
 </template>
+
+<style scoped>
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+</style>

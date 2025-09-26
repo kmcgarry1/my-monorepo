@@ -59,7 +59,7 @@ function choose(v: string) {
           :key="it.value"
           type="button"
           @click="choose(it.value)"
-          :class="['flex w-full items-center gap-3 text-left font-medium uppercase tracking-[0.08em] text-[color:var(--md-sys-color-on-surface)] transition-colors duration-[var(--transition-short)] hover:bg-[color:var(--md-comp-button-ghost-hover-layer)] focus-visible:outline-none focus-visible:bg-[color:var(--md-comp-button-ghost-hover-layer)]', itemSize(props.size)]"
+          :class="['flex w-full items-center gap-3 text-left font-medium uppercase tracking-[0.08em] text-[color:var(--md-sys-color-on-surface)] transition-colors duration-[var(--motion-duration-sm)] hover:bg-[color:var(--md-comp-button-ghost-hover-layer)] focus-visible:outline-none focus-visible:bg-[color:var(--md-comp-button-ghost-hover-layer)]', itemSize(props.size)]"
         >
           <AppIcon v-if="it.icon" :name="it.icon" />
           <span>{{ it.label }}</span>

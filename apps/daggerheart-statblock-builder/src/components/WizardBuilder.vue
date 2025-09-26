@@ -382,10 +382,6 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
   gap: 1rem;
 }
 
-.step-container :deep(.app-card) {
-  background: color-mix(in srgb, var(--surface-veil) 88%, transparent);
-}
-
 .review-hint {
   border: 1px dashed color-mix(in srgb, var(--border) 65%, transparent);
   border-radius: var(--radius-lg);

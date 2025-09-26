@@ -4,6 +4,45 @@ export const fonts = {
   display: "'Google Sans Display', 'Roboto Flex', 'Segoe UI', system-ui, sans-serif"
 } as const
 
+export const spacing = {
+  xxs: '0.25rem',
+  xs: '0.5rem',
+  sm: '0.75rem',
+  md: '1rem',
+  lg: '1.5rem',
+  xl: '2rem',
+  xxl: '2.5rem',
+  xxxl: '3.5rem'
+} as const
+
+export const typography = {
+  display: {
+    large: { size: '3.5625rem', lineHeight: '4rem', tracking: '-0.015em', weight: 400 },
+    medium: { size: '2.8125rem', lineHeight: '3.25rem', tracking: '0em', weight: 400 },
+    small: { size: '2.25rem', lineHeight: '2.75rem', tracking: '0em', weight: 400 }
+  },
+  headline: {
+    large: { size: '2rem', lineHeight: '2.5rem', tracking: '0em', weight: 400 },
+    medium: { size: '1.75rem', lineHeight: '2.25rem', tracking: '0em', weight: 400 },
+    small: { size: '1.5rem', lineHeight: '2rem', tracking: '0em', weight: 400 }
+  },
+  title: {
+    large: { size: '1.375rem', lineHeight: '1.75rem', tracking: '0em', weight: 600 },
+    medium: { size: '1.125rem', lineHeight: '1.5rem', tracking: '0.01em', weight: 600 },
+    small: { size: '1rem', lineHeight: '1.4rem', tracking: '0.01em', weight: 600 }
+  },
+  body: {
+    large: { size: '1rem', lineHeight: '1.6rem', tracking: '0.01em', weight: 400 },
+    medium: { size: '0.875rem', lineHeight: '1.45rem', tracking: '0.015em', weight: 400 },
+    small: { size: '0.75rem', lineHeight: '1.3rem', tracking: '0.02em', weight: 400 }
+  },
+  label: {
+    large: { size: '0.875rem', lineHeight: '1.25rem', tracking: '0.01em', weight: 600 },
+    medium: { size: '0.75rem', lineHeight: '1rem', tracking: '0.04em', weight: 600 },
+    small: { size: '0.6875rem', lineHeight: '1rem', tracking: '0.08em', weight: 600 }
+  }
+} as const
+
 export const radii = {
   xs: '0.25rem',
   sm: '0.5rem',
@@ -13,20 +52,49 @@ export const radii = {
   pill: '999px'
 } as const
 
-export const transitions = {
-  micro: '120ms cubic-bezier(0.2, 0, 0, 1)',
-  short: '160ms cubic-bezier(0.2, 0, 0, 1)',
-  medium: '220ms cubic-bezier(0.2, 0, 0, 1)',
-  long: '320ms cubic-bezier(0.2, 0, 0, 1)',
-  emphasized: '220ms cubic-bezier(0.05, 0.7, 0.1, 1)'
+export const shadows = {
+  level1: '0 1px 2px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.06)',
+  level2: '0 4px 8px rgba(15, 23, 42, 0.1), 0 2px 6px rgba(15, 23, 42, 0.06)',
+  level3: '0 8px 16px rgba(15, 23, 42, 0.12), 0 6px 10px rgba(15, 23, 42, 0.08)',
+  level4: '0 12px 20px rgba(15, 23, 42, 0.14), 0 6px 12px rgba(15, 23, 42, 0.08)',
+  level5: '0 20px 32px rgba(15, 23, 42, 0.18), 0 12px 24px rgba(15, 23, 42, 0.1)'
 } as const
 
-export const shadows = {
-  level1: '0 1px 2px 0 rgba(15, 23, 42, 0.08), 0 1px 3px 1px rgba(15, 23, 42, 0.12)',
-  level2: '0 2px 6px 2px rgba(15, 23, 42, 0.08), 0 2px 4px -1px rgba(15, 23, 42, 0.12)',
-  level3: '0 6px 10px 4px rgba(15, 23, 42, 0.1), 0 2px 4px -1px rgba(15, 23, 42, 0.12)',
-  level4: '0 8px 12px 6px rgba(15, 23, 42, 0.12), 0 4px 6px -2px rgba(15, 23, 42, 0.16)',
-  level5: '0 12px 20px 8px rgba(15, 23, 42, 0.14), 0 6px 8px -4px rgba(15, 23, 42, 0.2)'
+export const motion = {
+  durations: {
+    xs: '120ms',
+    sm: '160ms',
+    md: '220ms',
+    lg: '320ms',
+    xl: '480ms'
+  },
+  delays: {
+    sm: '45ms',
+    md: '90ms'
+  },
+  easings: {
+    standard: 'cubic-bezier(0.2, 0, 0, 1)',
+    decelerate: 'cubic-bezier(0, 0, 0.2, 1)',
+    accelerate: 'cubic-bezier(0.4, 0, 1, 1)',
+    emphasized: 'cubic-bezier(0.05, 0.7, 0.1, 1)',
+    emphasizedDecelerate: 'cubic-bezier(0.05, 0.7, 0.1, 1)',
+    emphasizedAccelerate: 'cubic-bezier(0.3, 0, 0.8, 0.15)'
+  }
+} as const
+
+export const transitions = {
+  micro: `${motion.durations.xs} ${motion.easings.emphasizedDecelerate}`,
+  short: `${motion.durations.sm} ${motion.easings.standard}`,
+  medium: `${motion.durations.md} ${motion.easings.standard}`,
+  long: `${motion.durations.lg} ${motion.easings.standard}`,
+  emphasized: `${motion.durations.md} ${motion.easings.emphasized}`
+} as const
+
+export const stateLayers = {
+  hover: 0.08,
+  focus: 0.12,
+  pressed: 0.12,
+  dragged: 0.16
 } as const
 
 const materialIndigoVars = {
