@@ -3,6 +3,11 @@ import { ref, watch, computed } from 'vue'
 import AppBadge from './AppBadge.vue'
 import AppIcon from './AppIcon.vue'
 import type { ControlVariant, ControlSize } from '../types'
+import {
+  controlSizeClass,
+  normalizeControlVariant,
+  type NormalizedControlVariant
+} from '../utils/control'
 
 const props = withDefaults(defineProps<{
   modelValue?: string
@@ -46,26 +51,12 @@ function onKey(e: KeyboardEvent) {
   }
 }
 
-const sizeClass = computed(() => {
-  switch (props.size) {
-    case 'sm':
-      return 'px-3 py-2 text-[0.75rem]'
-    case 'lg':
-      return 'px-4 py-3 text-[0.88rem]'
-    default:
-      return 'px-3.5 py-2.5 text-[0.82rem]'
-  }
-})
+const sizeClass = computed(() => controlSizeClass(props.size))
+
+const normalizedVariant = computed<NormalizedControlVariant>(() => normalizeControlVariant(props.variant, 'outlined'))
 
 const variantClass = computed(() => {
-  const alias: Record<ControlVariant, ControlVariant> = {
-    filled: 'filled',
-    outlined: 'outlined',
-    outline: 'outlined',
-    text: 'text'
-  }
-  const key = alias[props.variant] ?? 'outlined'
-  const map: Record<string, string> = {
+  const map: Record<NormalizedControlVariant, string> = {
     filled:
       'bg-[color:var(--surface-translucent)] border border-[color:var(--border-muted)] backdrop-blur-sm focus-within:ring-2 focus-within:ring-[color:var(--md-comp-focus-ring)] focus-within:ring-offset-[color:var(--surface-translucent)] hover:border-[color:var(--border)]',
     outlined:
@@ -73,7 +64,7 @@ const variantClass = computed(() => {
     text:
       'rounded-b-none border-x-0 border-t-0 border-b border-[color:var(--border-muted)] px-0 bg-transparent focus-within:ring-2 focus-within:ring-[color:var(--md-comp-focus-ring)] focus-within:ring-offset-0 hover:border-[color:color-mix(in_srgb,var(--accent) 55%, transparent)]'
   }
-  return map[key] ?? map.outlined
+  return map[normalizedVariant.value]
 })
 
 const wrapperClass = computed(() => [
