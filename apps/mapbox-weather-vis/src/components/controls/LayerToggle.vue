@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { inject, watch } from 'vue'
-import type mapboxgl from 'mapbox-gl'
+import type { Map as MapboxMap } from 'mapbox-gl'
 import { MapboxKey, MapUiStateKey } from '../di/keys'
 
 const map = inject(MapboxKey, null)
 const uiState = inject(MapUiStateKey, null)
 
-function setSymbolVisibility(mapInstance: mapboxgl.Map | null, visible: boolean) {
+function setSymbolVisibility(mapInstance: MapboxMap | null, visible: boolean) {
   if (!mapInstance) return
   try {
     const style = mapInstance.getStyle()

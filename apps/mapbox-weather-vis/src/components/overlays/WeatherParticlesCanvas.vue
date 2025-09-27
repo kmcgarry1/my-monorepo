@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { inject, onBeforeUnmount, onMounted, ref } from 'vue'
-import type mapboxgl from 'mapbox-gl'
 import { MapboxKey, MapUiStateKey } from '../di/keys'
 
 const map = inject(MapboxKey, null)

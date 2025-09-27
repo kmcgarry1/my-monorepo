@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { AppButton, AppIcon, AppIconButton, fadeScale, fadeSlideUp } from '@my-monorepo/ui'
+import { AppButton, AppIcon, AppIconButton, fadeScale, fadeSlideUp, useMaterialDisplay } from '@my-monorepo/ui'
 import BuilderHero from './components/BuilderHero.vue'
 import BuilderInsights from './components/BuilderInsights.vue'
 import BuilderWizardOverlay from './components/BuilderWizardOverlay.vue'
@@ -10,7 +10,6 @@ import PrintableStatblock from './components/PrintableStatblock.vue'
 import GlossaryDrawer from './components/GlossaryDrawer.vue'
 import NameReferenceDrawer from './components/NameReferenceDrawer.vue'
 import { useStatblockBuilder } from './composables/useStatblockBuilder'
-import { useMobileLayout } from './composables/useMobileLayout'
 import { getTierGuide } from './lib/tierGuides'
 import { openGlossary } from './lib/glossaryState'
 
@@ -32,7 +31,7 @@ const {
 const showWizard = ref(false)
 const wizardKey = ref(0)
 const showNameReference = ref(false)
-const { isMobile } = useMobileLayout()
+const { deviceClasses, isPhone } = useMaterialDisplay()
 
 const isEnemy = computed(() => sbType.value === 'enemy')
 const typeLabel = computed(() => (isEnemy.value ? 'Enemy' : 'Environment'))
@@ -161,14 +160,14 @@ function handlePrint() {
 </script>
 
 <template>
-  <div class="app-shell" :class="{ 'is-mobile': isMobile }">
+  <div class="app-shell" :class="deviceClasses">
     <div class="shell-background" aria-hidden="true">
       <div class="shell-layer shell-layer--primary" />
       <div class="shell-layer shell-layer--accent" />
       <div class="shell-grid" />
     </div>
 
-    <aside v-if="!isMobile" class="nav-rail" aria-label="Builder navigation">
+    <aside v-if="!isPhone" class="nav-rail" aria-label="Builder navigation">
       <div class="nav-rail__logo" aria-hidden="true">
         <span class="nav-rail__brand">DH</span>
       </div>
@@ -204,7 +203,7 @@ function handlePrint() {
     </aside>
 
     <main class="layout-surface" role="main">
-      <header v-if="!isMobile" class="top-app-bar" role="banner">
+      <header v-if="!isPhone" class="top-app-bar" role="banner">
         <div class="top-app-bar__headline">
           <span class="top-app-bar__eyebrow">Daggerheart builder</span>
           <span class="top-app-bar__title">{{ displayName }}</span>
@@ -268,7 +267,7 @@ function handlePrint() {
         </div>
       </header>
 
-      <nav v-if="isMobile" class="mobile-action-bar" aria-label="Builder navigation">
+      <nav v-if="isPhone" class="mobile-action-bar" aria-label="Builder navigation">
         <button class="mobile-action is-active" type="button">
           <AppIcon name="sword" size="sm" />
           <span>Builder</span>
@@ -572,23 +571,23 @@ function handlePrint() {
   gap: clamp(1.9rem, 3vw, 2.6rem);
 }
 
-.app-shell.is-mobile {
+.app-shell.is-phone {
   grid-template-columns: 1fr;
   padding: clamp(1.2rem, 6vw, 1.8rem) clamp(0.75rem, 5vw, 1.6rem) clamp(2.4rem, 9vw, 3.2rem);
 }
 
-.app-shell.is-mobile .layout-surface {
+.app-shell.is-phone .layout-surface {
   padding: clamp(1rem, 6vw, 1.4rem);
   border-radius: 1.5rem;
   gap: 1.6rem;
 }
 
-.app-shell.is-mobile .layout-overview {
+.app-shell.is-phone .layout-overview {
   grid-template-columns: 1fr;
   gap: clamp(1rem, 5vw, 1.4rem);
 }
 
-.app-shell.is-mobile .layout-grid {
+.app-shell.is-phone .layout-grid {
   grid-template-columns: 1fr;
   gap: clamp(1rem, 6vw, 1.6rem);
 }

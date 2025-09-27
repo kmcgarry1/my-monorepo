@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
+import { useMaterialDisplay } from '@my-monorepo/ui'
 import DataManager from './components/DataManager.vue'
 import RecipeEditor from './components/RecipeEditor.vue'
 import RecipeList from './components/RecipeList.vue'
@@ -15,6 +16,8 @@ const navTabs: Array<{ id: TabId; label: string; description: string }> = [
   { id: 'edit', label: 'Add & refine', description: 'Craft new entries or iterate on existing ones.' },
   { id: 'data', label: 'Import & export', description: 'Bring data in from CSV or back everything up.' }
 ]
+
+const { deviceClasses, isPhone, layout } = useMaterialDisplay()
 
 function loadInitial() {
   const ls = localStorage.getItem('hrs:data')
@@ -40,7 +43,7 @@ watch(
 </script>
 
 <template>
-  <div class="app-shell">
+  <div class="app-shell" :class="deviceClasses" :data-layout="layout">
     <div class="app-aura" aria-hidden="true" />
     <main class="app-container">
       <header class="app-header">
@@ -51,18 +54,19 @@ watch(
         </p>
       </header>
 
-      <nav class="tab-rail" role="tablist">
+      <nav class="tab-rail" role="tablist" :class="{ 'is-phone': isPhone }">
         <button
           v-for="item in navTabs"
           :key="item.id"
           type="button"
           class="tab-chip"
+          :class="{ 'is-phone': isPhone }"
           role="tab"
           :aria-selected="tab === item.id"
           @click="tab = item.id"
         >
           <span class="chip-label">{{ item.label }}</span>
-          <span class="chip-description">{{ item.description }}</span>
+          <span v-if="!isPhone" class="chip-description">{{ item.description }}</span>
         </button>
       </nav>
 
@@ -91,6 +95,10 @@ watch(
   justify-content: center;
 }
 
+.app-shell.is-phone {
+  padding: clamp(2rem, 6vw, 3.2rem) clamp(1rem, 5vw, 1.75rem);
+}
+
 .app-aura {
   position: absolute;
   inset: 0;
@@ -115,10 +123,21 @@ watch(
   backdrop-filter: blur(26px);
 }
 
+.app-shell.is-phone .app-container {
+  gap: clamp(1.1rem, 4vw, 1.6rem);
+  border-radius: 1.6rem;
+  padding: clamp(1.25rem, 6vw, 1.9rem);
+  box-shadow: var(--glass-shadow-md), var(--glass-highlight);
+}
+
 .app-header {
   display: grid;
   gap: 0.75rem;
   max-width: 48rem;
+}
+
+.app-shell.is-phone .app-header {
+  gap: 0.65rem;
 }
 
 .header-eyebrow {
@@ -139,11 +158,20 @@ watch(
   color: var(--md-sys-color-on-surface);
 }
 
+.app-shell.is-phone .app-header h1 {
+  font-size: clamp(1.85rem, 7vw, 2.45rem);
+}
+
 .header-supporting {
   margin: 0;
   font-size: 1.05rem;
   line-height: 1.65rem;
   color: var(--md-sys-color-on-surface-variant);
+}
+
+.app-shell.is-phone .header-supporting {
+  font-size: 0.95rem;
+  line-height: 1.55rem;
 }
 
 .tab-rail {
@@ -155,6 +183,13 @@ watch(
   padding: clamp(0.75rem, 2.5vw, 1.25rem);
   border: 1px solid color-mix(in srgb, var(--border-soft) 72%, transparent);
   box-shadow: var(--glass-shadow-sm), var(--glass-highlight);
+}
+
+.tab-rail.is-phone {
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
+  padding: clamp(0.65rem, 4vw, 0.95rem);
+  border-radius: 1.5rem;
 }
 
 .tab-chip {
@@ -174,6 +209,17 @@ watch(
     box-shadow var(--motion-duration-sm) var(--motion-easing-emphasized);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--border-muted) 65%, transparent);
   position: relative;
+}
+
+.tab-chip.is-phone {
+  grid-template-columns: 1fr;
+  gap: 0.25rem;
+  padding: clamp(0.7rem, 4vw, 0.9rem);
+  border-radius: 1.15rem;
+}
+
+.tab-chip.is-phone .chip-label {
+  font-size: 1rem;
 }
 
 .tab-chip::after {
@@ -216,6 +262,10 @@ watch(
   color: var(--md-sys-color-on-surface-variant);
 }
 
+.app-shell.is-phone .chip-description {
+  font-size: 0.85rem;
+}
+
 .view-surface {
   background: var(--glass-surface-strong);
   border-radius: clamp(1.35rem, 3vw, 1.9rem);
@@ -225,22 +275,14 @@ watch(
   backdrop-filter: blur(18px);
 }
 
+.app-shell.is-phone .view-surface {
+  padding: clamp(1rem, 5vw, 1.6rem);
+  border-radius: 1.45rem;
+}
+
 @media (max-width: 720px) {
   .app-shell {
     padding: clamp(2.5rem, 8vw, 4rem) clamp(1rem, 5vw, 2rem);
-  }
-
-  .app-container {
-    padding: clamp(1.25rem, 5vw, 2rem);
-    border-radius: 1.5rem;
-  }
-
-  .tab-rail {
-    grid-template-columns: 1fr;
-  }
-
-  .view-surface {
-    border-radius: 1.2rem;
   }
 }
 </style>

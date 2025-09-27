@@ -11,30 +11,29 @@ const uiState = inject(MapUiStateKey, null)
 
 const LAYER_ID = 'three-particles-layer'
 
-let renderer: THREE.WebGLRenderer | null = null
-let camera: THREE.Camera | null = null
-let scene: THREE.Scene | null = null
-let root: THREE.Object3D | null = null
-let geometry: THREE.BufferGeometry | null = null
-let points: THREE.Points | null = null
-let rainGeom: THREE.BufferGeometry | null = null
-let rainLines: THREE.LineSegments | null = null
+let renderer: any = null
+let camera: any = null
+let scene: any = null
+let root: any = null
+let geometry: any = null
+let points: any = null
+let rainGeom: any = null
+let rainLines: any = null
 let rainLinePositions: Float32Array | null = null
 let velocities: Float32Array | null = null
 let mapInstance: mapboxgl.Map | null = null
 let prevMerc: mapboxgl.MercatorCoordinate | null = null
-let prevScale = 1
 let spreadX = 300
 let spreadY = 300
 let zMax = 150
 
 // Splash pool for rain ground impacts
-type Splash = { sprite: THREE.Sprite; age: number; maxAge: number; active: boolean }
+type Splash = { sprite: any; age: number; maxAge: number; active: boolean }
 let splashPool: Splash[] = []
 let splashIndex = 0
-let splashTexture: THREE.Texture | null = null
+let splashTexture: any = null
 
-function createSplashTexture(): THREE.Texture {
+function createSplashTexture(): any {
   const size = 64
   const canvas = document.createElement('canvas')
   canvas.width = size
@@ -76,7 +75,7 @@ function spawnSplash(x: number, y: number) {
   s.sprite.visible = true
   s.sprite.position.set(x, y, 0.1)
   s.sprite.scale.set(6, 6, 1)
-  ;(s.sprite.material as THREE.SpriteMaterial).opacity = 0.8
+  ;(s.sprite.material as any).opacity = 0.8
 }
 
 function updateSplashes() {
@@ -86,7 +85,7 @@ function updateSplashes() {
     const t = s.age / s.maxAge
     const scale = 6 + t * 18
     s.sprite.scale.set(scale, scale, 1)
-    const mat = s.sprite.material as THREE.SpriteMaterial
+    const mat = s.sprite.material as any
     mat.opacity = 0.8 * (1 - t)
     if (s.age >= s.maxAge) {
       s.active = false
@@ -125,12 +124,12 @@ function buildParticles(effect: Effect) {
   if (points && scene) {
     scene.remove(points)
     points.geometry.dispose()
-    ;(points.material as THREE.Material).dispose()
+    ;(points.material as any).dispose()
   }
   if (rainLines && scene) {
     scene.remove(rainLines)
     rainLines.geometry.dispose()
-    ;(rainLines.material as THREE.Material).dispose()
+    ;(rainLines.material as any).dispose()
     rainLines = null
     rainGeom = null
     rainLinePositions = null
@@ -196,7 +195,7 @@ function buildParticles(effect: Effect) {
 
 function respawnParticle(i3: number, effect: Effect, wind: { dirX: number; dirY: number; strength: number }) {
   // Spawn close to camera with slight random offset; above the camera
-  const positions = (geometry!.getAttribute('position') as THREE.BufferAttribute).array as Float32Array
+  const positions = (geometry!.getAttribute('position') as any).array as Float32Array
   positions[i3 + 0] = (Math.random() * 2 - 1) * (spreadX * 0.1)
   positions[i3 + 1] = (Math.random() * 2 - 1) * (spreadY * 0.1)
   positions[i3 + 2] = zMax * (0.8 + Math.random() * 0.2)
@@ -219,7 +218,7 @@ function respawnParticle(i3: number, effect: Effect, wind: { dirX: number; dirY:
 
 function updateParticles(effect: Effect) {
   if (!geometry || !velocities) return
-  const attr = geometry.getAttribute('position') as THREE.BufferAttribute
+  const attr = geometry.getAttribute('position') as any
   const positions = attr.array as Float32Array
   const count = positions.length / 3
   const wind = mapInstance ? getWind(mapInstance) : { dirX: 1, dirY: 0, strength: 1 }
@@ -294,7 +293,7 @@ function updateParticles(effect: Effect) {
 
   attr.needsUpdate = true
   if (effect === 'rain' && rainGeom) {
-    ;(rainGeom.getAttribute('position') as THREE.BufferAttribute).needsUpdate = true
+    ;(rainGeom.getAttribute('position') as any).needsUpdate = true
   }
 }
 
@@ -309,7 +308,7 @@ function updateRootTransform(map: mapboxgl.Map) {
     const dxMeters = (merc.x - prevMerc.x) / scale
     const dyMeters = (merc.y - prevMerc.y) / scale
     if (dxMeters !== 0 || dyMeters !== 0) {
-      const attr = geometry.getAttribute('position') as THREE.BufferAttribute
+      const attr = geometry.getAttribute('position') as any
       const positions = attr.array as Float32Array
       const len = positions.length
       for (let i = 0; i < len; i += 3) {
@@ -335,7 +334,6 @@ function updateRootTransform(map: mapboxgl.Map) {
   root.matrixAutoUpdate = false
 
   prevMerc = merc
-  prevScale = scale
   updateSpreads(map)
 }
 
@@ -358,7 +356,7 @@ function addLayer(map: mapboxgl.Map) {
       const effect = (uiState?.effect ?? 'wind') as Effect
       buildParticles(effect)
     },
-    render: function (gl: WebGLRenderingContext, matrix: number[]) {
+    render: function (_gl: WebGLRenderingContext, matrix: number[]) {
       if (!renderer || !camera || !scene) return
       const effect = (uiState?.effect ?? 'wind') as Effect
       if (uiState?.playing !== false) updateParticles(effect)
