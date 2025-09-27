@@ -10,6 +10,7 @@ import PrintableStatblock from './components/PrintableStatblock.vue'
 import GlossaryDrawer from './components/GlossaryDrawer.vue'
 import { useStatblockBuilder } from './composables/useStatblockBuilder'
 import { getTierGuide } from './lib/tierGuides'
+import { openGlossary } from './lib/glossaryState'
 
 const {
   sbType,
@@ -145,10 +146,36 @@ function handlePrint() {
 <template>
   <div class="app-shell">
     <div class="shell-background" aria-hidden="true">
-      <div class="shell-orb shell-orb--primary" />
-      <div class="shell-orb shell-orb--accent" />
-      <div class="shell-noise" />
+      <div class="shell-layer shell-layer--primary" />
+      <div class="shell-layer shell-layer--accent" />
+      <div class="shell-grid" />
     </div>
+
+    <aside class="nav-rail" aria-label="Builder navigation">
+      <div class="nav-rail__logo" aria-hidden="true">
+        <span class="nav-rail__brand">DH</span>
+      </div>
+      <nav class="nav-rail__actions" aria-label="Primary">
+        <button class="nav-rail__action is-active" type="button">
+          <AppIcon name="sword" size="sm" />
+          <span>Builder</span>
+        </button>
+        <button class="nav-rail__action" type="button" @click="openWizard">
+          <AppIcon name="dice" size="sm" />
+          <span>Guided</span>
+        </button>
+        <button class="nav-rail__action" type="button" @click="openGlossary()">
+          <AppIcon name="book" size="sm" />
+          <span>Glossary</span>
+        </button>
+      </nav>
+      <div class="nav-rail__footer">
+        <button class="nav-rail__action" type="button" @click="handlePrint">
+          <AppIcon name="print" size="sm" />
+          <span>Print</span>
+        </button>
+      </div>
+    </aside>
 
     <main class="layout-surface" role="main">
       <header class="top-app-bar" role="banner">
@@ -159,11 +186,11 @@ function handlePrint() {
         </div>
 
         <div class="top-app-bar__actions">
-          <AppButton variant="tonal" size="sm" class="top-app-bar__action" @click="openWizard">
+          <AppButton variant="elevated" size="sm" class="top-app-bar__action" @click="openWizard">
             <AppIcon name="dice" size="sm" />
             <span>Guided build</span>
           </AppButton>
-          <AppButton variant="text" size="sm" class="top-app-bar__action" @click="resetAll">
+          <AppButton variant="outlined" size="sm" class="top-app-bar__action" @click="resetAll">
             <AppIcon name="trash" size="sm" />
             <span>Reset</span>
           </AppButton>
@@ -178,7 +205,7 @@ function handlePrint() {
         </div>
       </header>
 
-      <section class="layout-stack">
+      <section class="layout-overview">
         <Transition
           appear
           :enter-active-class="heroMotion.enterActiveClass"
@@ -189,6 +216,7 @@ function handlePrint() {
           :leave-to-class="heroMotion.leaveToClass"
         >
           <BuilderHero
+            class="layout-overview__hero"
             :display-name="displayName"
             :type-label="typeLabel"
             :summary-message="summaryMessage"
@@ -209,7 +237,7 @@ function handlePrint() {
           :leave-to-class="toolbarMotion.leaveToClass"
         >
           <Toolbar
-            class="builder-toolbar"
+            class="layout-overview__controls"
             :sbType="sbType"
             :enemy="enemy"
             :environment="environment"
@@ -219,36 +247,36 @@ function handlePrint() {
             @load-preset="loadPreset"
           />
         </Transition>
+      </section>
 
-        <div class="layout-panels">
-          <Transition
-            appear
-            :enter-active-class="panelMotion.enterActiveClass"
-            :enter-from-class="panelMotion.enterFromClass"
-            :enter-to-class="panelMotion.enterToClass"
-            :leave-active-class="panelMotion.leaveActiveClass"
-            :leave-from-class="panelMotion.leaveFromClass"
-            :leave-to-class="panelMotion.leaveToClass"
-          >
-            <div class="layout-primary">
-              <BuilderInsights :summary-meta="summaryMeta" :tier-callout="tierCallout" :type-label="typeLabel" />
-            </div>
-          </Transition>
+      <section class="layout-grid">
+        <Transition
+          appear
+          :enter-active-class="panelMotion.enterActiveClass"
+          :enter-from-class="panelMotion.enterFromClass"
+          :enter-to-class="panelMotion.enterToClass"
+          :leave-active-class="panelMotion.leaveActiveClass"
+          :leave-from-class="panelMotion.leaveFromClass"
+          :leave-to-class="panelMotion.leaveToClass"
+        >
+          <div class="layout-primary">
+            <BuilderInsights :summary-meta="summaryMeta" :tier-callout="tierCallout" :type-label="typeLabel" />
+          </div>
+        </Transition>
 
-          <Transition
-            appear
-            :enter-active-class="previewMotion.enterActiveClass"
-            :enter-from-class="previewMotion.enterFromClass"
-            :enter-to-class="previewMotion.enterToClass"
-            :leave-active-class="previewMotion.leaveActiveClass"
-            :leave-from-class="previewMotion.leaveFromClass"
-            :leave-to-class="previewMotion.leaveToClass"
-          >
-            <div class="layout-preview">
-              <StatblockPreview :key="sbType" :sbType="sbType" :enemy="enemy" :environment="environment" />
-            </div>
-          </Transition>
-        </div>
+        <Transition
+          appear
+          :enter-active-class="previewMotion.enterActiveClass"
+          :enter-from-class="previewMotion.enterFromClass"
+          :enter-to-class="previewMotion.enterToClass"
+          :leave-active-class="previewMotion.leaveActiveClass"
+          :leave-from-class="previewMotion.leaveFromClass"
+          :leave-to-class="previewMotion.leaveToClass"
+        >
+          <div class="layout-preview">
+            <StatblockPreview :key="sbType" :sbType="sbType" :enemy="enemy" :environment="environment" />
+          </div>
+        </Transition>
       </section>
     </main>
 
@@ -285,9 +313,12 @@ function handlePrint() {
 .app-shell {
   position: relative;
   min-height: 100vh;
-  padding: clamp(3rem, 8vw, 5rem) clamp(1.25rem, 5vw, 3rem) clamp(4rem, 7vw, 5.5rem);
-  background: radial-gradient(circle at 20% -10%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 62%),
-    radial-gradient(circle at 90% 120%, color-mix(in srgb, var(--md-sys-color-primary) 18%, transparent), transparent 72%),
+  display: grid;
+  grid-template-columns: clamp(72px, 8vw, 88px) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+  padding: clamp(2.5rem, 6vw, 4rem);
+  background: radial-gradient(circle at 20% -12%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 62%),
+    radial-gradient(circle at 120% 40%, color-mix(in srgb, var(--md-sys-color-primary) 24%, transparent), transparent 74%),
     var(--md-sys-color-surface-container-lowest, color-mix(in srgb, var(--surface) 96%, transparent));
   color: var(--md-sys-color-on-surface, var(--fg));
   overflow: hidden;
@@ -300,81 +331,170 @@ function handlePrint() {
   overflow: hidden;
 }
 
-.shell-orb {
+.shell-layer {
   position: absolute;
-  width: clamp(18rem, 42vw, 32rem);
-  height: clamp(18rem, 42vw, 32rem);
-  border-radius: 50%;
-  opacity: 0.36;
-  transform: translate3d(0, 0, 0);
-  animation: floatAura 18s ease-in-out infinite;
+  border-radius: 999px;
+  opacity: 0.28;
+  filter: blur(0);
 }
 
-.shell-orb--primary {
-  top: clamp(-12rem, -18vw, -6rem);
-  right: clamp(-6rem, -10vw, -1rem);
-  background: radial-gradient(circle, color-mix(in srgb, var(--md-sys-color-secondary) 34%, transparent), transparent 70%);
-  mix-blend-mode: screen;
+.shell-layer--primary {
+  width: clamp(22rem, 46vw, 32rem);
+  height: clamp(22rem, 46vw, 32rem);
+  top: clamp(-14rem, -16vw, -8rem);
+  right: clamp(-10rem, -12vw, -4rem);
+  background: radial-gradient(circle, color-mix(in srgb, var(--md-sys-color-secondary) 38%, transparent), transparent 70%);
 }
 
-.shell-orb--accent {
-  bottom: clamp(-10rem, -16vw, -4rem);
-  left: clamp(-12rem, -14vw, -6rem);
-  animation-delay: -6s;
-  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 42%, transparent), transparent 68%);
-  mix-blend-mode: screen;
+.shell-layer--accent {
+  width: clamp(20rem, 38vw, 30rem);
+  height: clamp(20rem, 38vw, 30rem);
+  bottom: clamp(-12rem, -18vw, -6rem);
+  left: clamp(-12rem, -14vw, -5rem);
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 48%, transparent), transparent 75%);
 }
 
-.shell-noise {
+.shell-grid {
   position: absolute;
   inset: 0;
   background: linear-gradient(
-      120deg,
+      115deg,
       color-mix(in srgb, var(--md-sys-color-surface-container-high, var(--surface)) 12%, transparent),
       transparent 65%
     ),
-    radial-gradient(circle at 16% 28%, rgba(255, 255, 255, 0.12), transparent 54%);
-  opacity: 0.28;
-  mix-blend-mode: lighten;
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--md-sys-color-outline-variant, rgba(255, 255, 255, 0.14)) 24%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--md-sys-color-outline-variant, rgba(255, 255, 255, 0.14)) 24%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: cover, 88px 88px, 88px 88px;
+  opacity: 0.12;
+}
+
+.nav-rail {
+  position: sticky;
+  top: clamp(1.5rem, 6vw, 3rem);
+  z-index: 3;
+  height: calc(100vh - clamp(2.5rem, 6vw, 4rem) * 2);
+  border-radius: 1.8rem;
+  padding: clamp(1rem, 2.5vw, 1.5rem) clamp(0.4rem, 2vw, 0.75rem);
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-highest, var(--surface)) 88%, transparent);
+  box-shadow: 0 24px 50px rgba(18, 12, 54, 0.2),
+    0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline-variant, rgba(44, 40, 70, 0.26)) 30%, transparent);
+  backdrop-filter: blur(22px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 2rem);
+}
+
+.nav-rail__logo {
+  display: grid;
+  place-items: center;
+  width: clamp(44px, 5vw, 56px);
+  height: clamp(44px, 5vw, 56px);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--md-sys-color-primary) 22%, transparent);
+  color: var(--md-sys-color-on-primary, #fff);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+}
+
+.nav-rail__brand {
+  transform: translateY(-1px);
+}
+
+.nav-rail__actions {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 2vw, 1rem);
+  width: 100%;
+  align-items: center;
+}
+
+.nav-rail__footer {
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.nav-rail__action {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.4rem;
+  border-radius: 1.2rem;
+  border: none;
+  background: transparent;
+  color: color-mix(in srgb, var(--md-sys-color-on-surface-variant, var(--muted)) 85%, transparent);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 140ms ease, color 140ms ease, box-shadow 140ms ease;
+}
+
+.nav-rail__action:is(:hover, :focus-visible) {
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-high, var(--surface)) 92%, transparent);
+  color: var(--md-sys-color-on-surface, var(--fg));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline, rgba(255, 255, 255, 0.3)) 40%, transparent);
+}
+
+.nav-rail__action.is-active {
+  background: color-mix(in srgb, var(--md-sys-color-secondary-container, var(--surface)) 92%, transparent);
+  color: var(--md-sys-color-on-secondary-container, var(--fg));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline-variant, rgba(255, 255, 255, 0.3)) 45%, transparent);
+}
+
+.nav-rail__action span {
+  white-space: nowrap;
 }
 
 .layout-surface {
   position: relative;
   z-index: 1;
   margin: 0 auto;
-  max-width: 1180px;
-  width: min(100%, 1180px);
-  padding: clamp(1.5rem, 4vw, 2.75rem);
-  border-radius: 2rem;
-  background: color-mix(in srgb, var(--md-sys-color-surface-container-highest, var(--surface)) 90%, transparent);
-  box-shadow: 0 24px 60px rgba(20, 12, 58, 0.2),
-    0 0 0 1px color-mix(in srgb, var(--surface-outline, rgba(40, 35, 70, 0.26)) 28%, transparent);
+  max-width: 1260px;
+  width: min(100%, 1260px);
+  padding: clamp(1.75rem, 3.5vw, 2.75rem);
+  border-radius: 2.4rem;
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-highest, var(--surface)) 94%, transparent);
+  box-shadow: 0 30px 70px rgba(20, 12, 58, 0.22),
+    0 0 0 1px color-mix(in srgb, var(--surface-outline, rgba(40, 35, 70, 0.26)) 26%, transparent);
   backdrop-filter: blur(26px);
   display: flex;
   flex-direction: column;
-  gap: clamp(1.8rem, 3vw, 2.6rem);
+  gap: clamp(1.9rem, 3vw, 2.6rem);
 }
 
 .top-app-bar {
-  position: sticky;
-  top: clamp(1.5rem, 5vw, 2.75rem);
-  z-index: 4;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: clamp(1.2rem, 3vw, 2rem);
-  padding: clamp(0.75rem, 2vw, 1.25rem) clamp(0.9rem, 2vw, 1.4rem);
-  border-radius: 1.6rem;
-  background: color-mix(in srgb, var(--md-sys-color-surface-container-high, var(--surface-translucent)) 92%, transparent);
-  box-shadow: 0 18px 40px rgba(16, 10, 50, 0.18),
-    0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline-variant, transparent) 40%, transparent);
+  gap: clamp(1rem, 2.5vw, 1.8rem);
+  padding: clamp(0.85rem, 2vw, 1.25rem) clamp(1rem, 2vw, 1.6rem);
+  border-radius: 1.8rem;
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-high, var(--surface-translucent)) 94%, transparent);
+  box-shadow: 0 20px 44px rgba(18, 12, 54, 0.18),
+    0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline-variant, transparent) 38%, transparent);
   backdrop-filter: blur(18px);
 }
 
 .top-app-bar__headline {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.4rem;
   min-width: 0;
 }
 
@@ -382,11 +502,11 @@ function handlePrint() {
   font-size: 0.75rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--md-sys-color-on-surface-variant, var(--muted)) 85%, transparent);
+  color: color-mix(in srgb, var(--md-sys-color-on-surface-variant, var(--muted)) 90%, transparent);
 }
 
 .top-app-bar__title {
-  font-size: clamp(1.4rem, 1.4vw + 1rem, 2rem);
+  font-size: clamp(1.5rem, 1.4vw + 1rem, 2.2rem);
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--md-sys-color-on-surface, var(--fg));
@@ -403,7 +523,7 @@ function handlePrint() {
 .top-app-bar__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 0.65rem;
   align-items: center;
   justify-content: flex-end;
 }
@@ -411,40 +531,36 @@ function handlePrint() {
 .top-app-bar__action {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   font-weight: 600;
-}
-
-.top-app-bar__action :deep(.app-icon) {
-  margin-left: -0.1rem;
 }
 
 .top-app-bar__icon {
   border-radius: 0.9rem;
-  box-shadow: 0 10px 24px rgba(24, 16, 60, 0.18);
+  box-shadow: 0 12px 28px rgba(24, 16, 60, 0.18);
 }
 
-.layout-stack {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(1.6rem, 3vw, 2.3rem);
-}
-
-.builder-toolbar {
-  position: sticky;
-  top: clamp(6.5rem, 11vw, 7.5rem);
-  z-index: 3;
-}
-
-.builder-toolbar :deep(.toolbar-card) {
-  border-radius: 1.35rem;
-  background: color-mix(in srgb, var(--md-sys-color-surface-container-high, var(--surface-translucent)) 94%, transparent);
-  box-shadow: 0 16px 38px rgba(18, 12, 54, 0.18), var(--glass-highlight);
-}
-
-.layout-panels {
+.layout-overview {
   display: grid;
-  gap: clamp(1.75rem, 3vw, 2.5rem);
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: clamp(1.4rem, 2.8vw, 2.2rem);
+  align-items: stretch;
+}
+
+.layout-overview__hero,
+.layout-overview__controls {
+  height: 100%;
+}
+
+.layout-overview__controls :deep(.toolbar-card) {
+  border-radius: 1.6rem;
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-high, var(--surface-translucent)) 95%, transparent);
+  box-shadow: 0 18px 40px rgba(18, 12, 54, 0.18), var(--glass-highlight);
+}
+
+.layout-grid {
+  display: grid;
+  gap: clamp(1.6rem, 3vw, 2.4rem);
   grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
   align-items: start;
 }
@@ -452,12 +568,12 @@ function handlePrint() {
 .layout-primary {
   display: flex;
   flex-direction: column;
-  gap: clamp(1.2rem, 2vw, 1.8rem);
+  gap: clamp(1.25rem, 2vw, 1.8rem);
 }
 
 .layout-preview {
   position: sticky;
-  top: clamp(7rem, 12vw, 8.5rem);
+  top: clamp(6.5rem, 11vw, 8rem);
   align-self: flex-start;
 }
 
@@ -465,17 +581,68 @@ function handlePrint() {
   display: none;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1280px) {
+  .app-shell {
+    grid-template-columns: clamp(64px, 8vw, 80px) minmax(0, 1fr);
+  }
+
   .layout-surface {
-    width: min(100%, 1020px);
+    max-width: 1120px;
+  }
+
+  .layout-overview {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 1024px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+    padding: clamp(2rem, 7vw, 3rem) clamp(1rem, 5vw, 2rem);
+  }
+
+  .nav-rail {
+    position: static;
+    height: auto;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 1.6rem;
+    gap: 1rem;
+  }
+
+  .nav-rail__logo {
+    width: 48px;
+    height: 48px;
+  }
+
+  .nav-rail__actions {
+    flex-direction: row;
+    gap: 0.6rem;
+    justify-content: center;
+  }
+
+  .nav-rail__footer {
+    margin-top: 0;
+  }
+
+  .nav-rail__action {
+    flex-direction: row;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    padding: 0.55rem 0.85rem;
+  }
+
+  .layout-surface {
+    padding: clamp(1.4rem, 5vw, 2rem);
+    border-radius: 1.8rem;
+  }
+
   .top-app-bar {
     flex-direction: column;
     align-items: stretch;
-    position: static;
   }
 
   .top-app-bar__subtitle {
@@ -486,12 +653,7 @@ function handlePrint() {
     justify-content: flex-start;
   }
 
-  .builder-toolbar {
-    position: relative;
-    top: 0;
-  }
-
-  .layout-panels {
+  .layout-grid {
     grid-template-columns: 1fr;
   }
 
@@ -501,14 +663,28 @@ function handlePrint() {
   }
 }
 
-@media (max-width: 960px) {
+@media (max-width: 720px) {
   .app-shell {
-    padding: clamp(2rem, 10vw, 3rem) clamp(1rem, 4vw, 1.5rem);
+    padding: clamp(1.5rem, 8vw, 2.2rem) clamp(0.75rem, 6vw, 1.5rem);
+  }
+
+  .nav-rail {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .nav-rail__actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .nav-rail__action span {
+    font-size: 0.68rem;
   }
 
   .layout-surface {
-    padding: clamp(1.1rem, 6vw, 1.75rem);
-    border-radius: 1.35rem;
+    padding: clamp(1.1rem, 8vw, 1.6rem);
+    border-radius: 1.4rem;
     box-shadow: 0 18px 48px rgba(14, 10, 44, 0.18);
   }
 }
@@ -516,7 +692,7 @@ function handlePrint() {
 @media print {
   .layout-surface,
   .top-app-bar,
-  .builder-toolbar,
+  .nav-rail,
   .shell-background,
   :deep(.wizard-overlay) {
     display: none !important;
@@ -527,24 +703,10 @@ function handlePrint() {
   }
 }
 
-@keyframes floatAura {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(0, -1.5rem, 0) scale(1.05);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .shell-orb {
-    animation: none;
-  }
-
+  .layout-surface,
   .top-app-bar,
-  .builder-toolbar,
-  .layout-surface {
+  .nav-rail {
     backdrop-filter: none;
   }
 }
