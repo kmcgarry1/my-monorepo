@@ -15,27 +15,36 @@ const emit = defineEmits<{ (e: 'open-wizard'): void; (e: 'reset'): void }>()
 </script>
 
 <template>
-  <AppCard padding="lg" variant="elevated" class="hero-card">
-    <div class="hero-grid">
-      <div class="hero-main">
-        <AppBadge size="xs" variant="neutral" class="hero-eyebrow">Currently editing</AppBadge>
-        <div class="hero-title-row">
-          <AppText as="h1" size="lg" class="hero-title">{{ displayName }}</AppText>
-          <AppBadge variant="accent" size="sm">{{ typeLabel }}</AppBadge>
+  <AppCard
+    padding="lg"
+    variant="surface"
+    overline="Currently editing"
+    class="hero-card"
+  >
+    <template #header>
+      <div class="hero-header">
+        <div class="hero-heading">
+          <AppText as="h1" variant="display" class="hero-title">{{ displayName }}</AppText>
+          <AppBadge variant="accent" size="sm" class="hero-type">{{ typeLabel }}</AppBadge>
         </div>
-        <AppText variant="body" size="lg" class="hero-lead">{{ summaryMessage }}</AppText>
-        <AppText variant="muted" size="sm" class="meta-note">
-          Saved automatically — export whenever you're ready using the toolbar.
-        </AppText>
+        <div class="hero-actions">
+          <AppButton size="lg" variant="primary" class="primary" @click="emit('open-wizard')">
+            Launch guided builder
+          </AppButton>
+          <AppButton size="lg" variant="surface" class="ghost" @click="emit('reset')">Start fresh</AppButton>
+        </div>
       </div>
-      <div class="hero-actions">
-        <AppButton size="lg" variant="primary" @click="emit('open-wizard')">Launch guided builder</AppButton>
-        <AppButton size="lg" variant="surface" @click="emit('reset')">Start fresh</AppButton>
-      </div>
-    </div>
+    </template>
+
+    <section class="hero-summary">
+      <AppText variant="body" size="lg" class="hero-lead">{{ summaryMessage }}</AppText>
+      <AppText variant="muted" size="sm" class="hero-note">
+        Saved automatically — export whenever you're ready using the toolbar.
+      </AppText>
+    </section>
 
     <div class="hero-highlights">
-      <div class="highlight-card">
+      <div class="highlight-card tier">
         <span class="highlight-label">Tier status</span>
         <span class="highlight-value">{{ tierStatus }}</span>
       </div>
@@ -51,56 +60,60 @@ const emit = defineEmits<{ (e: 'open-wizard'): void; (e: 'reset'): void }>()
 .hero-card {
   position: relative;
   overflow: hidden;
-  background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 95%, transparent);
+  isolation: isolate;
+  background: color-mix(in srgb, var(--surface-translucent) 94%, transparent);
 }
 
+.hero-card::before,
 .hero-card::after {
   content: '';
   position: absolute;
-  inset: -40% -10% auto;
-  height: 60%;
-  background: radial-gradient(circle at top, color-mix(in srgb, var(--accent) 28%, transparent), transparent 70%);
-  opacity: 0.45;
   pointer-events: none;
+  inset: auto;
+  border-radius: 999px;
+  filter: blur(40px);
+  opacity: 0.6;
 }
 
-.hero-grid {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+.hero-card::before {
+  width: 60%;
+  height: 240px;
+  bottom: -120px;
+  right: -20%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 26%, transparent), transparent 65%);
 }
 
-.hero-main {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.hero-card::after {
+  width: 45%;
+  height: 200px;
+  top: -140px;
+  left: -10%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--md-sys-color-secondary) 18%, transparent), transparent 70%);
 }
 
-.hero-eyebrow {
-  align-self: flex-start;
-}
-
-.hero-title-row {
+.hero-header {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  gap: 1.25rem;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.hero-heading {
+  display: flex;
+  flex-direction: column;
   gap: 0.75rem;
+  min-width: 0;
 }
 
 .hero-title {
   margin: 0;
-  font-size: clamp(2.1rem, 3vw + 1.25rem, 3.25rem);
   font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
-.hero-lead {
-  margin: 0;
-  max-width: 46rem;
-}
-
-.meta-note {
-  margin: 0;
+.hero-type {
+  align-self: flex-start;
 }
 
 .hero-actions {
@@ -108,25 +121,57 @@ const emit = defineEmits<{ (e: 'open-wizard'): void; (e: 'reset'): void }>()
   flex-wrap: wrap;
   gap: 0.75rem;
   align-items: center;
+  justify-content: flex-end;
+}
+
+.hero-actions :deep(.primary) {
+  min-width: 14rem;
+}
+
+.hero-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.hero-lead {
+  margin: 0;
+  max-width: 52rem;
+  font-size: clamp(1.125rem, 1.1vw + 1rem, 1.35rem);
+}
+
+.hero-note {
+  margin: 0;
 }
 
 .hero-highlights {
-  position: relative;
-  margin-top: 1.5rem;
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
 .highlight-card {
-  padding: 0.85rem 1rem;
+  position: relative;
+  padding: 1rem 1.1rem;
   border-radius: var(--radius-lg);
-  background: color-mix(in srgb, var(--surface-veil) 85%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
-  backdrop-filter: blur(10px);
+  border: 1px solid color-mix(in srgb, var(--border) 35%, transparent);
+  background: color-mix(in srgb, var(--surface-veil) 74%, transparent);
+  backdrop-filter: blur(12px);
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.4rem;
+  transition: transform var(--motion-duration-sm) var(--motion-easing-emphasized),
+    box-shadow var(--motion-duration-sm) var(--motion-easing-emphasized);
+}
+
+.highlight-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-level2);
+}
+
+.highlight-card.tier {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  background: color-mix(in srgb, var(--accent-weak) 36%, transparent);
 }
 
 .highlight-label {
@@ -136,20 +181,22 @@ const emit = defineEmits<{ (e: 'open-wizard'): void; (e: 'reset'): void }>()
   color: color-mix(in srgb, var(--muted) 85%, transparent);
 }
 
-.highlight-value {
-  font-weight: 600;
-  font-size: 1rem;
+.highlight-card.tier .highlight-label {
+  color: color-mix(in srgb, var(--accent) 80%, var(--muted) 30%);
 }
 
-@media (min-width: 980px) {
-  .hero-grid {
-    flex-direction: row;
-    justify-content: space-between;
+.highlight-value {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+@media (min-width: 960px) {
+  .hero-header {
     align-items: flex-start;
   }
 
   .hero-actions {
-    align-items: flex-end;
+    align-items: center;
   }
 }
 </style>

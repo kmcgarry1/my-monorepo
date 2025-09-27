@@ -138,8 +138,8 @@
   --md-sys-color-on-surface: #1C1B1F;
   --md-sys-color-surface-variant: #E7E0EC;
   --md-sys-color-on-surface-variant: #49454F;
-  --md-sys-color-outline: #79747E;
-  --md-sys-color-outline-variant: #CAC4D0;
+  --md-sys-color-outline: color-mix(in srgb, #79747E 65%, transparent);
+  --md-sys-color-outline-variant: color-mix(in srgb, #CAC4D0 55%, transparent);
   --md-sys-color-shadow: #000000;
   --md-sys-color-scrim: #000000;
   --md-sys-color-surface-tint: #6750A4;
@@ -188,7 +188,7 @@
   --md-comp-button-ghost-hover-layer: color-mix(in srgb, var(--md-comp-button-ghost-label) 10%, transparent);
 
   --md-comp-field-container: color-mix(in srgb, var(--md-sys-color-surface) 92%, var(--md-sys-color-surface-variant) 8%);
-  --md-comp-field-outline: var(--md-sys-color-outline);
+  --md-comp-field-outline: color-mix(in srgb, var(--md-sys-color-outline) 55%, transparent);
   --md-comp-field-on-surface: var(--md-sys-color-on-surface);
   --md-comp-field-placeholder: var(--md-sys-color-on-surface-variant);
 

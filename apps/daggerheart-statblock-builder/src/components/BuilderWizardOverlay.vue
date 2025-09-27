@@ -114,24 +114,26 @@ onBeforeUnmount(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: clamp(1rem, 4vw, 2.5rem);
-  background: color-mix(in srgb, var(--surface-translucent) 85%, rgba(10, 10, 18, 0.6));
-  backdrop-filter: blur(22px);
+  padding: clamp(1.2rem, 4vw, 3rem);
+  background: radial-gradient(circle at 15% 20%, rgba(82, 62, 155, 0.24), transparent 55%),
+    radial-gradient(circle at 80% 80%, rgba(34, 160, 195, 0.18), transparent 60%),
+    rgba(12, 10, 32, 0.58);
+  backdrop-filter: blur(26px);
   z-index: 50;
 }
 
 .wizard-dialog {
-  width: min(1120px, 100%);
-  max-height: 90vh;
+  width: min(1160px, 100%);
+  max-height: clamp(70vh, 86vh, 900px);
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  padding: 1.75rem;
-  border-radius: var(--radius-xl);
-  border: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
-  background: color-mix(in srgb, var(--surface-translucent) 92%, transparent);
-  box-shadow: var(--shadow-elevated);
-  backdrop-filter: blur(20px);
+  gap: 1.35rem;
+  padding: 1.9rem;
+  border-radius: 2rem;
+  border: 1px solid color-mix(in srgb, var(--border) 24%, transparent);
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  box-shadow: 0 32px 70px rgba(12, 10, 40, 0.32);
+  backdrop-filter: blur(24px);
 }
 
 .wizard-header {
@@ -139,16 +141,22 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
-  padding-bottom: 1rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 26%, transparent);
+  padding-bottom: 1.1rem;
 }
 
 .eyebrow {
   margin: 0;
   font-size: 0.7rem;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--muted) 82%, transparent);
+  color: color-mix(in srgb, var(--muted) 78%, transparent);
+}
+
+.wizard-header h2 {
+  margin: 0.25rem 0 0;
+  font-size: 1.4rem;
+  letter-spacing: 0.04em;
 }
 
 .wizard-body {
@@ -162,18 +170,19 @@ onBeforeUnmount(() => {
 
 .wizard-fade-enter-active,
 .wizard-fade-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .wizard-fade-enter-from,
 .wizard-fade-leave-to {
   opacity: 0;
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 @media (max-width: 768px) {
   .wizard-dialog {
-    padding: 1.25rem;
+    padding: 1.35rem;
+    border-radius: 1.6rem;
   }
 }
 </style>

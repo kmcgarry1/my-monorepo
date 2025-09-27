@@ -52,10 +52,10 @@ function updateFeature(idx: number, patch: Partial<Feature>) {
 </script>
 
 <template>
-  <div class="mt-3">
-    <div class="mb-2 flex items-center justify-between">
-      <div class="flex items-center gap-2 text-sm font-semibold text-[color:var(--fg)]">
-        <AppIcon name="palette" class="text-[color:var(--accent)]" />
+  <div class="editor-shell">
+    <div class="editor-header">
+      <div class="header-label">
+        <AppIcon name="palette" size="sm" color="accent" />
         <span>Features</span>
       </div>
       <AppButton variant="primary" size="sm" @click="addFeature">
@@ -66,6 +66,7 @@ function updateFeature(idx: number, patch: Partial<Feature>) {
 
     <TransitionGroup
       tag="div"
+      class="editor-list"
       enter-active-class="transition duration-150 ease-out"
       enter-from-class="opacity-0 -translate-y-1"
       enter-to-class="opacity-100 translate-y-0"
@@ -74,8 +75,8 @@ function updateFeature(idx: number, patch: Partial<Feature>) {
       leave-to-class="opacity-0 -translate-y-1"
       move-class="transition-transform duration-150"
     >
-      <div v-for="(f, i) in props.modelValue" :key="f.id" class="rounded-[var(--radius-md)] border border-[color:var(--border)] bg-[color:var(--surface-veil)] p-3">
-        <AppRow :cols="4" align="start">
+      <div v-for="(f, i) in props.modelValue" :key="f.id" class="editor-card">
+        <AppRow :cols="4" align="start" class="stat-grid">
           <AppCol>
             <AppFieldLabel label="Name" />
             <AppInput :model-value="f.name" @update:modelValue="v => updateFeature(i, { name: v })" placeholder="Feature name" />
@@ -84,7 +85,15 @@ function updateFeature(idx: number, patch: Partial<Feature>) {
             <AppFieldLabel label="Tag">
               <AppIconButton name="info" variant="ghost" size="xs" title="Tag" @click="openGlossary(f.tag.toLowerCase())" />
             </AppFieldLabel>
-            <AppSelect :model-value="f.tag" @update:modelValue="v => updateFeature(i, { tag: v as FeatureTag })" :options="[{label:'Passive', value:'Passive'}, {label:'Action', value:'Action'}, {label:'Reaction', value:'Reaction'}]" />
+            <AppSelect
+              :model-value="f.tag"
+              @update:modelValue="v => updateFeature(i, { tag: v as FeatureTag })"
+              :options="[
+                { label: 'Passive', value: 'Passive' },
+                { label: 'Action', value: 'Action' },
+                { label: 'Reaction', value: 'Reaction' }
+              ]"
+            />
           </AppCol>
           <AppCol>
             <AppFieldLabel label="Cost/Trigger">
@@ -93,7 +102,7 @@ function updateFeature(idx: number, patch: Partial<Feature>) {
             <AppInput :model-value="f.cost" @update:modelValue="v => updateFeature(i, { cost: v })" placeholder="e.g., Spend a Fear, Mark Stress" />
           </AppCol>
           <AppCol>
-            <div class="mt-6 flex items-start justify-end">
+            <div class="card-actions">
               <AppButton variant="danger" size="sm" @click="removeFeature(f.id)">
                 <AppIcon name="trash" class="mr-1" />
                 Remove
@@ -101,7 +110,7 @@ function updateFeature(idx: number, patch: Partial<Feature>) {
             </div>
           </AppCol>
         </AppRow>
-        <div class="mt-3">
+        <div class="text-stack">
           <AppFieldLabel label="Text" />
           <AppTextarea :rows="3" :model-value="f.text" @update:modelValue="v => updateFeature(i, { text: v })" placeholder="Describe the feature..." />
         </div>
@@ -109,3 +118,63 @@ function updateFeature(idx: number, patch: Partial<Feature>) {
     </TransitionGroup>
   </div>
 </template>
+<style scoped>
+.editor-shell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: color-mix(in srgb, var(--surface-veil) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 24%, transparent);
+  border-radius: 1rem;
+  padding: 0.9rem 1rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.header-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+.editor-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.editor-card {
+  padding: 1rem 1.1rem;
+  border-radius: 1.1rem;
+  background: color-mix(in srgb, var(--surface-veil) 68%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 26%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.stat-grid {
+  gap: var(--space-sm);
+}
+
+.text-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+}
+</style>

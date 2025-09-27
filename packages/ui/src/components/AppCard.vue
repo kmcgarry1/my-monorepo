@@ -26,9 +26,9 @@ const variantClass = computed(() => {
     filled:
       'bg-[color:var(--md-sys-color-surface-container-high)] text-[color:var(--md-sys-color-on-surface)] border border-transparent shadow-none',
     outlined:
-      'bg-[color:var(--md-sys-color-surface)] text-[color:var(--md-sys-color-on-surface)] border border-[color:var(--md-sys-color-outline)] shadow-none',
+      'bg-[color:var(--md-sys-color-surface)] text-[color:var(--md-sys-color-on-surface)] border border-[color:color-mix(in srgb,var(--md-sys-color-outline) 60%,transparent)] shadow-none',
     surface:
-      'bg-[color:var(--md-sys-color-surface-container)] text-[color:var(--md-sys-color-on-surface)] border border-[color:var(--md-sys-color-outline-variant)] shadow-[var(--shadow-level1)]',
+      'bg-[color:var(--md-sys-color-surface-container)] text-[color:var(--md-sys-color-on-surface)] border border-transparent shadow-[var(--shadow-level1)]',
     ghost:
       'bg-transparent text-[color:var(--md-sys-color-on-surface)] border border-transparent shadow-none',
     tonal:

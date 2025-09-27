@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed } from 'vue'
 import type { ControlVariant, ControlSize } from '../types'
 
@@ -63,3 +63,4 @@ const klass = computed(() => [
     :class="klass"
   />
 </template>
+

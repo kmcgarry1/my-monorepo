@@ -69,33 +69,42 @@ const themeItems = computed(() => [
 </script>
 
 <template>
-  <AppCard padding="sm" variant="elevated" class="toolbar">
-    <div class="left items-center gap-1">
-      <AppIconButton name="plus" variant="primary" title="New" @click="emit('reset')" />
+  <AppCard variant="surface" class="toolbar-card">
+    <div class="toolbar-cluster">
+      <AppIconButton name="plus" variant="ghost" size="sm" class="icon-pill" title="New" @click="emit('reset')" />
       <AppDropdown
+        class="toolbar-dropdown"
         :items="[{label:'Acid Burrower', value:'acid', icon:'sword'}, {label:'Raging River', value:'river', icon:'book'}]"
         button-title="Presets"
+        variant="ghost"
         @select="v => emit('load-preset', v as any)"
       >
         <template #button>
-          <AppIcon name="sword" />
-          <span class="hidden md:inline">Presets</span>
+          <span class="toolbar-button">
+            <AppIcon name="sword" />
+            <span class="label">Presets</span>
+          </span>
         </template>
       </AppDropdown>
       <AppDropdown
+        class="toolbar-dropdown"
         :items="[{label:'Open SRD', value:'srd', icon:'book'}, {label:'License', value:'license', icon:'book'}]"
         button-title="Docs"
+        variant="ghost"
         @select="v => openDoc(v as 'srd' | 'license')"
       >
         <template #button>
-          <AppIcon name="book" />
-          <span class="hidden md:inline">Docs</span>
+          <span class="toolbar-button">
+            <AppIcon name="book" />
+            <span class="label">Docs</span>
+          </span>
         </template>
       </AppDropdown>
-      <AppIconButton name="info" variant="outline" title="Glossary" @click="openGlossary()" />
+      <AppIconButton name="info" variant="ghost" size="sm" class="icon-pill" title="Glossary" @click="openGlossary()" />
     </div>
-    <div class="right items-center gap-1">
+    <div class="toolbar-cluster">
       <AppDropdown
+        class="toolbar-dropdown"
         :items="[
           {label:'Download JSON', value:'json', icon:'download'},
           {label:'Download Markdown', value:'md', icon:'download'},
@@ -104,45 +113,112 @@ const themeItems = computed(() => [
         ]"
         button-title="Export"
         align="right"
+        variant="ghost"
         @select="v => v==='json' ? downloadJSON() : v==='md' ? downloadMarkdown() : v==='copy' ? copyMarkdown() : printNow()"
       >
         <template #button>
-          <AppIcon name="download" />
-          <span class="hidden md:inline">Export</span>
+          <span class="toolbar-button">
+            <AppIcon name="download" />
+            <span class="label">Export</span>
+          </span>
         </template>
       </AppDropdown>
-
       <AppDropdown
+        class="toolbar-dropdown"
         :items="themeItems"
         button-title="Theme"
         align="right"
+        variant="ghost"
         @select="v => emit('update:theme', v as Theme)"
       >
         <template #button>
-          <AppIcon name="palette" />
-          <span class="hidden md:inline">Theme</span>
+          <span class="toolbar-button">
+            <AppIcon name="palette" />
+            <span class="label">Theme</span>
+          </span>
         </template>
       </AppDropdown>
-
-      <AppButton v-if="hasSaved()" variant="subtle" size="sm" @click="clearSaved">Clear</AppButton>
+      <AppButton v-if="hasSaved()" variant="subtle" size="sm" class="toolbar-clear" @click="clearSaved">Clear</AppButton>
     </div>
   </AppCard>
 </template>
-
 <style scoped>
-.toolbar {
+.toolbar-card {
   display: flex;
-  gap: 0.75rem;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
+  gap: 0.9rem 1rem;
+  padding: 0.95rem 1.2rem;
+  border-radius: 1.2rem;
+  background: linear-gradient(120deg, color-mix(in srgb, var(--surface) 98%, transparent), color-mix(in srgb, var(--surface-veil) 60%, transparent));
+  border: 1px solid color-mix(in srgb, var(--border) 22%, transparent);
+  box-shadow: 0 18px 32px rgba(15, 12, 40, 0.12);
+  backdrop-filter: blur(18px);
 }
 
-.left,
-.right {
+.toolbar-cluster {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
   flex-wrap: wrap;
+}
+
+.icon-pill {
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--surface-veil) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 26%, transparent);
+  padding: 0.5rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  transition: transform var(--motion-duration-sm) var(--motion-easing-emphasized), box-shadow var(--motion-duration-sm) var(--motion-easing-standard);
+}
+
+.icon-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(15, 12, 40, 0.12);
+}
+
+.toolbar-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.toolbar-button .label {
+  color: color-mix(in srgb, var(--fg) 92%, transparent);
+}
+
+.toolbar-clear {
+  border-radius: 0.9rem;
+  padding-inline: 1rem;
+}
+
+:deep(.toolbar-dropdown > button) {
+  border-radius: 0.95rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--border) 26%, transparent);
+  background: color-mix(in srgb, var(--surface-veil) 72%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  transition: transform var(--motion-duration-sm) var(--motion-easing-emphasized), box-shadow var(--motion-duration-sm) var(--motion-easing-standard);
+}
+
+:deep(.toolbar-dropdown > button:hover) {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(15, 12, 40, 0.12);
+}
+
+:deep(.toolbar-dropdown > button .toolbar-button .label) {
+  color: color-mix(in srgb, var(--fg) 92%, transparent);
+}
+
+@media (max-width: 640px) {
+  .toolbar-button .label,
+  :deep(.toolbar-dropdown > button .toolbar-button .label) {
+    display: none;
+  }
 }
 </style>

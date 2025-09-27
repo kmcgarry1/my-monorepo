@@ -188,33 +188,43 @@ function handleUpdateTraits(value: string) {
   position: relative;
   min-height: 100vh;
   padding: clamp(3rem, 8vw, 5rem) 0 5rem;
-  background: radial-gradient(circle at top, color-mix(in srgb, var(--accent) 14%, transparent), transparent 55%),
-    radial-gradient(circle at bottom, color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent), transparent 70%),
-    var(--bg);
+  background: radial-gradient(circle at 20% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 55%),
+    radial-gradient(circle at 80% 120%, color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent), transparent 72%),
+    color-mix(in srgb, var(--surface) 96%, transparent);
 }
 
 .shell-aura {
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, color-mix(in srgb, var(--accent) 12%, transparent), transparent 60%);
-  opacity: 0.4;
-  filter: saturate(115%);
+  background: linear-gradient(120deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 65%);
+  opacity: 0.35;
   pointer-events: none;
+  mix-blend-mode: screen;
 }
 
 .page-container {
   position: relative;
   z-index: 1;
   margin: 0 auto;
-  max-width: 1180px;
-  padding: 0 clamp(1.25rem, 6vw, 2.75rem);
+  max-width: 1200px;
+  padding: clamp(1.25rem, 6vw, 2.75rem);
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
+  gap: 1.9rem;
+  background: color-mix(in srgb, var(--surface) 97%, transparent);
+  border-radius: 1.9rem;
+  border: 1px solid color-mix(in srgb, var(--border) 22%, transparent);
+  box-shadow: 0 28px 60px rgba(15, 12, 40, 0.18);
+  backdrop-filter: blur(22px);
+}
+
+.builder-toolbar {
+  margin-top: -0.3rem;
 }
 
 .main-grid {
   align-items: flex-start;
+  gap: var(--space-lg);
 }
 
 .preview-column {
@@ -227,7 +237,13 @@ function handleUpdateTraits(value: string) {
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 960px) {
+  .page-container {
+    border-radius: 1.4rem;
+    box-shadow: 0 22px 48px rgba(15, 12, 40, 0.16);
+    padding: clamp(1rem, 5vw, 2rem);
+  }
+
   .preview-column {
     position: static;
   }
