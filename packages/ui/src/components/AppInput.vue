@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import type { ControlVariant, ControlSize } from '../types'
 
 const props = withDefaults(defineProps<{
@@ -53,10 +53,19 @@ const klass = computed(() => [
   variantClass.value,
   invalidClass.value
 ].join(' '))
+
+const inputRef = ref<HTMLInputElement | null>(null)
+
+function focus(): void {
+  inputRef.value?.focus()
+}
+
+defineExpose({ focus })
 </script>
 
 <template>
   <input
+    ref="inputRef"
     :type="props.type"
     :placeholder="props.placeholder"
     :value="props.modelValue ?? ''"

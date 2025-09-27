@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, type ComponentPublicInstance } from 'vue'
 import { cx } from '../utils/variants'
 import type { ButtonVariant, ButtonSize } from '../types'
 
@@ -92,15 +92,67 @@ function itemClass(active: boolean) {
   const base = 'px-3 transition-all duration-[var(--motion-duration-sm)] uppercase tracking-[0.12em] font-semibold border-r last:border-r-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--md-comp-focus-ring)] focus-visible:ring-offset-1 focus-visible:ring-offset-[color:var(--md-sys-color-surface)]'
   return cx(base, sizeClass.value, palette(active))
 }
+
+const buttonRefs = ref<Array<HTMLButtonElement | null>>([])
+
+function registerButton(el: Element | ComponentPublicInstance | null, index: number) {
+  if (el instanceof HTMLButtonElement) {
+    buttonRefs.value[index] = el
+  } else if (el == null) {
+    buttonRefs.value[index] = null
+  }
+}
+
+function focusButton(index: number) {
+  const target = buttonRefs.value[index]
+  target?.focus()
+}
+
+function selectIndex(index: number) {
+  const option = props.options[index]
+  if (!option) return
+  emit('update:modelValue', option.value)
+  focusButton(index)
+}
+
+function handleKeydown(event: KeyboardEvent, index: number) {
+  if (!props.options.length) return
+
+  const lastIndex = props.options.length - 1
+
+  if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+    event.preventDefault()
+    const nextIndex = index >= lastIndex ? 0 : index + 1
+    selectIndex(nextIndex)
+  } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+    event.preventDefault()
+    const prevIndex = index <= 0 ? lastIndex : index - 1
+    selectIndex(prevIndex)
+  } else if (event.key === 'Home') {
+    event.preventDefault()
+    selectIndex(0)
+  } else if (event.key === 'End') {
+    event.preventDefault()
+    selectIndex(lastIndex)
+  }
+}
 </script>
 
 <template>
-  <div :class="cx('inline-flex overflow-hidden rounded-[var(--radius-md)] backdrop-blur-sm', containerClass)">
+  <div
+    role="radiogroup"
+    :class="cx('inline-flex overflow-hidden rounded-[var(--radius-md)] backdrop-blur-sm', containerClass)"
+  >
     <button
-      v-for="opt in props.options"
+      v-for="(opt, index) in props.options"
       :key="opt.value"
       type="button"
       :class="itemClass(props.modelValue===opt.value)"
+      role="radio"
+      :aria-checked="props.modelValue===opt.value"
+      :tabindex="props.modelValue===opt.value ? 0 : -1"
+      @keydown="handleKeydown($event, index)"
+      :ref="el => registerButton(el, index)"
       @click="emit('update:modelValue', opt.value)"
     >
       {{ opt.label }}
