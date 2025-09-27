@@ -11,7 +11,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"]
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "baseUrl": "../../",
+    "paths": {
+      "@my-monorepo/ui": ["packages/ui/src/index.ts"],
+      "@my-monorepo/ui/*": ["packages/ui/src/*"]
+    }
   }
 }
 

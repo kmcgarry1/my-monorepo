@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@my-monorepo/ui": "workspace:*",
     "@my-monorepo/theme": "workspace:*",
     "mapbox-gl": "^3.9.0",
     "vue": "^3.5.18",

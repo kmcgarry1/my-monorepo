@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { inject, onBeforeUnmount, onMounted, watch } from 'vue'
-import type mapboxgl from 'mapbox-gl'
+import type { Map as MapboxMap, RasterSourceSpecification } from 'mapbox-gl'
 import { MapboxKey } from '../di/keys'
 
 const props = defineProps<{ active: boolean; opacity: number }>()
@@ -13,7 +13,7 @@ let frameUrls: string[] = []
 let frameIndex = 0
 let styleDataHandler: (() => void) | null = null
 
-type RasterSource = mapboxgl.RasterSource & {
+type ConfigurableRasterSource = {
   setTiles?: (tiles: string[]) => void
 }
 
@@ -30,11 +30,11 @@ async function fetchTimeline(): Promise<string[]> {
   }
 }
 
-function addOrUpdateLayer(map: mapboxgl.Map) {
+function addOrUpdateLayer(map: MapboxMap) {
   // Add source if missing
-  const source = map.getSource(SOURCE_ID) as RasterSource | undefined
+  const source = map.getSource(SOURCE_ID) as (ConfigurableRasterSource | undefined)
   if (!source) {
-    const sourceSpec: mapboxgl.RasterSourceSpecification = {
+    const sourceSpec: RasterSourceSpecification = {
       type: 'raster',
       tiles: frameUrls.length ? [frameUrls[frameIndex]] : [],
       tileSize: 256,
@@ -49,7 +49,7 @@ function addOrUpdateLayer(map: mapboxgl.Map) {
         // Some versions require re-adding on style change
         map.removeLayer(LAYER_ID)
         map.removeSource(SOURCE_ID)
-        const freshSource: mapboxgl.RasterSourceSpecification = {
+        const freshSource: RasterSourceSpecification = {
           type: 'raster',
           tiles: [frameUrls[frameIndex]],
           tileSize: 256,
@@ -75,12 +75,12 @@ function addOrUpdateLayer(map: mapboxgl.Map) {
   }
 }
 
-function removeLayer(map: mapboxgl.Map) {
+function removeLayer(map: MapboxMap) {
   if (map.getLayer(LAYER_ID)) map.removeLayer(LAYER_ID)
   if (map.getSource(SOURCE_ID)) map.removeSource(SOURCE_ID)
 }
 
-async function enable(map: mapboxgl.Map) {
+async function enable(map: MapboxMap) {
   frameUrls = await fetchTimeline()
   frameIndex = Math.max(0, frameUrls.length - 1)
   addOrUpdateLayer(map)
@@ -94,7 +94,7 @@ async function enable(map: mapboxgl.Map) {
   }
 }
 
-function disable(map: mapboxgl.Map) {
+function disable(map: MapboxMap) {
   stopAnimation()
   removeLayer(map)
 }

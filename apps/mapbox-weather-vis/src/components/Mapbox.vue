@@ -1,12 +1,12 @@
 <template>
-  <div class="map-wrapper">
+  <div class="map-wrapper" :class="deviceClasses">
     <div ref="mapContainer" class="map-container" />
 
     <WeatherParticlesCanvas v-if="uiState.effect === 'off'" />
     <ThreeParticlesOverlay v-else />
     <RadarOverlay :active="uiState.radarOn" :opacity="uiState.radarOpacity" />
 
-    <div class="ui-overlay" role="region" aria-labelledby="map-controls-title">
+    <div class="ui-overlay" :class="{ 'is-phone': isPhone }" role="region" aria-labelledby="map-controls-title">
       <section class="panel">
         <header class="panel-header">
           <p class="panel-eyebrow">Weather layers</p>
@@ -36,6 +36,7 @@
 
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref, provide, shallowRef, reactive } from 'vue'
+import { useMaterialDisplay } from '@my-monorepo/ui'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
@@ -51,6 +52,7 @@ import { MapboxKey, MapUiStateKey, type MapUiState } from './di/keys'
 
 const mapContainer = ref<HTMLDivElement | null>(null)
 const map = shallowRef<mapboxgl.Map | null>(null)
+const { deviceClasses, isPhone } = useMaterialDisplay()
 
 const uiState = reactive<MapUiState>({
   styleId: 'mapbox://styles/mapbox/standard',
@@ -168,6 +170,25 @@ function applyLabelVisibility(m: mapboxgl.Map, visible: boolean) {
   display: flex;
   gap: 0.75rem;
   align-items: flex-start;
+}
+
+.ui-overlay.is-phone {
+  top: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  justify-content: center;
+  padding: clamp(0.75rem, 4vw, 1.25rem);
+  pointer-events: none;
+}
+
+.ui-overlay.is-phone .panel {
+  pointer-events: auto;
+  width: min(520px, calc(100% - clamp(1.5rem, 8vw, 2.5rem)));
+  max-height: min(65vh, 540px);
+  overflow-y: auto;
+  border-radius: 1.35rem;
+  padding: clamp(1rem, 4vw, 1.6rem);
 }
 .panel {
   min-width: 260px;

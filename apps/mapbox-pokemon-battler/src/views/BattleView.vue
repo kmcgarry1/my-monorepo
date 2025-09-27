@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
+import { useMaterialDisplay } from '@my-monorepo/ui'
 import { useRouter } from 'vue-router'
 import { useStore, type PokemonInstance, type Move } from '../store'
 
 const store = useStore()
 const router = useRouter()
+const { deviceClasses, isPhone } = useMaterialDisplay()
 
 const LOG_LIMIT = 24
 
@@ -80,7 +82,10 @@ const partyLabel = computed(() => {
   if (!store.team.length) return '0 / 0'
   return `${store.battle.partyIndex + 1} / ${store.team.length}`
 })
-const visibleLog = computed(() => (log.value.length ? log.value.slice(-3) : ['What will you do?']))
+const visibleLog = computed(() => {
+  const limit = isPhone.value ? 2 : 3
+  return log.value.length ? log.value.slice(-limit) : ['What will you do?']
+})
 
 onMounted(() => {
   resetLogForBattle()
@@ -303,7 +308,7 @@ function run() {
 </script>
 
 <template>
-  <div class="battle-screen fullscreen">
+  <div class="battle-screen fullscreen" :class="deviceClasses">
     <div class="battle-stage" role="presentation">
       <div v-if="wildMon" class="field opponent">
         <div class="status-card opponent">
