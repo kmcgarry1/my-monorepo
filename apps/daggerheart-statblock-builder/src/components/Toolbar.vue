@@ -4,7 +4,7 @@ import { toJSONBlob, toMarkdown, downloadBlob } from '../lib/exporters'
 import { hasSaved, clear } from '../lib/persist'
 import type { Enemy, Environment } from '../types'
 import type { Theme } from '../lib/theme'
-import { themeOptions } from '@my-monorepo/theme'
+import { themeOptions } from '../lib/theme'
 import { openGlossary } from '../lib/glossaryState'
 import {
   AppButton,
@@ -63,8 +63,12 @@ function openDoc(which: 'srd' | 'license') {
 }
 
 const themeItems = computed(() => [
-  { label: 'System', value: 'system', icon: 'palette' as const },
-  ...themeOptions.map((opt) => ({ label: opt.label, value: opt.value, icon: 'palette' as const }))
+  { label: 'System (match device)', value: 'system', icon: 'palette' as const },
+  ...themeOptions.map((opt) => ({
+    label: `${opt.family === 'material' ? 'Material You' : 'Apple Fluent'} · ${opt.mode === 'light' ? 'Light' : 'Dark'}`,
+    value: opt.value,
+    icon: 'palette' as const
+  }))
 ])
 </script>
 
