@@ -10,6 +10,7 @@ import PrintableStatblock from './components/PrintableStatblock.vue'
 import GlossaryDrawer from './components/GlossaryDrawer.vue'
 import NameReferenceDrawer from './components/NameReferenceDrawer.vue'
 import { useStatblockBuilder } from './composables/useStatblockBuilder'
+import { useMobileLayout } from './composables/useMobileLayout'
 import { getTierGuide } from './lib/tierGuides'
 import { openGlossary } from './lib/glossaryState'
 
@@ -31,6 +32,7 @@ const {
 const showWizard = ref(false)
 const wizardKey = ref(0)
 const showNameReference = ref(false)
+const { isMobile } = useMobileLayout()
 
 const isEnemy = computed(() => sbType.value === 'enemy')
 const typeLabel = computed(() => (isEnemy.value ? 'Enemy' : 'Environment'))
@@ -159,14 +161,14 @@ function handlePrint() {
 </script>
 
 <template>
-  <div class="app-shell">
+  <div class="app-shell" :class="{ 'is-mobile': isMobile }">
     <div class="shell-background" aria-hidden="true">
       <div class="shell-layer shell-layer--primary" />
       <div class="shell-layer shell-layer--accent" />
       <div class="shell-grid" />
     </div>
 
-    <aside class="nav-rail" aria-label="Builder navigation">
+    <aside v-if="!isMobile" class="nav-rail" aria-label="Builder navigation">
       <div class="nav-rail__logo" aria-hidden="true">
         <span class="nav-rail__brand">DH</span>
       </div>
@@ -202,7 +204,7 @@ function handlePrint() {
     </aside>
 
     <main class="layout-surface" role="main">
-      <header class="top-app-bar" role="banner">
+      <header v-if="!isMobile" class="top-app-bar" role="banner">
         <div class="top-app-bar__headline">
           <span class="top-app-bar__eyebrow">Daggerheart builder</span>
           <span class="top-app-bar__title">{{ displayName }}</span>
@@ -228,6 +230,67 @@ function handlePrint() {
           />
         </div>
       </header>
+
+      <header v-else class="mobile-app-bar" role="banner">
+        <div class="mobile-app-bar__brand">
+          <span class="mobile-app-bar__logo" aria-hidden="true">DH</span>
+          <div class="mobile-app-bar__headline">
+            <span class="mobile-app-bar__eyebrow">Daggerheart builder</span>
+            <span class="mobile-app-bar__title">{{ displayName }}</span>
+            <span class="mobile-app-bar__subtitle">{{ topAppBarSubtitle }}</span>
+          </div>
+        </div>
+        <div class="mobile-app-bar__actions">
+          <AppIconButton
+            class="mobile-app-bar__icon"
+            name="dice"
+            variant="surface"
+            size="sm"
+            aria-label="Open guided build"
+            @click="openWizard"
+          />
+          <AppIconButton
+            class="mobile-app-bar__icon"
+            name="trash"
+            variant="surface"
+            size="sm"
+            aria-label="Reset statblock"
+            @click="resetAll"
+          />
+          <AppIconButton
+            class="mobile-app-bar__icon"
+            name="print"
+            variant="surface"
+            size="sm"
+            aria-label="Print statblock"
+            @click="handlePrint"
+          />
+        </div>
+      </header>
+
+      <nav v-if="isMobile" class="mobile-action-bar" aria-label="Builder navigation">
+        <button class="mobile-action is-active" type="button">
+          <AppIcon name="sword" size="sm" />
+          <span>Builder</span>
+        </button>
+        <button class="mobile-action" type="button" @click="openWizard">
+          <AppIcon name="dice" size="sm" />
+          <span>Guided</span>
+        </button>
+        <button
+          class="mobile-action"
+          type="button"
+          :class="{ 'is-active': showNameReference }"
+          @click="openNameReference"
+        >
+          <AppIcon name="sparkles" size="sm" />
+          <span>Name DB</span>
+        </button>
+        <button class="mobile-action" type="button" @click="openGlossary()">
+          <AppIcon name="book" size="sm" />
+          <span>Glossary</span>
+        </button>
+      </nav>
 
       <section class="layout-overview">
         <Transition
@@ -507,6 +570,138 @@ function handlePrint() {
   display: flex;
   flex-direction: column;
   gap: clamp(1.9rem, 3vw, 2.6rem);
+}
+
+.app-shell.is-mobile {
+  grid-template-columns: 1fr;
+  padding: clamp(1.2rem, 6vw, 1.8rem) clamp(0.75rem, 5vw, 1.6rem) clamp(2.4rem, 9vw, 3.2rem);
+}
+
+.app-shell.is-mobile .layout-surface {
+  padding: clamp(1rem, 6vw, 1.4rem);
+  border-radius: 1.5rem;
+  gap: 1.6rem;
+}
+
+.app-shell.is-mobile .layout-overview {
+  grid-template-columns: 1fr;
+  gap: clamp(1rem, 5vw, 1.4rem);
+}
+
+.app-shell.is-mobile .layout-grid {
+  grid-template-columns: 1fr;
+  gap: clamp(1rem, 6vw, 1.6rem);
+}
+
+.mobile-app-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: clamp(0.9rem, 4vw, 1.1rem) clamp(1rem, 5vw, 1.4rem);
+  border-radius: 1.4rem;
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-high, var(--surface)) 96%, transparent);
+  box-shadow: 0 16px 40px rgba(14, 10, 44, 0.18),
+    0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline-variant, rgba(40, 35, 70, 0.22)) 32%, transparent);
+}
+
+.mobile-app-bar__brand {
+  display: flex;
+  gap: 0.9rem;
+  align-items: center;
+}
+
+.mobile-app-bar__logo {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--md-sys-color-primary) 22%, transparent);
+  color: var(--md-sys-color-on-primary, #fff);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.mobile-app-bar__headline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.mobile-app-bar__eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--md-sys-color-on-surface-variant, var(--muted)) 85%, transparent);
+}
+
+.mobile-app-bar__title {
+  font-weight: 700;
+  font-size: 1.3rem;
+  letter-spacing: -0.01em;
+}
+
+.mobile-app-bar__subtitle {
+  font-size: 0.82rem;
+  line-height: 1.2;
+  color: color-mix(in srgb, var(--md-sys-color-on-surface-variant, var(--muted)) 85%, transparent);
+}
+
+.mobile-app-bar__actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+}
+
+.mobile-app-bar__icon {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline-variant, rgba(255, 255, 255, 0.2)) 30%, transparent);
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-high, var(--surface)) 92%, transparent);
+}
+
+.mobile-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem clamp(0.75rem, 6vw, 1.4rem);
+  border-radius: 1.4rem;
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-highest, var(--surface)) 96%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline-variant, rgba(40, 35, 70, 0.22)) 36%, transparent);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.mobile-action-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-action {
+  flex: 1 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 1.1rem;
+  border: none;
+  background: transparent;
+  color: color-mix(in srgb, var(--md-sys-color-on-surface-variant, var(--muted)) 88%, transparent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mobile-action:is(:hover, :focus-visible) {
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-high, var(--surface)) 88%, transparent);
+  color: var(--md-sys-color-on-surface, var(--fg));
+}
+
+.mobile-action.is-active {
+  background: color-mix(in srgb, var(--md-sys-color-secondary-container, var(--surface)) 88%, transparent);
+  color: var(--md-sys-color-on-secondary-container, var(--fg));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline-variant, rgba(255, 255, 255, 0.3)) 45%, transparent);
 }
 
 .top-app-bar {
