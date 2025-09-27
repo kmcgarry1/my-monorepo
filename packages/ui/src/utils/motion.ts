@@ -1,7 +1,6 @@
 const easeStandard = "ease-[var(--motion-easing-standard)]"
 const easeDecelerate = "ease-[var(--motion-easing-decelerate)]"
 const easeAccelerate = "ease-[var(--motion-easing-accelerate)]"
-const easeEmphasized = "ease-[var(--motion-easing-emphasized)]"
 const easeEmphasizedDecelerate = "ease-[var(--motion-easing-emphasized-decelerate)]"
 const easeEmphasizedAccelerate = "ease-[var(--motion-easing-emphasized-accelerate)]"
 
