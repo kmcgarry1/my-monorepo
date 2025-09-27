@@ -5,7 +5,7 @@ import { btnBase, btnVariants, iconBtnSizes, cx } from '../utils/variants'
 import type { ButtonVariant, IconButtonSize } from '../types'
 
 const props = withDefaults(defineProps<{
-  name: 'sword'|'arrows'|'dice'|'plus'|'trash'|'book'|'info'|'download'|'copy'|'print'|'x'|'palette'
+  name: 'sword'|'arrows'|'dice'|'plus'|'trash'|'book'|'info'|'download'|'copy'|'print'|'x'|'palette'|'sparkles'
   variant?: ButtonVariant
   size?: IconButtonSize
   title?: string

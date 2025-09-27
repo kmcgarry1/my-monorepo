@@ -6,7 +6,7 @@ import type { Tone, TextSize } from '../types'
 type Size = Extract<TextSize, 'xs' | 'sm' | 'md'>
 
 const props = withDefaults(defineProps<{
-  icon?: 'sword'|'arrows'|'dice'|'book'|'info'
+  icon?: 'sword'|'arrows'|'dice'|'book'|'info'|'sparkles'
   label: string
   tone?: Tone
   size?: Size

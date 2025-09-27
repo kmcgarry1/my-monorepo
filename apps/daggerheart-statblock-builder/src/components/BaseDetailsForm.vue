@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import { AppCard, AppCol, AppFieldLabel, AppInput, AppRow, AppTagInput, AppTextarea } from '@my-monorepo/ui'
+import { AppCard, AppCol, AppFieldLabel, AppIconButton, AppInput, AppRow, AppTagInput, AppTextarea } from '@my-monorepo/ui'
 
 const props = defineProps<{
   name: string
@@ -13,6 +13,7 @@ const emit = defineEmits<{
   (e: 'update:archetype', v: string): void
   (e: 'update:description', v: string): void
   (e: 'update:traits', v: string): void
+  (e: 'open-name-helper'): void
 }>()
 </script>
 
@@ -26,7 +27,9 @@ const emit = defineEmits<{
     <section class="form-section">
       <AppRow :cols="2" class="form-row">
         <AppCol>
-          <AppFieldLabel icon="sword" label="Name" />
+          <AppFieldLabel icon="sword" label="Name">
+            <AppIconButton name="sparkles" variant="ghost" size="xs" title="Browse name database" @click="emit('open-name-helper')" />
+          </AppFieldLabel>
           <AppInput
             :model-value="props.name"
             @update:modelValue="v => emit('update:name', v)"

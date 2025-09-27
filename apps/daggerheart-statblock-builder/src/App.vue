@@ -8,6 +8,7 @@ import StatblockPreview from './components/StatblockPreview.vue'
 import Toolbar from './components/Toolbar.vue'
 import PrintableStatblock from './components/PrintableStatblock.vue'
 import GlossaryDrawer from './components/GlossaryDrawer.vue'
+import NameReferenceDrawer from './components/NameReferenceDrawer.vue'
 import { useStatblockBuilder } from './composables/useStatblockBuilder'
 import { getTierGuide } from './lib/tierGuides'
 import { openGlossary } from './lib/glossaryState'
@@ -29,6 +30,7 @@ const {
 
 const showWizard = ref(false)
 const wizardKey = ref(0)
+const showNameReference = ref(false)
 
 const isEnemy = computed(() => sbType.value === 'enemy')
 const typeLabel = computed(() => (isEnemy.value ? 'Enemy' : 'Environment'))
@@ -114,12 +116,25 @@ function handleFinish() {
   closeWizard()
 }
 
+function openNameReference() {
+  showNameReference.value = true
+}
+
+function closeNameReference() {
+  showNameReference.value = false
+}
+
 function handleUpdateSbType(value: 'enemy' | 'environment') {
   sbType.value = value
 }
 
 function handleUpdateName(value: string) {
   name.value = value
+}
+
+function handleApplySuggestedName(value: string) {
+  handleUpdateName(value)
+  closeNameReference()
 }
 
 function handleUpdateArchetype(value: string) {
@@ -163,6 +178,15 @@ function handlePrint() {
         <button class="nav-rail__action" type="button" @click="openWizard">
           <AppIcon name="dice" size="sm" />
           <span>Guided</span>
+        </button>
+        <button
+          class="nav-rail__action"
+          type="button"
+          :class="{ 'is-active': showNameReference }"
+          @click="openNameReference"
+        >
+          <AppIcon name="sparkles" size="sm" />
+          <span>Name DB</span>
         </button>
         <button class="nav-rail__action" type="button" @click="openGlossary()">
           <AppIcon name="book" size="sm" />
@@ -299,12 +323,19 @@ function handlePrint() {
       @update:description="handleUpdateDescription"
       @update:traits="handleUpdateTraits"
       @close="closeWizard"
+      @open-name-helper="openNameReference"
       @finish="handleFinish"
     />
 
     <div class="print-only">
       <PrintableStatblock :sbType="sbType" :enemy="enemy" :environment="environment" />
     </div>
+    <NameReferenceDrawer
+      :open="showNameReference"
+      :sb-type="sbType"
+      @close="closeNameReference"
+      @apply-name="handleApplySuggestedName"
+    />
     <GlossaryDrawer />
   </div>
 </template>

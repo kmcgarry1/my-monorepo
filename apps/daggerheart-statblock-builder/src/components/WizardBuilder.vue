@@ -35,6 +35,7 @@ const emit = defineEmits<{
   (e: 'update:tier', v: number | null): void
   (e: 'update:description', v: string): void
   (e: 'update:traits', v: string): void
+  (e: 'open-name-helper'): void
   (e: 'finish'): void
 }>()
 
@@ -183,6 +184,7 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
               @update:archetype="v => emit('update:archetype', v)"
               @update:description="v => emit('update:description', v)"
               @update:traits="v => emit('update:traits', v)"
+              @open-name-helper="emit('open-name-helper')"
             />
           </template>
           <template v-else-if="steps[current].key==='profile'">

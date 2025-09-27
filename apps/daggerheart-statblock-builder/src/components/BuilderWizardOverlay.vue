@@ -27,6 +27,7 @@ const emit = defineEmits<{
   (e: 'update:tier', value: number | null): void
   (e: 'update:description', value: string): void
   (e: 'update:traits', value: string): void
+  (e: 'open-name-helper'): void
 }>()
 
 let listening = false
@@ -99,6 +100,7 @@ onBeforeUnmount(() => {
             @update:tier="(value) => emit('update:tier', value)"
             @update:description="(value) => emit('update:description', value)"
             @update:traits="(value) => emit('update:traits', value)"
+            @open-name-helper="emit('open-name-helper')"
             @finish="emit('finish')"
           />
         </div>
