@@ -39,7 +39,7 @@ function setActive(i: number) {
 
     <div class="panel py-[0.45rem] px-[0.6rem]" v-if="active">
       <div class="row gap-3 items-center">
-        <img :src="active.sprites.front_default" alt="active" class="w-10 h-10 [image-rendering:pixelated]" />
+        <img :src="active.sprites.front_default ?? ''" alt="active" class="w-10 h-10 [image-rendering:pixelated]" />
         <div class="stack">
           <div class="capitalize font-semibold">{{ active.name }}</div>
           <div class="text-[0.85rem] opacity-80">Lv {{ active.level }} • {{ active.types.map(t=>t.type.name).join(', ') }}</div>
@@ -57,7 +57,7 @@ function setActive(i: number) {
           @click="setActive(i)"
           :title="p.name"
         >
-          <img :src="p.sprites.front_default" alt="p.name" class="w-9 h-9 [image-rendering:pixelated]" />
+          <img :src="p.sprites.front_default ?? ''" alt="p.name" class="w-9 h-9 [image-rendering:pixelated]" />
           <span class="absolute bottom-[-0.55rem] text-[0.75rem] text-slate-900">{{ p.level }}</span>
         </button>
       </div>

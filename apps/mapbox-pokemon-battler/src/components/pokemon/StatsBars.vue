@@ -21,11 +21,11 @@ function percent(val: number) {
   return Math.min(100, Math.round((val / max) * 100))
 }
 
-function tier(val: number) {
-  if (val <= 50) return 'bg-red-500'
-  if (val <= 80) return 'bg-amber-500'
-  if (val <= 120) return 'bg-green-500'
-  return 'bg-blue-500'
+function tierColor(val: number) {
+  if (val <= 50) return 'var(--md-sys-color-error)'
+  if (val <= 80) return 'color-mix(in srgb, var(--md-sys-color-tertiary) 60%, var(--md-sys-color-primary) 20%)'
+  if (val <= 120) return 'color-mix(in srgb, var(--md-sys-color-tertiary) 70%, var(--md-sys-color-primary) 30%)'
+  return 'color-mix(in srgb, var(--md-sys-color-primary) 80%, white 8%)'
 }
 
 function total() {
@@ -34,24 +34,67 @@ function total() {
 </script>
 
 <template>
-  <div class="grid gap-[0.35rem] w-full">
-    <div class="grid [grid-template-columns:36px_1fr_42px] items-center gap-2" v-for="s in order" :key="s.key">
-      <div class="font-semibold text-[0.85rem] opacity-85">{{ s.label }}</div>
-      <div class="h-[14px] bg-[var(--panel-border)] rounded-[6px] overflow-hidden relative border-2 border-[var(--panel-border)]">
-        <div class="h-full rounded-[4px] transition-[width] duration-200 ease-linear" :class="tier(findStat(s.key))" :style="{ width: percent(findStat(s.key)) + '%' }"></div>
+  <div class="stats-grid">
+    <div class="stat-row" v-for="s in order" :key="s.key">
+      <div class="stat-label">{{ s.label }}</div>
+      <div class="stat-track" :style="{ '--fill-color': tierColor(findStat(s.key)) }">
+        <div class="stat-fill" :style="{ width: percent(findStat(s.key)) + '%' }"></div>
       </div>
-      <div class="text-right [font-variant-numeric:tabular-nums] font-semibold min-w-[36px]">{{ findStat(s.key) }}</div>
+      <div class="stat-value">{{ findStat(s.key) }}</div>
     </div>
-    <div class="grid [grid-template-columns:36px_1fr_42px] items-center gap-2">
-      <div class="font-semibold text-[0.85rem] opacity-85">BST</div>
-      <div class="h-[10px] bg-[var(--panel-border)] rounded-[6px] overflow-hidden relative border-2 border-[var(--panel-border)]">
-        <div class="h-full rounded-[4px] transition-[width] duration-200 ease-linear bg-[var(--accent)]" :style="{ width: Math.min(100, Math.round((total()/720)*100)) + '%' }"></div>
+    <div class="stat-row">
+      <div class="stat-label">BST</div>
+      <div class="stat-track" :style="{ '--fill-color': 'var(--md-sys-color-primary)' }">
+        <div class="stat-fill" :style="{ width: Math.min(100, Math.round((total()/720)*100)) + '%' }"></div>
       </div>
-      <div class="text-right [font-variant-numeric:tabular-nums] font-semibold min-w-[36px]">{{ total() }}</div>
+      <div class="stat-value">{{ total() }}</div>
     </div>
   </div>
-  
 </template>
 
 <style scoped>
+.stats-grid {
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 48px;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.stat-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: color-mix(in srgb, var(--md-sys-color-on-surface) 82%, transparent);
+}
+
+.stat-track {
+  position: relative;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline) 40%, transparent);
+}
+
+.stat-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--fill-color);
+  transition: width 220ms var(--motion-easing-standard);
+}
+
+.stat-value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--md-sys-color-on-surface) 88%, transparent);
+}
 </style>
