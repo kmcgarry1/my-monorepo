@@ -33,6 +33,7 @@ const selectedGuide = computed(() => getTierGuide(props.tier ?? defaultTier))
     <div class="field-cluster">
       <AppFieldLabel icon="info" label="Statblock Type" />
       <AppButtonGroup
+        aria-label="Statblock type"
         :options="[
           { label: 'Enemy', value: 'enemy' },
           { label: 'Environment', value: 'environment' }
@@ -47,6 +48,7 @@ const selectedGuide = computed(() => getTierGuide(props.tier ?? defaultTier))
     <div class="field-cluster">
       <AppFieldLabel icon="book" label="Tier" />
       <AppButtonGroup
+        aria-label="Tier"
         :options="tierOptions"
         :model-value="String(props.tier ?? defaultTier)"
         @update:modelValue="v => emit('update:tier', Number(v))"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { AppInput, AppButton } from '@my-monorepo/ui'
 import { fadeSlideUp } from '@my-monorepo/ui'
 import { glossaryOpen, glossaryTerm, closeGlossary } from '../lib/glossaryState'
@@ -9,9 +9,15 @@ import srdUrl from '../SRD/Daggerheart-SRD-9-09-25.pdf?url'
 
 const q = ref('')
 const filtered = computed(() => findEntries(q.value))
+const searchInput = ref<{ focus: () => void } | null>(null)
 
 watch(glossaryOpen, (o) => {
-  if (o && glossaryTerm.value) q.value = glossaryTerm.value
+  if (o) {
+    if (glossaryTerm.value) q.value = glossaryTerm.value
+    nextTick(() => {
+      searchInput.value?.focus?.()
+    })
+  }
 })
 </script>
 
@@ -34,7 +40,13 @@ watch(glossaryOpen, (o) => {
           </header>
           <div class="space-y-3 p-4">
             <div>
-              <AppInput v-model="q" placeholder="Search terms..." />
+              <label class="sr-only" for="glossary-search">Search glossary terms</label>
+              <AppInput
+                id="glossary-search"
+                ref="searchInput"
+                v-model="q"
+                placeholder="Search terms..."
+              />
             </div>
             <div class="flex items-center gap-2 text-sm">
               <a :href="srdUrl" target="_blank" rel="noreferrer" class="text-[var(--link)] underline">Open SRD PDF</a>

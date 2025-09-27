@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { AppBadge, AppButton, AppInput, fadeSlideUp } from '@my-monorepo/ui'
 import {
   describeType,
@@ -17,6 +17,7 @@ const emit = defineEmits<{ (e: 'close'): void; (e: 'apply-name', value: string):
 const query = ref('')
 const filter = ref<NameFilter>('all')
 const lastRoll = ref<string>('')
+const searchInput = ref<{ focus: () => void } | null>(null)
 
 const filterOptions = computed(() => {
   const base = [{ value: 'all' as NameFilter, label: 'All' }]
@@ -65,6 +66,9 @@ watch(
       lastRoll.value = ''
       filter.value = props.sbType
       window.addEventListener('keydown', onKeydown)
+      nextTick(() => {
+        searchInput.value?.focus?.()
+      })
     } else {
       window.removeEventListener('keydown', onKeydown)
     }
@@ -100,13 +104,19 @@ onBeforeUnmount(() => {
           <header class="flex items-center justify-between border-b border-[var(--border)] p-4">
             <div>
               <h2 class="text-lg font-semibold">Name reference</h2>
-              <p class="text-xs text-[var(--muted)]">{{ resultSummary }}</p>
+              <p class="text-xs text-[var(--muted)]" role="status" aria-live="polite">{{ resultSummary }}</p>
             </div>
             <AppButton size="sm" variant="outline" @click="close">Close</AppButton>
           </header>
           <div class="flex h-full flex-col gap-4 p-4">
             <div class="space-y-3">
-              <AppInput v-model="query" placeholder="Search names, tags, or sources" />
+              <label class="sr-only" for="name-reference-search">Search names, tags, or sources</label>
+              <AppInput
+                id="name-reference-search"
+                ref="searchInput"
+                v-model="query"
+                placeholder="Search names, tags, or sources"
+              />
               <div class="flex flex-wrap gap-2">
                 <AppButton
                   v-for="option in filterOptions"
