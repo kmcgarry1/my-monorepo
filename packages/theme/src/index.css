@@ -1,5 +1,5 @@
 :root,
-:root[data-theme='material-indigo'] {
+:root[data-theme='material-aurora'] {
   color-scheme: light;
   font-family: var(--font-sans);
 
@@ -18,16 +18,17 @@
 
   --radius-xs: 0.25rem;
   --radius-sm: 0.5rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
+  --radius-md: 0.9rem;
+  --radius-lg: 1.35rem;
+  --radius-xl: 1.9rem;
   --radius-pill: 999px;
 
-  --shadow-level1: 0 1px 2px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.06);
-  --shadow-level2: 0 4px 8px rgba(15, 23, 42, 0.1), 0 2px 6px rgba(15, 23, 42, 0.06);
-  --shadow-level3: 0 8px 16px rgba(15, 23, 42, 0.12), 0 6px 10px rgba(15, 23, 42, 0.08);
-  --shadow-level4: 0 12px 20px rgba(15, 23, 42, 0.14), 0 6px 12px rgba(15, 23, 42, 0.08);
-  --shadow-level5: 0 20px 32px rgba(15, 23, 42, 0.18), 0 12px 24px rgba(15, 23, 42, 0.1);
+  --shadow-level1: 0 16px 32px rgba(103, 80, 164, 0.12);
+  --shadow-level2: 0 28px 56px rgba(103, 80, 164, 0.18);
+  --shadow-level3: 0 36px 64px rgba(73, 49, 122, 0.2);
+  --shadow-level4: 0 48px 82px rgba(73, 49, 122, 0.26);
+  --shadow-level5: 0 60px 96px rgba(73, 49, 122, 0.3);
+  --shadow-elevated: 0 32px 60px rgba(103, 80, 164, 0.16);
 
   --motion-duration-xs: 120ms;
   --motion-duration-sm: 160ms;
@@ -119,7 +120,7 @@
   --type-label-sm-weight: 600;
   --type-label-sm-tracking: 0.08em;
 
-  /* Default theme values mirror material-indigo for SSR */
+  /* Default theme values mirror material-aurora for SSR */
   --md-sys-color-primary: #6750A4;
   --md-sys-color-on-primary: #FFFFFF;
   --md-sys-color-primary-container: #EADDFF;
@@ -138,8 +139,8 @@
   --md-sys-color-on-surface: #1C1B1F;
   --md-sys-color-surface-variant: #E7E0EC;
   --md-sys-color-on-surface-variant: #49454F;
-  --md-sys-color-outline: color-mix(in srgb, #79747E 65%, transparent);
-  --md-sys-color-outline-variant: color-mix(in srgb, #CAC4D0 55%, transparent);
+  --md-sys-color-outline: #79747E;
+  --md-sys-color-outline-variant: #CAC4D0;
   --md-sys-color-shadow: #000000;
   --md-sys-color-scrim: #000000;
   --md-sys-color-surface-tint: #6750A4;
@@ -192,43 +193,38 @@
   --md-comp-field-on-surface: var(--md-sys-color-on-surface);
   --md-comp-field-placeholder: var(--md-sys-color-on-surface-variant);
 
-  /* Legacy aliases retained for downstream apps */
-  --bg: var(--md-sys-color-background);
-  --fg: var(--md-sys-color-on-surface);
-  --muted: var(--md-sys-color-on-surface-variant);
-  --surface: var(--md-sys-color-surface);
-  --surface-2: var(--md-sys-color-surface-container);
-  --surface-translucent: color-mix(in srgb, var(--md-sys-color-surface) 94%, transparent);
-  --surface-veil: color-mix(in srgb, var(--md-sys-color-surface) 78%, transparent);
-  --surface-panel: var(--md-sys-color-surface-container-high);
-  --border: var(--md-sys-color-outline-variant);
-  --border-soft: var(--md-sys-color-outline-variant);
-  --border-strong: var(--md-sys-color-outline);
-  --border-muted: color-mix(in srgb, var(--md-sys-color-outline) 40%, transparent);
-  --accent: var(--md-sys-color-primary);
-  --accent-weak: var(--md-sys-color-primary-container);
-  --accent-strong: var(--md-sys-color-on-primary);
-  --enemy-accent: var(--md-sys-color-error);
-  --env-accent: var(--md-sys-color-success);
-  --danger-soft: color-mix(in srgb, var(--enemy-accent) 14%, transparent);
-  --success-soft: color-mix(in srgb, var(--env-accent) 16%, transparent);
-  --danger-border: color-mix(in srgb, var(--enemy-accent) 30%, transparent);
-  --success-border: color-mix(in srgb, var(--env-accent) 30%, transparent);
-  --btn-bg: var(--md-comp-button-elevated-container);
-  --btn-fg: var(--md-comp-button-elevated-on-container);
-  --btn-border: var(--md-comp-button-outlined-outline);
-  --btn-border-strong: var(--md-comp-button-outlined-outline);
-  --link: var(--md-comp-button-text-label);
-  --overlay: color-mix(in srgb, var(--md-sys-color-scrim) 16%, transparent);
-  --gridline: color-mix(in srgb, var(--md-sys-color-outline) 6%, transparent);
+  --bg: #F7F2FA;
+  --fg: #1C1B1F;
+  --muted: #625B71;
+  --surface: #FFFBFE;
+  --surface-2: #F3EDF7;
+  --surface-panel: #ECE6F0;
+  --surface-veil: rgba(103, 80, 164, 0.08);
+  --surface-translucent: rgba(255, 255, 255, 0.85);
+  --border: rgba(103, 80, 164, 0.18);
+  --border-soft: rgba(103, 80, 164, 0.12);
+  --border-muted: rgba(103, 80, 164, 0.08);
+  --border-strong: #79747E;
+  --accent: #6750A4;
+  --accent-weak: #EADDFF;
+  --accent-strong: #21005D;
+  --enemy-accent: #B3261E;
+  --env-accent: #2F6F3D;
+  --danger-soft: rgba(179, 38, 30, 0.16);
+  --success-soft: rgba(46, 125, 50, 0.16);
+  --danger-border: rgba(179, 38, 30, 0.3);
+  --success-border: rgba(46, 125, 50, 0.3);
+  --overlay: rgba(15, 12, 40, 0.16);
+  --gridline: rgba(103, 80, 164, 0.08);
 }
 
-[data-theme='material-emerald'] {
-  color-scheme: light;
-}
-
-[data-theme='material-midnight'] {
+[data-theme='material-midnight'],
+[data-theme='apple-midnight'] {
   color-scheme: dark;
+}
+
+[data-theme='apple-sky'] {
+  color-scheme: light;
 }
 
 html,

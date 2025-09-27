@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "@my-monorepo/theme/styles.css";
-@import "./theme/base.css";
 
 html, body, #app {
   height: 100%;
