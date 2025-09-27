@@ -13,8 +13,9 @@ import {
   PrinterIcon,
   XMarkIcon,
   PaintBrushIcon,
+  SparklesIcon,
 } from '@heroicons/vue/24/outline'
-import { 
+import {
   InformationCircleIcon as InformationCircleIconSolid,
   BookOpenIcon as BookOpenIconSolid,
   TrashIcon as TrashIconSolid,
@@ -27,11 +28,12 @@ import {
   PrinterIcon as PrinterIconSolid,
   XMarkIcon as XMarkIconSolid,
   PaintBrushIcon as PaintBrushIconSolid,
+  SparklesIcon as SparklesIconSolid,
 } from '@heroicons/vue/24/solid'
 
 import type { IconColor, IconSize, IconWeight } from '../types'
 
-type IconName = 'sword'|'arrows'|'dice'|'plus'|'trash'|'book'|'info'|'download'|'copy'|'print'|'x'|'palette'
+type IconName = 'sword'|'arrows'|'dice'|'plus'|'trash'|'book'|'info'|'download'|'copy'|'print'|'x'|'palette'|'sparkles'
 
 const props = withDefaults(
   defineProps<{
@@ -85,6 +87,7 @@ const heroMapOutline: Record<string, any> = {
   print: PrinterIcon,
   x: XMarkIcon,
   palette: PaintBrushIcon,
+  sparkles: SparklesIcon,
 }
 const heroMapSolid: Record<string, any> = {
   sword: BoltIconSolid,
@@ -99,6 +102,7 @@ const heroMapSolid: Record<string, any> = {
   print: PrinterIconSolid,
   x: XMarkIconSolid,
   palette: PaintBrushIconSolid,
+  sparkles: SparklesIconSolid,
 }
 
 const HeroComp = computed(() => {
