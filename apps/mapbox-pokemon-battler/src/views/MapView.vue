@@ -120,12 +120,25 @@ function battlePokemon(s: Spawn) {
 
 function recenterToPlayer() { if (playerPos.value) recenter(playerPos.value) }
 
+function catchSelected() {
+  const current = selected.value
+  if (!current) return
+  catchPokemon(current)
+}
+
+function battleSelected() {
+  const current = selected.value
+  if (!current) return
+  battlePokemon(current)
+}
+
 watch(
   () => store.battle.inBattle,
   (inBattle) => {
     if (!inBattle) {
       const outcome = store.battle.outcome
-      if (outcome === 'victory' || outcome === 'caught') releaseSpawn(activeBattleSpawn.value)
+      const spawn = activeBattleSpawn.value
+      if ((outcome === 'victory' || outcome === 'caught') && spawn) releaseSpawn(spawn)
       activeBattleSpawn.value = null
     }
   }
@@ -156,43 +169,168 @@ onBeforeUnmount(() => {
 <template>
   <div class="fullscreen">
     <div ref="mapContainer" class="fullscreen" aria-hidden="true"></div>
-    <div v-if="loading" class="overlay"><div class="panel">Loading map...</div></div>
-    <div v-if="error" class="overlay"><div class="panel" role="alert">{{ error }}</div></div>
+    <Transition name="scrim">
+      <div v-if="loading" class="overlay" role="status">
+        <div class="panel overlay-card">
+          <h3 class="overlay-title">Preparing the map</h3>
+          <p class="overlay-copy">Locating you and summoning nearby Pokémon habitats…</p>
+        </div>
+      </div>
+    </Transition>
+    <Transition name="scrim">
+      <div v-if="error" class="overlay">
+        <div class="panel overlay-card" role="alert">
+          <h3 class="overlay-title">Location required</h3>
+          <p class="overlay-copy">{{ error }}</p>
+          <AppButton variant="primary" @click="locateAndInitMap">Try again</AppButton>
+        </div>
+      </div>
+    </Transition>
 
     <PokeballMenu @open-team="teamOpen = true" @open-pc="pcOpen = true" @recenter="recenterToPlayer" />
-<div v-if="selected?.data" class="overlay" @click.self="closeOverlay">
-      <div class="panel max-w-[420px]">
-        <div class="row justify-between items-start">
-          <h3 class="m-0 capitalize">{{ selected.data.name }}</h3>
-          <AppButton variant="outline" size="sm" @click="closeOverlay">Close</AppButton>
-        </div>
-        <div class="row gap-4 items-start">
-          <img :src="selected.data.sprites.front_default" :alt="selected.data.name" class="w-[120px] h-[120px] [image-rendering:pixelated]" />
-          <div class="stack min-w-[200px]">
-            <div>Types: {{ selected.data.types.map(t=>t.type.name).join(', ') }}</div>
-            <StatsBars v-if="selected.data.stats" :stats="selected.data.stats" />
-            <div class="row mt-2 gap-2 flex-wrap">
-              <AppButton variant="primary" @click="selected && catchPokemon(selected)">Catch</AppButton>
-              <AppButton variant="outline" @click="selected && battlePokemon(selected)">Battle</AppButton>
-              <AppButton variant="outline" @click="teamOpen = true">Team</AppButton>
+
+    <Transition name="scrim">
+      <div v-if="selected?.data" class="overlay" @click.self="closeOverlay">
+        <div class="panel wild-card" role="dialog" aria-modal="true">
+          <header class="wild-header">
+            <div class="wild-title">
+              <p class="eyebrow">Wild encounter</p>
+              <h3 class="capitalize">{{ selected.data.name }}</h3>
+            </div>
+            <AppButton variant="ghost" size="sm" @click="closeOverlay">Close</AppButton>
+          </header>
+          <div class="wild-body">
+            <img :src="selected.data.sprites.front_default ?? ''" :alt="selected.data.name" class="wild-sprite" />
+            <div class="wild-details">
+              <div class="chip-row">
+                <span class="chip" v-for="t in selected.data.types" :key="t.type.name">{{ t.type.name }}</span>
+              </div>
+              <StatsBars v-if="selected.data.stats" :stats="selected.data.stats" />
+              <div class="wild-actions">
+                <AppButton variant="primary" @click="catchSelected">Throw Poké Ball</AppButton>
+                <AppButton variant="outline" @click="battleSelected">Start battle</AppButton>
+                <AppButton variant="ghost" @click="teamOpen = true">Manage team</AppButton>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </Transition>
 
-    
     <BattleOverlay v-if="store.battle.inBattle" @open-team="teamOpen=true" />
-    <TeamOverlay v-if="teamOpen" @close="teamOpen=false" @inspect="(p)=>{ inspectMon = p }" />    <PcOverlay v-if="pcOpen" @close="pcOpen=false" />
+    <TeamOverlay v-if="teamOpen" @close="teamOpen=false" @inspect="(p)=>{ inspectMon = p }" />
+    <PcOverlay v-if="pcOpen" @close="pcOpen=false" />
     <PokemonInspect
       v-if="inspectMon"
       :pokemon="inspectMon"
       @close="inspectMon=null"
-      @set-active="() => { const idx = store.team.findIndex(c=>c.id===inspectMon.id); if (idx>=0) store.setPartyIndex(idx); inspectMon=null; teamOpen=false }"
+      @set-active="() => { const current = inspectMon; if (!current) return; const idx = store.team.findIndex(c=>c.id===current.id); if (idx>=0) store.setPartyIndex(idx); inspectMon=null; teamOpen=false }"
     />
   </div>
 </template>
 
 <style scoped>
+.overlay-card {
+  text-align: center;
+  display: grid;
+  gap: 0.65rem;
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+}
+
+.overlay-title {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.overlay-copy {
+  margin: 0;
+  color: color-mix(in srgb, var(--md-sys-color-on-surface) 74%, transparent);
+}
+
+.wild-card {
+  max-width: min(720px, 96vw);
+  display: grid;
+  gap: clamp(1.25rem, 3vw, 2rem);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.wild-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.wild-title { display: grid; gap: 0.2rem; }
+
+.wild-title > h3 {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--md-sys-color-on-surface) 58%, transparent);
+}
+
+.wild-body {
+  display: grid;
+  gap: clamp(1rem, 3vw, 1.5rem);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-items: start;
+}
+
+.wild-sprite {
+  width: clamp(160px, 24vw, 220px);
+  aspect-ratio: 1;
+  image-rendering: pixelated;
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline) 40%, transparent);
+  padding: 1.5rem;
+}
+
+.wild-details {
+  display: grid;
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--md-sys-color-primary) 12%, var(--md-sys-color-surface-container-highest));
+  color: color-mix(in srgb, var(--md-sys-color-on-surface) 82%, transparent);
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+
+.wild-actions {
+  display: grid;
+  gap: 0.6rem;
+  align-content: start;
+}
+
+.scrim-enter-active,
+.scrim-leave-active {
+  transition: opacity var(--motion-duration-medium) var(--motion-easing-standard);
+}
+
+.scrim-enter-from,
+.scrim-leave-to {
+  opacity: 0;
+}
 </style>
 

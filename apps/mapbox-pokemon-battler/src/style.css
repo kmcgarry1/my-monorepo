@@ -2,119 +2,119 @@
 @import "@my-monorepo/theme/styles.css";
 
 :root {
-  --radius: var(--radius-lg);
-  --radius-sm: var(--radius-sm);
-  --blur: 12px;
-  --dur-fast: var(--transition-fast);
-  --dur: var(--transition-base);
-  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --blur: 16px;
+  --motion-duration-short: 150ms;
+  --motion-duration-medium: 240ms;
+  --motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-easing-emphasized: cubic-bezier(0.3, 0, 0.2, 1);
   --mx: 0;
   --my: 0;
   --liftY: 0px;
-  --panel: color-mix(in srgb, var(--surface-panel) 95%, transparent);
-  --panel-weak: color-mix(in srgb, var(--surface-translucent) 85%, transparent);
-  --panel-border: var(--border);
-  --button-bg: var(--btn-bg);
-  --button-text: var(--btn-fg);
-  --accent: var(--accent);
-  --success: var(--env-accent);
-  --shadow: var(--shadow-soft);
-  --overlay: color-mix(in srgb, var(--overlay) 92%, transparent);
+
+  --md-sys-color-primary: var(--accent);
+  --md-sys-color-on-primary: var(--accent-fg, #ffffff);
+  --md-sys-color-primary-container: color-mix(in srgb, var(--accent) 22%, transparent);
+  --md-sys-color-on-primary-container: color-mix(in srgb, var(--accent) 98%, #051014);
+  --md-sys-color-surface: var(--surface);
+  --md-sys-color-surface-dim: color-mix(in srgb, var(--surface) 82%, black);
+  --md-sys-color-surface-bright: color-mix(in srgb, var(--surface) 68%, white);
+  --md-sys-color-surface-container: color-mix(in srgb, var(--surface-panel) 92%, transparent);
+  --md-sys-color-surface-container-high: color-mix(in srgb, var(--surface-panel) 97%, transparent);
+  --md-sys-color-surface-container-highest: color-mix(in srgb, var(--surface-panel) 99%, transparent);
+  --md-sys-color-on-surface: var(--fg);
+  --md-sys-color-outline: color-mix(in srgb, var(--border) 72%, transparent);
+  --md-sys-color-outline-variant: color-mix(in srgb, var(--border) 48%, transparent);
+  --md-sys-color-secondary: color-mix(in srgb, var(--accent) 62%, #44aadd);
+  --md-sys-color-tertiary: var(--env-accent);
+  --md-sys-color-error: color-mix(in srgb, #ef4444 80%, #220000);
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-on-surface-variant: color-mix(in srgb, var(--fg) 64%, transparent);
+  --md-sys-color-scrim: color-mix(in srgb, var(--overlay) 96%, transparent);
+
+  /* Legacy tokens mapped to Material design system */
+  --panel-border: var(--md-sys-color-outline-variant);
+  --panel-weak: var(--md-sys-color-surface-container-highest);
+  --panel: var(--md-sys-color-surface-container-high);
+  --button-bg: var(--md-sys-color-surface-container-highest);
+  --button-text: var(--md-sys-color-on-surface);
+  --accent: var(--md-sys-color-primary);
+  --success: var(--md-sys-color-tertiary);
+
+  --md-sys-elevation-level1: 0 1px 3px rgba(12, 12, 14, 0.24), 0 1px 2px rgba(12, 12, 14, 0.36);
+  --md-sys-elevation-level2: 0 8px 16px rgba(12, 12, 16, 0.22), 0 3px 6px rgba(12, 12, 16, 0.16);
+  --md-sys-elevation-level3: 0 18px 26px rgba(8, 8, 12, 0.28), 0 8px 16px rgba(8, 8, 12, 0.16);
 }
 
 @media (max-width: 640px) {
-  :root { --blur: 8px; }
+  :root { --blur: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :root { --blur: 4px; --dur-fast: 100ms; --dur: 160ms; }
+  :root {
+    --blur: 8px;
+    --motion-duration-short: 120ms;
+    --motion-duration-medium: 180ms;
+    --motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+    --motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  }
 }
 
 * { box-sizing: border-box; }
 html, body, #app { margin: 0; height: 100%; }
 
 body {
-  color: var(--fg);
-  background: var(--bg);
+  color: var(--md-sys-color-on-surface);
+  background: radial-gradient(140% 100% at 50% 0%, color-mix(in srgb, var(--md-sys-color-primary) 16%, transparent) 0%, var(--md-sys-color-surface) 48%, color-mix(in srgb, var(--md-sys-color-surface-dim) 90%, transparent) 100%);
   font-family: var(--font-sans);
+  transition: background 420ms var(--motion-easing-emphasized);
 }
 
 .fullscreen { position: absolute; inset: 0; }
 
 .panel {
-  background: var(--panel);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-card);
-  padding: 0.9rem;
-  color: var(--fg);
+  background: var(--md-sys-color-surface-container-high);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--md-sys-elevation-level2);
+  padding: 1.15rem;
+  color: var(--md-sys-color-on-surface);
   backdrop-filter: blur(var(--blur));
-  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+  transition:
+    transform var(--motion-duration-short) var(--motion-easing-standard),
+    box-shadow var(--motion-duration-short) var(--motion-easing-standard),
+    border-color var(--motion-duration-medium) var(--motion-easing-standard);
 }
 
 .panel:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-elevated);
+  transform: translateY(-2px);
+  box-shadow: var(--md-sys-elevation-level3);
+  border-color: color-mix(in srgb, var(--md-sys-color-outline) 48%, transparent);
 }
 
 .panel:active { transform: translateY(0); }
 
-.btn {
-  appearance: none;
-  border: 1px solid var(--panel-border);
-  background: var(--button-bg);
-  color: var(--button-text);
-  border-radius: var(--radius);
-  padding: 0.66rem 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
-  box-shadow: var(--shadow-button);
-}
-
-.btn.primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--bg);
-}
-
-.btn.danger {
-  background: var(--enemy-accent);
-  border-color: var(--enemy-accent);
-  color: var(--bg);
-}
-
-.btn:hover {
-  box-shadow: var(--shadow-button-hover);
-  transform: translateY(-1px);
-  border-color: var(--accent);
-}
-
-.btn:active { transform: translateY(0); }
-
-.btn:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent);
-}
-
-.row { display: flex; gap: 0.5rem; align-items: center; }
-.stack { display: grid; gap: 0.5rem; }
+.row { display: flex; gap: 0.65rem; align-items: center; }
+.stack { display: grid; gap: 0.75rem; }
 
 .overlay {
   position: absolute;
   inset: 0;
-  background: var(--overlay);
+  background: var(--md-sys-color-scrim);
   display: grid;
   place-items: center;
+  padding: clamp(1.5rem, 5vw, 3rem);
 }
 
-.overlay > .panel { animation: pop-in var(--dur) var(--ease-spring) both; }
+.overlay > .panel {
+  animation: md-pop-in var(--motion-duration-medium) var(--motion-easing-emphasized) both;
+}
 
-@keyframes pop-in {
-  from { opacity: 0; transform: translateY(6px) scale(0.985); }
+@keyframes md-pop-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
@@ -133,36 +133,54 @@ body {
 input,
 select,
 textarea {
-  background: var(--button-bg);
-  color: var(--button-text);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-sm);
-  transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+  background: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition:
+    border-color var(--motion-duration-short) var(--motion-easing-standard),
+    box-shadow var(--motion-duration-short) var(--motion-easing-standard),
+    background-color var(--motion-duration-short) var(--motion-easing-standard);
 }
 
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
   outline: none;
-  border-color: color-mix(in srgb, var(--accent) 65%, white);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+  border-color: color-mix(in srgb, var(--md-sys-color-primary) 70%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 8%, var(--md-sys-color-surface-container-highest));
+}
+
+.surface-tonal {
+  background: var(--md-sys-color-surface-container-highest);
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.surface-outline {
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--radius-lg);
 }
 
 .mapboxgl-ctrl,
 .mapboxgl-ctrl-group {
-  background: var(--panel);
-  border: 1px solid var(--panel-border);
+  background: var(--md-sys-color-surface-container-highest);
+  border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: var(--radius-sm);
-  box-shadow: var(--shadow);
+  box-shadow: var(--md-sys-elevation-level1);
   backdrop-filter: blur(var(--blur));
 }
 
 .mapboxgl-ctrl button {
-  background: var(--button-bg);
-  color: var(--button-text);
-  transition: background var(--dur-fast) var(--ease);
+  background: transparent;
+  color: var(--md-sys-color-on-surface);
+  transition: background var(--motion-duration-short) var(--motion-easing-standard);
 }
 
 .mapboxgl-ctrl button:hover {
-  background: var(--panel-weak);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
 }

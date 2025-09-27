@@ -453,7 +453,7 @@ initBattle()
             <div class="hptext">{{ foeState.currentHp }} / {{ foeState.maxHp }}</div>
           </div>
           <div class="platform platform-foe"></div>
-          <img :src="foeState.instance.sprites.front_default" alt="foe" class="sprite foe-sprite" :class="{ 'enter-foe': anim.foeEnter, 'hit': anim.foeHit }" />
+          <img :src="foeState.instance.sprites.front_default ?? ''" alt="foe" class="sprite foe-sprite" :class="{ 'enter-foe': anim.foeEnter, 'hit': anim.foeHit }" />
         </div>
         <div class="side me" v-if="playerState">
           <div class="info">
@@ -523,19 +523,74 @@ initBattle()
 /* Place foe top-right, player bottom-left, closer together */
 .side.foe { position: absolute; top: 0.5rem; right: 0.8rem; display: grid; justify-items: end; gap: 0.25rem; }
 .side.me { position: absolute; bottom: 0.8rem; left: 0.8rem; display: grid; justify-items: start; gap: 0.25rem; }
+.btn {
+  position: relative;
+  display: inline-grid;
+  gap: 0.2rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 65%, transparent);
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 92%, transparent);
+  color: var(--md-sys-color-on-surface);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    transform var(--motion-duration-short) var(--motion-easing-standard),
+    box-shadow var(--motion-duration-short) var(--motion-easing-standard),
+    background-color var(--motion-duration-short) var(--motion-easing-standard);
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity var(--motion-duration-short) var(--motion-easing-standard);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--md-sys-elevation-level1);
+}
+
+.btn:not(:disabled):hover::after { opacity: 0.08; }
+.btn:not(:disabled):active::after { opacity: 0.14; }
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn.move {
+  text-align: left;
+  border-color: color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent);
+}
+
+.btn.move:hover {
+  background: color-mix(in srgb, var(--md-sys-color-primary) 18%, var(--md-sys-color-surface-container-highest));
+}
+
+.btn.switch-btn.active {
+  outline: 3px solid color-mix(in srgb, var(--md-sys-color-primary) 55%, transparent);
+}
 .sprite { image-rendering: pixelated; width: clamp(96px, 14vw, 140px); filter: drop-shadow(0 6px 10px rgba(0,0,0,0.35)); position: relative; z-index: 2; }
 .foe-sprite {
   justify-self: end;
 }
 .me-sprite.flipped { transform: scaleX(-1); }
-.info { @apply bg-[var(--panel-weak)] rounded-lg p-2 mb-2 grid gap-1 w-fit; }
+.info { @apply rounded-lg p-2 mb-2 grid gap-1 w-fit; background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 96%, transparent); border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent); }
 .types { @apply text-[0.8rem] opacity-75; }
 .name { @apply capitalize font-semibold; }
 .level { @apply text-[0.85rem] opacity-80; }
-.hpbar { @apply w-[180px] h-[10px] bg-[var(--panel-border)] rounded-md overflow-hidden; }
-.hp { @apply h-full bg-[var(--success)] transition-[width] duration-[260ms] ease-out; }
+.hpbar { @apply w-[180px] h-[10px] rounded-md overflow-hidden; background: color-mix(in srgb, var(--md-sys-color-on-surface) 14%, transparent); border: 1px solid color-mix(in srgb, var(--md-sys-color-outline) 45%, transparent); }
+.hp { @apply h-full transition-[width] duration-[260ms] ease-out; background: linear-gradient(90deg, color-mix(in srgb, var(--md-sys-color-tertiary) 70%, transparent), var(--md-sys-color-primary)); }
 .hptext { @apply text-[0.8rem] opacity-85; }
-.box { @apply bg-[var(--panel)] border-t border-[var(--panel-border)] p-3; }
+.box { @apply p-3; background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 98%, transparent); border-top: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 65%, transparent); }
 .menu { @apply grid grid-cols-4 gap-2; }\n.moves { @apply grid gap-2; }
 .move { @apply w-full grid gap-[0.2rem] text-left; }
 .move-name { @apply font-semibold; }
@@ -549,7 +604,7 @@ initBattle()
 .switch-btn.active { @apply outline outline-2 outline-blue-600; }
 .switch-name { @apply font-semibold capitalize; }
 .switch-meta { @apply text-[0.8rem] opacity-75; }
-.log { @apply bg-[var(--panel-weak)] border-t border-[var(--panel-border)] px-3 py-2 max-h-[140px] overflow-auto text-[0.9rem]; }
+.log { @apply px-3 py-2 max-h-[140px] overflow-auto text-[0.9rem]; background: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 96%, transparent); border-top: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent); }
 
 
 /* Platforms under sprites */

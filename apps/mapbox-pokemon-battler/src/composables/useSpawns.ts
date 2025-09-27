@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import mapboxgl from 'mapbox-gl'
 import { fetchPokemon, type PokeBasic, typeWeightedRandom } from '../services/pokeapi'
 
-export type Spawn = { id: number; coord: [number, number]; marker?: mapboxgl.Marker | null; data?: PokeBasic }
+export type Spawn = { id: number; coord: [number, number]; marker?: { remove: () => void } | null; data?: PokeBasic }
 
 export function useSpawns(getMap: () => mapboxgl.Map | null, opts?: { onSelect?: (s: Spawn) => void }) {
   const spawns = ref<Spawn[]>([])
@@ -29,8 +29,8 @@ export function useSpawns(getMap: () => mapboxgl.Map | null, opts?: { onSelect?:
       const pt = map.project(centerLngLat)
       const pad = 12
       const bbox: [mapboxgl.PointLike, mapboxgl.PointLike] = [
-        { x: pt.x - pad, y: pt.y - pad },
-        { x: pt.x + pad, y: pt.y + pad },
+        new mapboxgl.Point(pt.x - pad, pt.y - pad),
+        new mapboxgl.Point(pt.x + pad, pt.y + pad),
       ]
       const features: mapboxgl.MapboxGeoJSONFeature[] = existing.length
         ? map.queryRenderedFeatures(bbox, { layers: existing })
@@ -49,7 +49,7 @@ export function useSpawns(getMap: () => mapboxgl.Map | null, opts?: { onSelect?:
     const env = envHint ?? getEnv(coord)
     const pokeId = typeWeightedRandom(env)
     const s: Spawn = { id: pokeId, coord }
-    spawns.value.push(s)
+    ;(spawns.value as Spawn[]).push(s)
     try {
       const data = await fetchPokemon(pokeId)
       s.data = data
@@ -102,7 +102,7 @@ export function useSpawns(getMap: () => mapboxgl.Map | null, opts?: { onSelect?:
     spawns.value.splice(0)
   }
 
-  function releaseSpawn(spawn: Spawn | null) {
+  function releaseSpawn(spawn?: Spawn | null) {
     if (!spawn) return
     spawn.marker?.remove()
     const idx = spawns.value.indexOf(spawn)
