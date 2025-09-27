@@ -22,6 +22,13 @@ export type ThemePreference = ThemeName | 'system'
 export const THEME_STORAGE_KEY = 'my-monorepo:theme'
 
 const themeVariableNames: ThemeVariableName[] = [...themeVariablesList]
+const firstLightTheme = themeOrder.find((name) => themeMeta[name].mode === 'light') ?? defaultThemeName
+const firstDarkTheme = themeOrder.find((name) => themeMeta[name].mode === 'dark') ?? defaultThemeName
+
+let currentPreference: ThemePreference = defaultThemeName
+let currentRoot: HTMLElement | null = null
+let systemMedia: MediaQueryList | null = null
+let systemListener: ((event: MediaQueryListEvent) => void) | null = null
 
 export interface ApplyThemeOptions {
   root?: HTMLElement | null
@@ -47,6 +54,42 @@ function setInlineThemeVariables(root: HTMLElement, theme: ThemeName | null) {
   }
 }
 
+function cleanupSystemListener() {
+  if (systemMedia && systemListener) {
+    if (typeof systemMedia.removeEventListener === 'function') {
+      systemMedia.removeEventListener('change', systemListener)
+    } else if (typeof systemMedia.removeListener === 'function') {
+      systemMedia.removeListener(systemListener)
+    }
+  }
+  systemMedia = null
+  systemListener = null
+}
+
+function getSystemTheme(): ThemeName {
+  if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+    const media = window.matchMedia('(prefers-color-scheme: dark)')
+    return media.matches ? firstDarkTheme : firstLightTheme
+  }
+  return firstLightTheme
+}
+
+function watchSystemPreference() {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return
+  const media = window.matchMedia('(prefers-color-scheme: dark)')
+  systemMedia = media
+  systemListener = () => {
+    if (currentPreference === 'system' && currentRoot) {
+      applyTheme('system', { root: currentRoot })
+    }
+  }
+  if (typeof media.addEventListener === 'function') {
+    media.addEventListener('change', systemListener)
+  } else if (typeof media.addListener === 'function') {
+    media.addListener(systemListener)
+  }
+}
+
 export function isThemePreference(value: string | null | undefined): value is ThemePreference {
   if (!value) return false
   if (value === 'system') return true
@@ -57,23 +100,33 @@ export function applyTheme(theme: ThemePreference, options: ApplyThemeOptions = 
   const root = getDocumentElement(options.root)
   if (!root) return theme
 
+  currentPreference = theme
+  currentRoot = root
+
+  let appliedTheme: ThemeName
   if (theme === 'system') {
-    root.removeAttribute('data-theme')
-    setInlineThemeVariables(root, null)
+    appliedTheme = getSystemTheme()
+    cleanupSystemListener()
+    watchSystemPreference()
+    root.setAttribute('data-theme-preference', 'system')
   } else {
-    root.setAttribute('data-theme', theme)
-    setInlineThemeVariables(root, theme)
+    appliedTheme = theme
+    cleanupSystemListener()
+    root.setAttribute('data-theme-preference', theme)
   }
+
+  const meta = themeMeta[appliedTheme]
+  root.setAttribute('data-theme', appliedTheme)
+  root.setAttribute('data-theme-family', meta.family)
+  root.setAttribute('data-theme-mode', meta.mode)
+  root.style.setProperty('color-scheme', meta.mode)
+  setInlineThemeVariables(root, appliedTheme)
 
   if (options.persist) {
     storeThemePreference(theme, options.storageKey)
   }
 
-  return theme
-}
-
-export interface StoreThemeOptions {
-  storageKey?: string
+  return appliedTheme
 }
 
 export function storeThemePreference(theme: ThemePreference, storageKey?: string) {
@@ -115,13 +168,11 @@ export function initTheme(options: InitThemeOptions = {}) {
   }
 
   const fallback = options.fallback ?? defaultThemeName
-  if (fallback !== 'system') {
-    applyTheme(fallback, {
-      root: options.root,
-      storageKey: options.storageKey,
-      persist: options.persistComputed ?? false
-    })
-  }
+  applyTheme(fallback, {
+    root: options.root,
+    storageKey: options.storageKey,
+    persist: options.persistComputed ?? false,
+  })
   return fallback
 }
 
@@ -129,8 +180,17 @@ export const themeOptions = themeOrder.map((value) => ({
   value,
   label: themeMeta[value].label,
   description: themeMeta[value].description,
-  accent: themeMeta[value].accent
-})) as ReadonlyArray<{ value: ThemeName; label: string; description: string; accent: string }>
+  accent: themeMeta[value].accent,
+  family: themeMeta[value].family,
+  mode: themeMeta[value].mode,
+})) as ReadonlyArray<{
+  value: ThemeName
+  label: string
+  description: string
+  accent: string
+  family: 'material' | 'apple'
+  mode: 'light' | 'dark'
+}>
 
 export {
   defaultThemeName,
@@ -148,5 +208,5 @@ export {
   typography,
   type ThemeName,
   type ThemeVariableName,
-  type ThemeVariables
+  type ThemeVariables,
 }

@@ -43,8 +43,10 @@ type BattleState = {
 
 const themeNameSet = new Set<ThemeName>(themeOptions.map((opt) => opt.value))
 const legacyThemeMap: Record<string, ThemeName> = {
-  light: 'synthwave-dawn',
-  dark: 'neon-noir',
+  light: 'material-aurora',
+  dark: 'material-midnight',
+  'synthwave-dawn': 'material-aurora',
+  'neon-noir': 'material-midnight',
 }
 const themeCycle: Array<'auto' | ThemeName> = ['auto', ...themeOptions.map((opt) => opt.value)]
 
@@ -172,7 +174,7 @@ function toInstance(p: PokemonBasic, level?: number): PokemonInstance {
 export function useStore() {
   const computeTimeThemeValue = (): ThemeName => {
     const hour = new Date().getHours()
-    return hour >= 6 && hour < 18 ? 'synthwave-dawn' : 'neon-noir'
+    return hour >= 6 && hour < 18 ? 'material-aurora' : 'material-midnight'
   }
 
   const syncTheme = (persist = true) => {
