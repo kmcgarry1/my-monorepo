@@ -53,13 +53,13 @@ function choose(v: string) {
       :leave-from-class="fadeScale.leaveFromClass"
       :leave-to-class="fadeScale.leaveToClass"
     >
-      <div v-if="open" :class="['absolute z-50 mt-2 min-w-[12rem] overflow-hidden rounded-[var(--radius-lg)] border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface-container-high)] shadow-[var(--shadow-level3)] backdrop-blur-md', props.align==='right' ? 'right-0' : 'left-0']">
+      <div v-if="open" :class="['absolute z-50 mt-2 min-w-[12rem] overflow-hidden rounded-[1rem] border border-[color:color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent)] bg-[color-mix(in srgb, var(--surface) 98%, transparent)] shadow-[0_18px_32px_rgba(15,12,40,0.16)] backdrop-blur-xl ring-1 ring-[color:color-mix(in srgb, var(--accent) 18%, transparent)]/10', props.align==='right' ? 'right-0' : 'left-0']">
         <button
           v-for="it in props.items"
           :key="it.value"
           type="button"
           @click="choose(it.value)"
-          :class="['flex w-full items-center gap-3 text-left font-medium uppercase tracking-[0.08em] text-[color:var(--md-sys-color-on-surface)] transition-colors duration-[var(--motion-duration-sm)] hover:bg-[color:var(--md-comp-button-ghost-hover-layer)] focus-visible:outline-none focus-visible:bg-[color:var(--md-comp-button-ghost-hover-layer)]', itemSize(props.size)]"
+          :class="['flex w-full items-center gap-3 text-left font-medium uppercase tracking-[0.08em] text-[color:var(--md-sys-color-on-surface)] transition-[color,background] duration-[var(--motion-duration-sm)] hover:bg-[color-mix(in srgb,var(--accent) 12%,transparent)] focus-visible:outline-none focus-visible:bg-[color-mix(in srgb,var(--accent) 15%,transparent)]', itemSize(props.size)]"
         >
           <AppIcon v-if="it.icon" :name="it.icon" />
           <span>{{ it.label }}</span>

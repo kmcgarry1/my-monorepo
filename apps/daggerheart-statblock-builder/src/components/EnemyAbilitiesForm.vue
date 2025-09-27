@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed } from 'vue'
 import type { Enemy } from '../types'
 import AttackEditorList from './AttackEditorList.vue'
@@ -12,11 +12,52 @@ const guidance = computed(() => getEnemyTierGuidance(props.tier, props.enemy.ran
 
 <template>
   <AppCard
-    title="Abilities &amp; Features"
-    :subtitle="guidance?.features"
     variant="surface"
+    overline="Abilities"
+    title="Signature moves"
+    :subtitle="guidance?.features"
+    class="abilities-card"
   >
-    <AttackEditorList v-model="props.enemy.attacks" />
-    <FeatureEditorList v-model="props.enemy.features" />
+    <section class="form-section">
+      <AttackEditorList v-model="props.enemy.attacks" />
+    </section>
+    <section class="form-section">
+      <FeatureEditorList v-model="props.enemy.features" />
+    </section>
   </AppCard>
 </template>
+<style scoped>
+.abilities-card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.abilities-card::after {
+  content: '';
+  position: absolute;
+  inset: auto;
+  right: -18%;
+  bottom: -70px;
+  width: 46%;
+  height: 140px;
+  border-radius: 999px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 20%, transparent), transparent 70%);
+  opacity: 0.25;
+  pointer-events: none;
+  filter: blur(24px);
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: 1.05rem 1.15rem;
+  border-radius: 1.1rem;
+  background: color-mix(in srgb, var(--surface-veil) 66%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 24%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+</style>

@@ -1,7 +1,6 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed } from 'vue'
-import type { Enemy, Environment } from '../types'
-import { AppBadge, AppCard, AppText } from '@my-monorepo/ui'
+import type { Enemy, Environment, Feature, Attack } from '../types'
 import { getTierGuide } from '../lib/tierGuides'
 
 const props = defineProps<{
@@ -11,376 +10,518 @@ const props = defineProps<{
 }>()
 
 const isEnemy = computed(() => props.sbType === 'enemy')
-const enemyData = computed(() => props.enemy)
-const environmentData = computed(() => props.environment)
-
-const activeBlock = computed(() => (isEnemy.value ? enemyData.value : environmentData.value))
+const active = computed<Enemy | Environment>(() => (isEnemy.value ? props.enemy : props.environment))
 
 const title = computed(() => {
-  const base = (activeBlock.value.name || '').trim()
-  if (base) return base
-  return isEnemy.value ? 'New Enemy' : 'New Environment'
+  const raw = (active.value.name || '').trim()
+  if (raw) return raw.toUpperCase()
+  return isEnemy.value ? 'UNTITLED ENEMY' : 'UNTITLED ENVIRONMENT'
 })
 
-const subtitle = computed(() => (activeBlock.value.archetype || '').trim())
-const description = computed(() => (activeBlock.value.description || '').trim())
+const subtitle = computed(() => (active.value.archetype || '').trim())
+const description = computed(() => (active.value.description || '').trim())
 
-const tierInfo = computed(() => {
-  const tier = activeBlock.value.tier as number | null
-  if (tier != null && tier !== ('' as any)) {
-    return getTierGuide(Number(tier))
-  }
-  return null
-})
-
-const traits = computed(() => {
-  const value = activeBlock.value.traits || ''
-  return value
+const traits = computed(() =>
+  (active.value.traits || '')
     .split(',')
-    .map((t) => t.trim())
+    .map((trait) => trait.trim())
     .filter(Boolean)
+)
+
+const primaryTag = computed(() => {
+  if (isEnemy.value) return (props.enemy.rank || 'Enemy').toUpperCase()
+  return (props.environment.category || 'Environment').toUpperCase()
 })
 
-const metaStats = computed(() => {
-  const items: Array<{ label: string; value: string; hint?: string }> = []
-  const tierLabel = tierInfo.value ? `Tier ${tierInfo.value.tier}` : 'Unassigned'
-  items.push({ label: 'Tier', value: tierLabel, hint: tierInfo.value?.title })
+const difficulty = computed(() => {
+  const raw = isEnemy.value ? props.enemy.difficulty : props.environment.difficulty
+  return raw != null && raw !== ('' as any) ? String(raw) : '—'
+})
 
+const tierGuide = computed(() => {
+  const tier = active.value.tier
+  if (tier == null || tier === ('' as any)) return null
+  return getTierGuide(Number(tier)) ?? null
+})
+
+const featureIcons: Record<Feature['tag'], string> = {
+  Passive: '○',
+  Action: '✦',
+  Reaction: '☠'
+}
+
+const features = computed(() => {
+  const source = (isEnemy.value ? props.enemy.features : props.environment.features) as Feature[]
+  return source.map((feature) => ({
+    id: feature.id,
+    name: feature.name?.trim() || 'Unnamed Feature',
+    tag: feature.tag,
+    icon: featureIcons[feature.tag] ?? '○',
+    cost: feature.cost?.trim() || '',
+    text: feature.text?.trim() || ''
+  }))
+})
+
+const attacks = computed(() => (isEnemy.value ? props.enemy.attacks : []) as Attack[])
+
+const infoBlocks = computed(() => {
   if (isEnemy.value) {
-    const enemy = enemyData.value
-    items.push({ label: 'Rank', value: enemy.rank || '—' })
-    items.push({ label: 'Difficulty', value: enemy.difficulty != null ? String(enemy.difficulty) : '—' })
-    items.push({ label: 'HP', value: enemy.hp != null ? String(enemy.hp) : '—' })
-    items.push({ label: 'Stress', value: enemy.stress != null ? String(enemy.stress) : '—' })
-    items.push({ label: 'Thresholds', value: enemy.thresholds || '—' })
-    if (enemy.atkBonus != null) {
-      items.push({ label: 'Attack Bonus', value: `+${enemy.atkBonus}` })
-    }
-  } else {
-    const env = environmentData.value
-    items.push({ label: 'Category', value: env.category || '—' })
-    items.push({ label: 'Difficulty', value: env.difficulty != null ? String(env.difficulty) : '—' })
-    items.push({ label: 'Impulses', value: env.impulses || '—' })
-    if (env.potential) {
-      items.push({ label: 'Potential Adversaries', value: env.potential })
-    }
+    const sections: Array<{ label: string; text: string }> = []
+    if (props.enemy.experience?.trim()) sections.push({ label: 'Experience', text: props.enemy.experience })
+    if (props.enemy.tactics?.trim()) sections.push({ label: 'Motives & Tactics', text: props.enemy.tactics })
+    return sections
   }
-
-  return items
+  const env = props.environment
+  const sections: Array<{ label: string; text: string }> = []
+  if (env.impulses?.trim()) sections.push({ label: 'Impulses', text: env.impulses })
+  if (env.potential?.trim()) sections.push({ label: 'Potential Adversaries', text: env.potential })
+  if (env.prompts?.trim()) sections.push({ label: 'Prompts', text: env.prompts })
+  return sections
 })
 
-const hasDetailContent = computed(() => {
-  if (isEnemy.value) {
-    const enemy = enemyData.value
-    return (
-      enemy.attacks.length > 0 ||
-      enemy.features.length > 0 ||
-      Boolean(enemy.experience) ||
-      Boolean(enemy.tactics)
-    )
-  }
-
-  const env = environmentData.value
-  return env.features.length > 0 || Boolean(env.prompts)
+const ctaLabel = computed(() => {
+  if (isEnemy.value) return ''
+  const potential = props.environment.potential?.trim()
+  if (!potential) return ''
+  const firstLine = potential.split(/\r?\n/).find((line) => line.trim().length > 0)
+  return firstLine ? firstLine.trim().toUpperCase() : ''
 })
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function renderRichText(text: string) {
+  const lines = text.split(/\r?\n/)
+  const html: string[] = []
+  let inList = false
+  for (const rawLine of lines) {
+    const line = rawLine.trim()
+    if (!line) {
+      if (inList) {
+        html.push('</ul>')
+        inList = false
+      }
+      continue
+    }
+    if (/^[-•]/.test(line)) {
+      if (!inList) {
+        html.push('<ul>')
+        inList = true
+      }
+      const content = escapeHtml(line.replace(/^[-•]\s*/, ''))
+      html.push(`<li>${content}</li>`)
+      continue
+    }
+    if (inList) {
+      html.push('</ul>')
+      inList = false
+    }
+    let content = escapeHtml(line)
+    content = content.replace(/_(.+?)_/g, '<em>$1</em>').replace(/\*(.+?)\*/g, '<em>$1</em>')
+    html.push(`<p>${content}</p>`)
+  }
+  if (inList) html.push('</ul>')
+  return html.join('')
+}
 </script>
 
 <template>
-  <AppCard padding="lg" variant="surface" class="preview-card">
-    <header class="preview-header">
-      <div>
-        <p class="preview-eyebrow">{{ isEnemy ? 'Enemy statblock' : 'Environment statblock' }}</p>
-        <h2 class="preview-title">{{ title }}</h2>
-        <p v-if="subtitle" class="preview-subtitle">{{ subtitle }}</p>
+  <section class="statblock-card">
+    <div class="statblock-ribbon">{{ primaryTag }}</div>
+    <header class="statblock-header">
+      <div class="header-text">
+        <p class="statblock-label">{{ isEnemy ? 'Enemy statblock' : 'Environment statblock' }}</p>
+        <h1 class="statblock-title">{{ title }}</h1>
+        <p v-if="subtitle" class="statblock-subtitle">{{ subtitle }}</p>
       </div>
-      <div class="preview-badges">
-        <AppBadge variant="accent">{{ tierInfo ? tierInfo.title : 'Tier pending' }}</AppBadge>
-        <AppBadge variant="neutral">{{ isEnemy ? 'Enemy' : 'Environment' }}</AppBadge>
+      <div class="header-meta">
+        <div class="difficulty-box">
+          <span class="meta-label">Difficulty</span>
+          <span class="meta-value">{{ difficulty }}</span>
+        </div>
+        <div v-if="tierGuide" class="tier-chip">
+          <span>{{ tierGuide.tier }}</span>
+        </div>
       </div>
     </header>
 
-    <AppText v-if="description" variant="body" size="md" class="preview-description">{{ description }}</AppText>
+    <div class="statblock-divider"></div>
 
-    <div v-if="traits.length" class="preview-traits">
-      <AppBadge v-for="trait in traits" :key="trait" variant="neutral">{{ trait }}</AppBadge>
-    </div>
+    <section v-if="description" class="statblock-section">
+      <p class="statblock-paragraph">{{ description }}</p>
+    </section>
 
-    <div v-if="metaStats.length" class="preview-meta">
-      <div v-for="item in metaStats" :key="item.label" class="meta-card">
-        <span class="meta-label">{{ item.label }}</span>
-        <span class="meta-value">{{ item.value }}</span>
-        <span v-if="item.hint" class="meta-hint">{{ item.hint }}</span>
+    <section v-if="traits.length" class="statblock-section">
+      <ul class="trait-list">
+        <li v-for="trait in traits" :key="trait">{{ trait }}</li>
+      </ul>
+    </section>
+
+    <section v-if="features.length" class="statblock-section">
+      <div class="section-heading">
+        <span>Features</span>
       </div>
-    </div>
+      <div class="feature-list">
+        <article v-for="feature in features" :key="feature.id" class="feature-card">
+          <header class="feature-header">
+            <span class="feature-icon">{{ feature.icon }}</span>
+            <span class="feature-name">{{ feature.name }}</span>
+            <span class="feature-tag">{{ feature.tag }}</span>
+            <span v-if="feature.cost" class="feature-cost">{{ feature.cost }}</span>
+          </header>
+          <div v-if="feature.text" class="feature-body" v-html="renderRichText(feature.text)"></div>
+        </article>
+      </div>
+    </section>
 
-    <template v-if="isEnemy">
-      <section v-if="enemyData.attacks.length" class="detail-section">
-        <h3>Attacks</h3>
-        <div class="attack-list">
-          <div v-for="attack in enemyData.attacks" :key="attack.id" class="attack-item">
-            <div class="attack-heading">
-              <span class="attack-name">{{ attack.name || 'Unnamed attack' }}</span>
-              <AppBadge v-if="attack.range" variant="accent">{{ attack.range }}</AppBadge>
-            </div>
-            <p v-if="attack.details" class="attack-details">{{ attack.details }}</p>
-          </div>
-        </div>
-      </section>
+    <section v-if="attacks.length" class="statblock-section">
+      <div class="section-heading">
+        <span>Actions</span>
+      </div>
+      <div class="feature-list">
+        <article v-for="attack in attacks" :key="attack.id" class="feature-card">
+          <header class="feature-header">
+            <span class="feature-icon">✥</span>
+            <span class="feature-name">{{ attack.name || 'Unnamed Attack' }}</span>
+            <span v-if="attack.range" class="feature-tag">{{ attack.range }}</span>
+          </header>
+          <div v-if="attack.details" class="feature-body" v-html="renderRichText(attack.details)"></div>
+        </article>
+      </div>
+    </section>
 
-      <section v-if="enemyData.features.length" class="detail-section">
-        <h3>Features</h3>
-        <div class="feature-list">
-          <div v-for="feature in enemyData.features" :key="feature.id" class="feature-item">
-            <div class="feature-head">
-              <span class="feature-name">{{ feature.name || 'Unnamed feature' }}</span>
-              <span v-if="feature.tag" class="feature-pill">{{ feature.tag }}</span>
-              <span v-if="feature.cost" class="feature-pill muted">{{ feature.cost }}</span>
-            </div>
-            <p v-if="feature.text" class="feature-text">{{ feature.text }}</p>
-          </div>
-        </div>
-      </section>
+    <section v-if="infoBlocks.length" class="statblock-section">
+      <div class="section-heading dotted">
+        <span>{{ isEnemy ? 'Intel' : 'Scene Notes' }}</span>
+      </div>
+      <div class="info-blocks">
+        <article v-for="block in infoBlocks" :key="block.label" class="info-card">
+          <h4>{{ block.label }}</h4>
+          <div class="feature-body" v-html="renderRichText(block.text)"></div>
+        </article>
+      </div>
+    </section>
 
-      <section v-if="enemyData.experience || enemyData.tactics" class="detail-section info-grid">
-        <div v-if="enemyData.experience" class="info-card">
-          <h4>Experience</h4>
-          <p>{{ enemyData.experience }}</p>
-        </div>
-        <div v-if="enemyData.tactics" class="info-card">
-          <h4>Motives &amp; Tactics</h4>
-          <p>{{ enemyData.tactics }}</p>
-        </div>
-      </section>
-    </template>
-
-    <template v-else>
-      <section v-if="environmentData.features.length" class="detail-section">
-        <h3>Features</h3>
-        <div class="feature-list">
-          <div v-for="feature in environmentData.features" :key="feature.id" class="feature-item">
-            <div class="feature-head">
-              <span class="feature-name">{{ feature.name || 'Unnamed feature' }}</span>
-              <span v-if="feature.tag" class="feature-pill">{{ feature.tag }}</span>
-              <span v-if="feature.cost" class="feature-pill muted">{{ feature.cost }}</span>
-            </div>
-            <p v-if="feature.text" class="feature-text">{{ feature.text }}</p>
-          </div>
-        </div>
-      </section>
-
-      <section v-if="environmentData.prompts" class="detail-section">
-        <h3>GM Prompts</h3>
-        <pre class="prompt-text">{{ environmentData.prompts }}</pre>
-      </section>
-    </template>
-
-    <p v-if="!hasDetailContent" class="preview-placeholder">
-      Add more details in the guided builder to see them reflected here.
-    </p>
-  </AppCard>
+    <footer v-if="ctaLabel" class="statblock-footer">
+      <div class="section-heading subtle">
+        <span>Summons</span>
+      </div>
+      <button class="cta-chip" type="button">{{ ctaLabel }}</button>
+    </footer>
+  </section>
 </template>
 
 <style scoped>
-.preview-card {
+.statblock-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(36, 28, 76, 0.97), rgba(20, 16, 54, 0.98));
+  color: rgba(248, 245, 255, 0.95);
+  padding: 1.7rem 1.55rem 1.65rem;
+  border-radius: 1.6rem;
+  box-shadow: 0 22px 50px rgba(12, 10, 40, 0.48);
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.5rem;
+  overflow: hidden;
 }
 
-.preview-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
+.statblock-card::before {
+  content: '';
+  position: absolute;
+  inset: -20% 30% auto -20%;
+  height: 40%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 72%);
+  opacity: 0.55;
+  pointer-events: none;
 }
 
-.preview-eyebrow {
-  margin: 0;
+.statblock-ribbon {
+  position: absolute;
+  top: 1.05rem;
+  right: -1.1rem;
+  background: linear-gradient(135deg, #fdd374, #f59e25);
+  color: #311900;
   font-size: 0.7rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--muted) 82%, transparent);
-}
-
-.preview-title {
-  margin: 0.2rem 0 0;
-  font-size: 1.5rem;
   font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.42rem 2.6rem 0.42rem 1.4rem;
+  clip-path: polygon(0 0, 95% 0, 100% 50%, 95% 100%, 0 100%);
+  box-shadow: 0 12px 24px rgba(253, 195, 92, 0.35);
 }
 
-.preview-subtitle {
-  margin: 0.25rem 0 0;
-  color: color-mix(in srgb, var(--muted) 85%, transparent);
-  font-style: italic;
+.statblock-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.75rem;
+  position: relative;
 }
 
-.preview-badges {
+.header-text {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  align-items: flex-end;
+  gap: 0.45rem;
+  max-width: min(26rem, 100%);
 }
 
-.preview-description {
-  margin-top: 0.25rem;
+.statblock-label {
+  margin: 0;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.58);
 }
 
-.preview-traits {
+.statblock-title {
+  margin: 0;
+  font-size: 1.58rem;
+  letter-spacing: 0.09em;
+}
+
+.statblock-subtitle {
+  margin: 0;
+  font-size: 0.88rem;
+  color: rgba(229, 224, 255, 0.72);
+}
+
+.header-meta {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 0.8rem;
 }
 
-.preview-meta {
-  display: grid;
-  gap: 0.75rem;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-}
-
-.meta-card {
-  padding: 0.75rem;
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--surface-veil) 78%, transparent);
-  border: 1px solid color-mix(in srgb, var(--btn-border) 60%, transparent);
+.difficulty-box {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  padding: 0.62rem 1rem;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 0.95rem;
+  min-width: 116px;
+  text-align: center;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
 .meta-label {
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--muted) 85%, transparent);
+  color: rgba(255, 255, 255, 0.62);
 }
 
 .meta-value {
-  font-weight: 600;
+  font-size: 1.04rem;
+  font-weight: 700;
+  margin-top: 0.18rem;
+}
+
+.tier-chip {
+  display: grid;
+  place-items: center;
+  width: 2.05rem;
+  height: 2.05rem;
+  border-radius: 50%;
+  background: rgba(253, 195, 92, 0.93);
+  color: #351d00;
+  font-weight: 700;
   font-size: 1rem;
+  box-shadow: 0 12px 24px rgba(253, 195, 92, 0.35);
 }
 
-.meta-hint {
-  font-size: 0.75rem;
-  color: color-mix(in srgb, var(--muted) 80%, transparent);
+.statblock-divider {
+  border-top: 1px dashed rgba(255, 255, 255, 0.18);
+  margin: -0.25rem -0.25rem 0;
 }
 
-.detail-section {
+.statblock-section {
   display: flex;
   flex-direction: column;
+  gap: 0.7rem;
+}
+
+.statblock-paragraph {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.55;
+  color: rgba(239, 236, 255, 0.88);
+}
+
+.trait-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.32rem;
+  font-size: 0.9rem;
+  color: rgba(239, 236, 255, 0.85);
+}
+
+.section-heading {
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(249, 228, 255, 0.78);
+  display: flex;
+  align-items: center;
   gap: 0.75rem;
 }
 
-.detail-section h3 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
+.section-heading::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.45) 15%, rgba(255, 255, 255, 0) 70%);
 }
 
-.attack-list,
+.section-heading.dotted::after {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.5) 18%, rgba(255, 255, 255, 0) 21%);
+  background-size: 6px 6px;
+}
+
+.section-heading.subtle {
+  color: rgba(249, 193, 73, 0.72);
+}
+
+.section-heading.subtle::after {
+  background-image: radial-gradient(circle, rgba(249, 193, 73, 0.65) 18%, rgba(249, 193, 73, 0) 21%);
+  background-size: 6px 6px;
+}
+
 .feature-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
-.attack-item,
-.feature-item {
-  padding: 0.75rem 0.85rem;
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--surface-veil) 75%, transparent);
-  border: 1px solid color-mix(in srgb, var(--btn-border) 58%, transparent);
+.feature-card {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  padding: 0.9rem 1.05rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
-.attack-heading,
-.feature-head {
+.feature-header {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 0.5rem;
-}
-
-.attack-name,
-.feature-name {
-  font-weight: 600;
-}
-
-.attack-details,
-.feature-text {
-  margin: 0.4rem 0 0;
-  white-space: pre-line;
-  color: color-mix(in srgb, var(--muted) 85%, transparent);
-  font-size: 0.9rem;
-}
-
-.feature-pill {
-  display: inline-flex;
   align-items: center;
-  padding: 0.2rem 0.5rem;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.45rem;
+}
+
+.feature-icon {
+  font-size: 0.78rem;
+  line-height: 1;
+  color: rgba(249, 193, 73, 0.82);
+}
+
+.feature-name {
+  font-weight: 700;
+  font-size: 0.96rem;
+  letter-spacing: 0.01em;
+}
+
+.feature-tag {
+  padding: 0.18rem 0.55rem;
   border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--accent) 16%, transparent);
-  color: color-mix(in srgb, var(--accent) 90%, transparent);
-  font-size: 0.75rem;
-  font-weight: 600;
+  background: rgba(249, 193, 73, 0.18);
+  color: rgba(249, 193, 73, 0.92);
+  text-transform: uppercase;
+  font-size: 0.63rem;
+  letter-spacing: 0.16em;
 }
 
-.feature-pill.muted {
-  background: color-mix(in srgb, var(--surface-veil) 70%, transparent);
-  color: color-mix(in srgb, var(--muted) 82%, transparent);
+.feature-cost {
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.72);
+  font-style: italic;
 }
 
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
+.feature-body {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: rgba(239, 236, 255, 0.88);
+}
+
+.feature-body ul {
+  margin: 0.35rem 0 0.35rem 1.2rem;
+  padding: 0;
+  list-style: disc;
+}
+
+.feature-body ul li {
+  margin-bottom: 0.3rem;
+}
+
+.feature-body p {
+  margin: 0.22rem 0;
+}
+
+.feature-body em {
+  font-style: italic;
+  color: rgba(249, 193, 73, 0.85);
+}
+
+.info-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
 }
 
 .info-card {
-  padding: 0.95rem;
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--surface-veil) 78%, transparent);
-  border: 1px solid color-mix(in srgb, var(--btn-border) 55%, transparent);
+  padding: 0.92rem 1rem;
+  border-radius: 1rem;
+  background: rgba(18, 16, 44, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .info-card h4 {
-  margin: 0 0 0.45rem;
-  font-size: 0.95rem;
-  font-weight: 600;
+  margin: 0 0 0.42rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
 }
 
-.info-card p {
-  margin: 0;
-  color: color-mix(in srgb, var(--muted) 85%, transparent);
-  white-space: pre-line;
+.statblock-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
 }
 
-.prompt-text {
-  margin: 0;
-  padding: 0.95rem;
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--surface-veil) 76%, transparent);
-  border: 1px solid color-mix(in srgb, var(--btn-border) 58%, transparent);
-  white-space: pre-wrap;
-  font-size: 0.92rem;
+.cta-chip {
+  background: rgba(249, 193, 73, 0.2);
+  color: rgba(249, 193, 73, 0.92);
+  border: 1px solid rgba(249, 193, 73, 0.48);
+  border-radius: var(--radius-pill);
+  padding: 0.5rem 1.25rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  font-weight: 700;
+  align-self: flex-start;
 }
 
-.preview-placeholder {
-  margin: 0;
-  padding: 0.75rem 0.85rem;
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--surface-veil) 72%, transparent);
-  border: 1px dashed color-mix(in srgb, var(--btn-border) 58%, transparent);
-  color: color-mix(in srgb, var(--muted) 82%, transparent);
-  text-align: center;
-  font-size: 0.88rem;
-}
-
-@media (max-width: 600px) {
-  .preview-header {
-    flex-direction: column;
-    align-items: flex-start;
+@media (max-width: 640px) {
+  .statblock-card {
+    padding: 1.4rem 1.1rem;
+    border-radius: 1.25rem;
+    gap: 1.25rem;
   }
 
-  .preview-badges {
-    flex-direction: row;
+  .statblock-header {
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .statblock-ribbon {
+    right: -0.8rem;
   }
 }
 </style>

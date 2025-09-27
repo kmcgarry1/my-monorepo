@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed } from 'vue'
 import type { ControlVariant, ControlSize } from '../types'
 
@@ -10,7 +10,7 @@ const props = withDefaults(defineProps<{
   variant?: ControlVariant
   invalid?: boolean
   size?: ControlSize
-}>(), { options: () => [], variant: 'outlined', invalid: false, size: 'md' })
+}>(), { options: () => [], variant: 'filled', invalid: false, size: 'md' })
 
 const emit = defineEmits<{ (e: 'update:modelValue', v: string): void }>()
 
@@ -66,3 +66,4 @@ const klass = computed(() => [
     <slot />
   </select>
 </template>
+

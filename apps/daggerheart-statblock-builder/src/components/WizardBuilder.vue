@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed, ref } from 'vue'
 import BaseDetailsForm from './BaseDetailsForm.vue'
 import TierSelectionStep from './TierSelectionStep.vue'
@@ -135,7 +135,7 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
             @click="goto(i)"
           >
             <span class="indicator" :aria-label="`Step ${i + 1}`">
-              <span v-if="i < current" class="checkmark">✓</span>
+              <span v-if="i < current" class="checkmark">âœ“</span>
               <span v-else>{{ i + 1 }}</span>
             </span>
             <span class="stepper-text">
@@ -218,135 +218,163 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
 .wizard-shell {
   display: flex;
   flex-direction: row;
-  gap: 1.5rem;
+  gap: 1.6rem;
   height: 100%;
   min-height: 0;
+  padding: 1.5rem;
+  border-radius: 1.6rem;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 99%, transparent), color-mix(in srgb, var(--surface-veil) 55%, transparent));
+  border: 1px solid color-mix(in srgb, var(--border) 28%, transparent);
+  box-shadow: 0 24px 55px rgba(15, 12, 40, 0.12);
+  backdrop-filter: blur(18px);
 }
 
 .wizard-sidebar {
-  width: min(260px, 28%);
+  width: min(270px, 28%);
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  border-right: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
-  padding-right: 1.25rem;
+  gap: 1.5rem;
+  padding: 1.4rem;
+  background: color-mix(in srgb, var(--surface) 99%, transparent);
+  border-radius: 1.25rem;
+  border: 1px solid color-mix(in srgb, var(--border) 24%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 18px 40px rgba(15, 12, 40, 0.1);
 }
 
 .sidebar-copy {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.45rem;
 }
 
 .step-count {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: color-mix(in srgb, var(--muted) 82%, transparent);
+  color: color-mix(in srgb, var(--muted) 72%, transparent);
 }
 
 .sidebar-title {
   margin: 0;
-  font-size: 1.15rem;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--fg) 96%, transparent);
 }
 
 .sidebar-detail {
   margin: 0;
-  color: color-mix(in srgb, var(--muted) 86%, transparent);
   font-size: 0.88rem;
-  line-height: 1.4;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--muted) 80%, transparent);
 }
 
 .stepper {
-  margin: 0;
-  padding: 0;
   list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.8rem;
 }
 
 .stepper-item {
   width: 100%;
-  border: none;
-  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--border) 22%, transparent);
+  background: color-mix(in srgb, var(--surface) 98%, transparent);
   display: flex;
-  gap: 0.75rem;
+  gap: 0.9rem;
   align-items: flex-start;
-  padding: 0.6rem 0.5rem;
-  border-radius: var(--radius-md);
-  transition: background 0.15s ease, transform 0.15s ease;
+  padding: 0.85rem 1rem;
+  border-radius: 1rem;
   text-align: left;
   cursor: pointer;
+  transition:
+    transform var(--motion-duration-sm) var(--motion-easing-emphasized),
+    border-color var(--motion-duration-sm) var(--motion-easing-standard),
+    box-shadow var(--motion-duration-sm) var(--motion-easing-standard),
+    background var(--motion-duration-sm) var(--motion-easing-standard);
 }
 
-.stepper-item:hover {
-  background: color-mix(in srgb, var(--surface-veil) 80%, transparent);
+.stepper-item:hover:not(.active) {
+  transform: translateX(3px);
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  box-shadow: 0 12px 24px rgba(15, 12, 40, 0.08);
 }
 
 .stepper-item.active {
-  background: color-mix(in srgb, var(--accent) 16%, transparent);
-  transform: translateX(2px);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 14%, transparent), color-mix(in srgb, var(--surface) 94%, transparent));
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  box-shadow: 0 18px 32px rgba(15, 12, 40, 0.14);
+  transform: translateX(4px);
 }
 
-.stepper-item.active .indicator {
-  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
-  background: color-mix(in srgb, var(--accent) 26%, transparent);
-  color: color-mix(in srgb, var(--bg) 90%, transparent);
-}
-
-.stepper-item.complete .indicator {
-  background: color-mix(in srgb, var(--accent) 85%, transparent);
-}
-
-.stepper-item.complete .indicator span {
-  color: color-mix(in srgb, var(--bg) 100%, transparent);
+.stepper-item.complete {
+  border-color: color-mix(in srgb, var(--accent) 34%, transparent);
 }
 
 .indicator {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--btn-border) 70%, transparent);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: color-mix(in srgb, var(--fg) 85%, transparent);
   background: color-mix(in srgb, var(--surface-veil) 70%, transparent);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
+  border: 1px solid color-mix(in srgb, var(--border) 30%, transparent);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+}
+
+.stepper-item.active .indicator,
+.stepper-item.complete .indicator {
+  background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 75%, transparent), color-mix(in srgb, var(--accent) 45%, transparent));
+  color: color-mix(in srgb, var(--bg) 96%, transparent);
+  border-color: transparent;
+  box-shadow: 0 10px 22px rgba(249, 193, 73, 0.35);
+}
+
+.checkmark {
+  font-weight: 700;
   font-size: 0.9rem;
-  color: color-mix(in srgb, var(--fg) 90%, transparent);
+  color: inherit;
 }
 
 .stepper-text {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.25rem;
 }
 
 .stepper-text .label {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
+  letter-spacing: 0.02em;
+  color: color-mix(in srgb, var(--fg) 92%, transparent);
 }
 
 .stepper-text .hint {
-  font-size: 0.75rem;
-  color: color-mix(in srgb, var(--muted) 82%, transparent);
+  font-size: 0.76rem;
+  line-height: 1.35;
+  color: color-mix(in srgb, var(--muted) 78%, transparent);
+}
+
+.stepper-item.active .stepper-text .label {
+  color: color-mix(in srgb, var(--fg) 98%, transparent);
+}
+
+.stepper-item.active .stepper-text .hint {
+  color: color-mix(in srgb, var(--accent) 70%, transparent);
 }
 
 .step-icon {
   flex-shrink: 0;
-}
-
-.checkmark {
-  font-weight: 700;
-  color: color-mix(in srgb, var(--bg) 100%, transparent);
-  font-size: 0.85rem;
 }
 
 .wizard-main {
@@ -354,22 +382,29 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.3rem;
   min-height: 0;
+  padding: 1.45rem 1.55rem;
+  border-radius: 1.3rem;
+  background: color-mix(in srgb, var(--surface) 99%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 26%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 20px 38px rgba(15, 12, 40, 0.08);
 }
 
 .progress {
-  height: 6px;
+  height: 8px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--surface-veil) 70%, transparent);
+  background: color-mix(in srgb, var(--surface-veil) 68%, transparent);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
   overflow: hidden;
 }
 
 .progress-bar {
   height: 100%;
   border-radius: inherit;
-  background: color-mix(in srgb, var(--accent) 60%, transparent);
-  transition: width 0.2s ease;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 65%, transparent), color-mix(in srgb, var(--accent) 45%, transparent));
+  box-shadow: 0 6px 14px rgba(249, 193, 73, 0.35);
+  transition: width var(--motion-duration-sm) var(--motion-easing-emphasized);
 }
 
 .step-container {
@@ -383,10 +418,10 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
 }
 
 .review-hint {
-  border: 1px dashed color-mix(in srgb, var(--border) 65%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--border) 40%, transparent);
   border-radius: var(--radius-lg);
   padding: 1.25rem;
-  background: color-mix(in srgb, var(--surface-veil) 70%, transparent);
+  background: color-mix(in srgb, var(--surface-veil) 68%, transparent);
 }
 
 .review-hint h4 {
@@ -396,7 +431,7 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
 
 .review-hint p {
   margin: 0;
-  color: color-mix(in srgb, var(--muted) 85%, transparent);
+  color: color-mix(in srgb, var(--muted) 82%, transparent);
   font-size: 0.88rem;
 }
 
@@ -405,29 +440,34 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
-  padding-top: 1rem;
+  border-top: 1px solid color-mix(in srgb, var(--border) 28%, transparent);
+  padding-top: 1.25rem;
 }
 
 .nav-meta {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: color-mix(in srgb, var(--muted) 80%, transparent);
+  color: color-mix(in srgb, var(--muted) 78%, transparent);
 }
 
 @media (max-width: 960px) {
   .wizard-shell {
     flex-direction: column;
-    gap: 1.25rem;
+    padding: 1.2rem;
+    gap: 1.2rem;
   }
 
   .wizard-sidebar {
     width: 100%;
     border-right: none;
-    border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
-    padding-right: 0;
-    padding-bottom: 1rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 24%, transparent);
+    padding: 1.2rem 1.1rem;
+    border-radius: 1.15rem;
+  }
+
+  .wizard-main {
+    padding: 1.2rem 1.1rem;
   }
 
   .stepper {
@@ -436,11 +476,7 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
   }
 
   .stepper-item {
-    width: calc(50% - 0.25rem);
-  }
-
-  .wizard-main {
-    padding-bottom: 0.5rem;
+    width: calc(50% - 0.45rem);
   }
 }
 
@@ -465,3 +501,5 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
   }
 }
 </style>
+
+
