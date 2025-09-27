@@ -156,8 +156,8 @@ const themeItems = computed(() => [
   padding: 0.95rem 1.2rem;
   border-radius: 1.2rem;
   background: linear-gradient(120deg, color-mix(in srgb, var(--surface) 98%, transparent), color-mix(in srgb, var(--surface-veil) 60%, transparent));
-  border: 1px solid color-mix(in srgb, var(--border) 22%, transparent);
-  box-shadow: 0 18px 32px rgba(15, 12, 40, 0.12);
+  border: none;
+  box-shadow: var(--glass-shadow-md), var(--glass-highlight);
   backdrop-filter: blur(18px);
 }
 
@@ -170,16 +170,16 @@ const themeItems = computed(() => [
 
 .icon-pill {
   border-radius: 0.9rem;
-  background: color-mix(in srgb, var(--surface-veil) 72%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border) 26%, transparent);
+  background: var(--glass-surface-strong);
+  border: none;
   padding: 0.5rem;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  box-shadow: var(--glass-shadow-sm), var(--glass-highlight);
   transition: transform var(--motion-duration-sm) var(--motion-easing-emphasized), box-shadow var(--motion-duration-sm) var(--motion-easing-standard);
 }
 
 .icon-pill:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 24px rgba(15, 12, 40, 0.12);
+  box-shadow: var(--glass-shadow-md), var(--glass-highlight);
 }
 
 .toolbar-button {
@@ -204,15 +204,15 @@ const themeItems = computed(() => [
 :deep(.toolbar-dropdown > button) {
   border-radius: 0.95rem;
   padding: 0.6rem 1rem;
-  border: 1px solid color-mix(in srgb, var(--border) 26%, transparent);
-  background: color-mix(in srgb, var(--surface-veil) 72%, transparent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  border: none;
+  background: var(--glass-surface-strong);
+  box-shadow: var(--glass-shadow-sm), var(--glass-highlight);
   transition: transform var(--motion-duration-sm) var(--motion-easing-emphasized), box-shadow var(--motion-duration-sm) var(--motion-easing-standard);
 }
 
 :deep(.toolbar-dropdown > button:hover) {
   transform: translateY(-1px);
-  box-shadow: 0 12px 24px rgba(15, 12, 40, 0.12);
+  box-shadow: var(--glass-shadow-md), var(--glass-highlight);
 }
 
 :deep(.toolbar-dropdown > button .toolbar-button .label) {

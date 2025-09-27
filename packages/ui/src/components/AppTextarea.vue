@@ -33,9 +33,12 @@ const variantClass = computed(() => {
   }
   const key = alias[props.variant] ?? 'outlined'
   const map: Record<string, string> = {
-    filled: 'bg-[color:var(--md-comp-field-container)] border border-transparent focus-visible:ring-offset-[color:var(--md-comp-field-container)] hover:bg-[color:color-mix(in_srgb,var(--md-comp-field-container) 96%, var(--md-sys-color-surface-tint) 4%)]',
-    outlined: 'bg-transparent border border-[color:var(--md-comp-field-outline)] hover:border-[color:var(--md-sys-color-primary)] focus-visible:ring-offset-[color:var(--md-sys-color-surface)]',
-    text: 'rounded-b-none border-x-0 border-t-0 border-b border-[color:var(--md-comp-field-outline)] px-0 bg-transparent focus-visible:ring-offset-0 hover:border-[color:var(--md-sys-color-primary)]'
+    filled:
+      'bg-[color:var(--surface-translucent)] border border-[color:var(--border-muted)] backdrop-blur-sm focus-visible:ring-offset-[color:var(--surface-translucent)] hover:border-[color:var(--border)]',
+    outlined:
+      'bg-transparent border border-[color:var(--border)] hover:border-[color:color-mix(in_srgb,var(--accent) 55%, transparent)] focus-visible:ring-offset-[color:var(--surface-translucent)]',
+    text:
+      'rounded-b-none border-x-0 border-t-0 border-b border-[color:var(--border-muted)] px-0 bg-transparent focus-visible:ring-offset-0 hover:border-[color:color-mix(in_srgb,var(--accent) 55%, transparent)]'
   }
   return map[key] ?? map.outlined
 })

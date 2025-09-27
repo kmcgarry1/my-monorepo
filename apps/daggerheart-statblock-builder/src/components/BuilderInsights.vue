@@ -140,8 +140,9 @@ defineProps<{
 .summary-item {
   padding: 0.85rem 1rem;
   border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--surface-veil) 72%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border) 32%, transparent);
+  background: var(--glass-surface-strong);
+  border: none;
+  box-shadow: var(--glass-shadow-sm), var(--glass-highlight);
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
@@ -151,7 +152,7 @@ defineProps<{
 
 .summary-item:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-level2);
+  box-shadow: var(--glass-shadow-md), var(--glass-highlight);
 }
 
 .summary-label {
@@ -188,8 +189,9 @@ defineProps<{
   gap: 0.5rem;
   padding: 0.75rem 0.85rem;
   border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--surface-veil) 70%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border) 32%, transparent);
+  background: var(--glass-surface-strong);
+  border: none;
+  box-shadow: var(--glass-shadow-sm), var(--glass-highlight);
 }
 
 .tier-focus :deep(p) {

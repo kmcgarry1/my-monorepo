@@ -22,19 +22,19 @@ const slots = useSlots()
 const variantClass = computed(() => {
   const map: Record<AppCardVariant, string> = {
     elevated:
-      'bg-[color:var(--md-sys-color-surface-container-low)] text-[color:var(--md-sys-color-on-surface)] border border-transparent shadow-[var(--shadow-level2)]',
+      'bg-[color:var(--surface-translucent)] text-[color:var(--md-sys-color-on-surface)] border border-[color:var(--border-muted)] backdrop-blur-xl shadow-[var(--glass-shadow-md)]',
     filled:
-      'bg-[color:var(--md-sys-color-surface-container-high)] text-[color:var(--md-sys-color-on-surface)] border border-transparent shadow-none',
+      'bg-[color:var(--surface-panel)] text-[color:var(--md-sys-color-on-surface)] border border-[color:var(--border-muted)] shadow-[var(--glass-shadow-sm)]',
     outlined:
-      'bg-[color:var(--md-sys-color-surface)] text-[color:var(--md-sys-color-on-surface)] border border-[color:color-mix(in srgb,var(--md-sys-color-outline) 60%,transparent)] shadow-none',
+      'bg-[color:var(--surface-translucent)] text-[color:var(--md-sys-color-on-surface)] border border-[color:var(--border)] backdrop-blur-xl shadow-[var(--glass-shadow-sm)]',
     surface:
-      'bg-[color:var(--md-sys-color-surface-container)] text-[color:var(--md-sys-color-on-surface)] border border-transparent shadow-[var(--shadow-level1)]',
+      'bg-[color:var(--glass-surface-soft)] text-[color:var(--md-sys-color-on-surface)] border border-[color:var(--border-soft)] backdrop-blur-xl shadow-[var(--glass-shadow-sm)]',
     ghost:
       'bg-transparent text-[color:var(--md-sys-color-on-surface)] border border-transparent shadow-none',
     tonal:
-      'bg-[color:var(--md-sys-color-surface-container-highest)] text-[color:var(--md-sys-color-on-surface)] border border-transparent shadow-none',
+      'bg-[color:var(--surface-panel)] text-[color:var(--md-sys-color-on-surface)] border border-transparent shadow-none',
     default:
-      'bg-[color:var(--md-sys-color-surface-container-high)] text-[color:var(--md-sys-color-on-surface)] border border-transparent shadow-[var(--shadow-level2)]'
+      'bg-[color:var(--surface-translucent)] text-[color:var(--md-sys-color-on-surface)] border border-[color:var(--border-muted)] backdrop-blur-xl shadow-[var(--glass-shadow-md)]'
   }
 
   return map[props.variant ?? 'elevated'] ?? map.elevated

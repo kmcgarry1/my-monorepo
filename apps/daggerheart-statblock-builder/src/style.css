@@ -25,9 +25,9 @@ a:hover {
   top: clamp(1.25rem, 6vw, 2.25rem);
   z-index: 30;
   border-radius: var(--radius-xl);
-  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  border: none;
   background: color-mix(in srgb, var(--surface-translucent) 94%, transparent);
-  box-shadow: var(--shadow-elevated);
+  box-shadow: var(--shadow-elevated), var(--glass-highlight);
   backdrop-filter: blur(18px);
 }
 

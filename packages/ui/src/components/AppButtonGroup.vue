@@ -15,7 +15,7 @@ const sizeClass = computed(() => props.size==='sm' ? 'py-1.5 text-[0.7rem]' : pr
 
 const containerClass = computed(() => normalizeVariant(props.variant) === 'ghost'
   ? 'border-transparent bg-transparent shadow-none'
-  : 'border border-[color:var(--md-sys-color-outline-variant)] bg-[color:var(--md-sys-color-surface-container-high)] shadow-[var(--shadow-level1)]')
+  : 'border border-[color:var(--border-soft)] bg-[color:var(--surface-translucent)] backdrop-blur-sm shadow-[var(--glass-shadow-sm)]')
 
 function normalizeVariant(variant: ButtonVariant): 'filled' | 'tonal' | 'surface' | 'outlined' | 'text' | 'ghost' | 'danger' | 'success' {
   switch (variant) {
@@ -56,7 +56,7 @@ function palette(active: boolean) {
       case 'tonal':
         return 'bg-[color:var(--md-comp-button-tonal-container)] text-[color:var(--md-comp-button-tonal-on-container)] border-[color:var(--md-comp-button-tonal-container)]'
       case 'outlined':
-        return 'bg-[color:var(--md-comp-button-outlined-hover-layer)] text-[color:var(--md-comp-button-text-label)] border-[color:var(--md-comp-button-text-label)]'
+        return 'bg-[color:color-mix(in_srgb,var(--accent) 12%, transparent)] text-[color:var(--md-comp-button-text-label)] border-[color:var(--accent)]'
       case 'ghost':
         return 'bg-[color:var(--md-comp-button-ghost-hover-layer)] text-[color:var(--md-comp-button-ghost-label)] border-transparent'
       case 'danger':
@@ -65,7 +65,7 @@ function palette(active: boolean) {
         return 'bg-[color:var(--md-comp-button-success-container)] text-[color:var(--md-comp-button-success-on-container)] border-[color:var(--md-comp-button-success-container)]'
       case 'surface':
       default:
-        return 'bg-[color:var(--md-sys-color-surface-container-high)] text-[color:var(--md-sys-color-on-surface)] border-[color:var(--md-sys-color-outline-variant)]'
+        return 'bg-[color:var(--surface-translucent)] text-[color:var(--md-sys-color-on-surface)] border-[color:var(--border)] backdrop-blur-sm'
     }
   }
 
@@ -75,7 +75,7 @@ function palette(active: boolean) {
     case 'tonal':
       return 'bg-transparent border-[color:var(--md-comp-button-tonal-container)] text-[color:var(--md-comp-button-tonal-container)] hover:bg-[color:var(--md-comp-button-outlined-hover-layer)]'
     case 'outlined':
-      return 'bg-transparent border-[color:var(--md-comp-button-outlined-outline)] text-[color:var(--md-comp-button-text-label)] hover:bg-[color:var(--md-comp-button-outlined-hover-layer)]'
+      return 'bg-transparent border-[color:var(--border)] text-[color:var(--md-comp-button-text-label)] hover:bg-[color:color-mix(in_srgb,var(--accent) 12%, transparent)]'
     case 'ghost':
       return 'bg-transparent border-transparent text-[color:var(--md-comp-button-ghost-label)] hover:bg-[color:var(--md-comp-button-ghost-hover-layer)]'
     case 'danger':
@@ -84,7 +84,7 @@ function palette(active: boolean) {
       return 'bg-transparent border-[color:var(--md-comp-button-success-container)] text-[color:var(--md-comp-button-success-container)] hover:bg-[color:var(--md-comp-button-outlined-hover-layer)]'
     case 'surface':
     default:
-      return 'bg-transparent border-[color:var(--md-sys-color-outline-variant)] text-[color:var(--md-sys-color-on-surface-variant)] hover:bg-[color:var(--md-comp-button-ghost-hover-layer)]'
+      return 'bg-transparent border-[color:var(--border-muted)] text-[color:var(--md-sys-color-on-surface-variant)] hover:bg-[color:var(--glass-surface-soft)]'
   }
 }
 

@@ -53,7 +53,7 @@ function choose(v: string) {
       :leave-from-class="fadeScale.leaveFromClass"
       :leave-to-class="fadeScale.leaveToClass"
     >
-      <div v-if="open" :class="['absolute z-50 mt-2 min-w-[12rem] overflow-hidden rounded-[1rem] border border-[color:color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent)] bg-[color-mix(in srgb, var(--surface) 98%, transparent)] shadow-[0_18px_32px_rgba(15,12,40,0.16)] backdrop-blur-xl ring-1 ring-[color:color-mix(in srgb, var(--accent) 18%, transparent)]/10', props.align==='right' ? 'right-0' : 'left-0']">
+      <div v-if="open" :class="['absolute z-50 mt-2 min-w-[12rem] overflow-hidden rounded-[1rem] border border-[color:var(--border-soft)] bg-[color-mix(in srgb, var(--surface) 94%, transparent)] shadow-[0_18px_32px_rgba(15,12,40,0.16)] backdrop-blur-xl ring-1 ring-[color:color-mix(in srgb, var(--accent) 18%, transparent)]/10', props.align==='right' ? 'right-0' : 'left-0']">
         <button
           v-for="it in props.items"
           :key="it.value"
