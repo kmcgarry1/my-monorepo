@@ -80,9 +80,9 @@ const selectedGuide = computed(() => getTierGuide(props.tier ?? defaultTier))
   gap: var(--space-sm);
   padding: 1.1rem 1.2rem;
   border-radius: 1.1rem;
-  background: color-mix(in srgb, var(--surface-veil) 64%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border) 24%, transparent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  background: var(--glass-surface-strong);
+  border: none;
+  box-shadow: var(--glass-shadow-md), var(--glass-highlight);
 }
 
 .form-section + .form-section {
@@ -101,11 +101,11 @@ const selectedGuide = computed(() => getTierGuide(props.tier ?? defaultTier))
   gap: 1rem;
   padding: 1.15rem 1.2rem;
   border-radius: 1.15rem;
-  background: color-mix(in srgb, var(--surface-veil) 70%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border) 26%, transparent);
+  background: var(--glass-surface-strong);
+  border: none;
   position: relative;
   isolation: isolate;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  box-shadow: var(--glass-shadow-md), var(--glass-highlight);
 }
 
 .guide-panel::after {

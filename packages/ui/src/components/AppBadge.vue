@@ -9,14 +9,14 @@ const sizeMap: Record<'xs'|'sm'|'md', string> = {
 }
 
 const variantMap: Record<string, string> = {
-  surface: 'bg-[color:var(--md-sys-color-surface-container-high)] text-[color:var(--md-sys-color-on-surface)] border-[color:var(--md-sys-color-outline-variant)]',
+  surface: 'bg-[color:var(--surface-translucent)] text-[color:var(--md-sys-color-on-surface)] border-[color:var(--border-muted)] backdrop-blur-sm',
   primary: 'bg-[color:var(--md-sys-color-primary-container)] text-[color:var(--md-sys-color-on-primary-container)] border-[color:var(--md-sys-color-primary)]',
   accent: 'bg-[color:var(--md-sys-color-primary-container)] text-[color:var(--md-sys-color-on-primary-container)] border-[color:var(--md-sys-color-primary)]',
-  neutral: 'bg-[color:var(--md-sys-color-surface-variant)] text-[color:var(--md-sys-color-on-surface-variant)] border-[color:var(--md-sys-color-outline)]',
+  neutral: 'bg-[color:var(--md-sys-color-surface-variant)] text-[color:var(--md-sys-color-on-surface-variant)] border-[color:var(--border)]',
   secondary: 'bg-[color:var(--md-sys-color-secondary-container)] text-[color:var(--md-sys-color-on-secondary-container)] border-[color:var(--md-sys-color-secondary)]',
   danger: 'bg-[color:var(--md-sys-color-error-container)] text-[color:var(--md-sys-color-on-error-container)] border-[color:var(--md-sys-color-error)]',
   success: 'bg-[color:var(--md-sys-color-success-container)] text-[color:var(--md-sys-color-on-success-container)] border-[color:var(--md-sys-color-success)]',
-  default: 'bg-[color:var(--md-sys-color-surface-variant)] text-[color:var(--md-sys-color-on-surface-variant)] border-[color:var(--md-sys-color-outline)]'
+  default: 'bg-[color:var(--md-sys-color-surface-variant)] text-[color:var(--md-sys-color-on-surface-variant)] border-[color:var(--border)]'
 }
 
 const props = withDefaults(defineProps<{
@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<{
 }>(), { variant: 'surface', size: 'sm' })
 
 const klass = computed(() => cx(
-  'inline-flex items-center rounded-[var(--radius-pill)] border font-semibold',
+  'inline-flex items-center rounded-[var(--radius-pill)] border font-semibold shadow-[var(--glass-shadow-sm)]',
   sizeMap[props.size],
   variantMap[props.variant] ?? variantMap.surface
 ))

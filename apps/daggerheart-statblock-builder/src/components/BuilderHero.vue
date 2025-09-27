@@ -154,8 +154,9 @@ const emit = defineEmits<{ (e: 'open-wizard'): void; (e: 'reset'): void }>()
   position: relative;
   padding: 1rem 1.1rem;
   border-radius: var(--radius-lg);
-  border: 1px solid color-mix(in srgb, var(--border) 35%, transparent);
-  background: color-mix(in srgb, var(--surface-veil) 74%, transparent);
+  border: none;
+  background: var(--glass-surface-strong);
+  box-shadow: var(--glass-shadow-sm), var(--glass-highlight);
   backdrop-filter: blur(12px);
   display: flex;
   flex-direction: column;
@@ -166,12 +167,12 @@ const emit = defineEmits<{ (e: 'open-wizard'): void; (e: 'reset'): void }>()
 
 .highlight-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-level2);
+  box-shadow: var(--glass-shadow-md), var(--glass-highlight);
 }
 
 .highlight-card.tier {
-  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-  background: color-mix(in srgb, var(--accent-weak) 36%, transparent);
+  background: color-mix(in srgb, var(--accent-weak) 42%, transparent);
+  box-shadow: var(--glass-shadow-md), var(--glass-highlight), 0 18px 36px rgba(103, 80, 164, 0.25);
 }
 
 .highlight-label {

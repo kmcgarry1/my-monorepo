@@ -130,9 +130,9 @@ onBeforeUnmount(() => {
   gap: 1.35rem;
   padding: 1.9rem;
   border-radius: 2rem;
-  border: 1px solid color-mix(in srgb, var(--border) 24%, transparent);
+  border: none;
   background: color-mix(in srgb, var(--surface) 96%, transparent);
-  box-shadow: 0 32px 70px rgba(12, 10, 40, 0.32);
+  box-shadow: var(--glass-shadow-lg), var(--glass-highlight);
   backdrop-filter: blur(24px);
 }
 
@@ -141,8 +141,19 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--border) 26%, transparent);
+  position: relative;
+  border-bottom: none;
   padding-bottom: 1.1rem;
+}
+
+.wizard-header::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, color-mix(in srgb, var(--border-soft) 80%, transparent), transparent);
+  opacity: 0.8;
+  pointer-events: none;
 }
 
 .eyebrow {

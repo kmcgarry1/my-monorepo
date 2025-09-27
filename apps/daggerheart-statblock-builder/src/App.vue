@@ -213,8 +213,8 @@ function handleUpdateTraits(value: string) {
   gap: 1.9rem;
   background: color-mix(in srgb, var(--surface) 97%, transparent);
   border-radius: 1.9rem;
-  border: 1px solid color-mix(in srgb, var(--border) 22%, transparent);
-  box-shadow: 0 28px 60px rgba(15, 12, 40, 0.18);
+  border: none;
+  box-shadow: var(--glass-shadow-lg), var(--glass-highlight);
   backdrop-filter: blur(22px);
 }
 

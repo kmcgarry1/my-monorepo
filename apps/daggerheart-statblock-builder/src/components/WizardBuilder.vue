@@ -224,8 +224,8 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
   padding: 1.5rem;
   border-radius: 1.6rem;
   background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 99%, transparent), color-mix(in srgb, var(--surface-veil) 55%, transparent));
-  border: 1px solid color-mix(in srgb, var(--border) 28%, transparent);
-  box-shadow: 0 24px 55px rgba(15, 12, 40, 0.12);
+  border: none;
+  box-shadow: var(--glass-shadow-lg), var(--glass-highlight);
   backdrop-filter: blur(18px);
 }
 
@@ -238,8 +238,8 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
   padding: 1.4rem;
   background: color-mix(in srgb, var(--surface) 99%, transparent);
   border-radius: 1.25rem;
-  border: 1px solid color-mix(in srgb, var(--border) 24%, transparent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 18px 40px rgba(15, 12, 40, 0.1);
+  border: none;
+  box-shadow: var(--glass-shadow-sm), var(--glass-highlight);
 }
 
 .sidebar-copy {
@@ -282,8 +282,8 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
 
 .stepper-item {
   width: 100%;
-  border: 1px solid color-mix(in srgb, var(--border) 22%, transparent);
-  background: color-mix(in srgb, var(--surface) 98%, transparent);
+  border: none;
+  background: var(--glass-surface-strong);
   display: flex;
   gap: 0.9rem;
   align-items: flex-start;
@@ -293,26 +293,26 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
   cursor: pointer;
   transition:
     transform var(--motion-duration-sm) var(--motion-easing-emphasized),
-    border-color var(--motion-duration-sm) var(--motion-easing-standard),
     box-shadow var(--motion-duration-sm) var(--motion-easing-standard),
     background var(--motion-duration-sm) var(--motion-easing-standard);
+  box-shadow: var(--glass-shadow-sm), var(--glass-highlight);
 }
 
 .stepper-item:hover:not(.active) {
   transform: translateX(3px);
-  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
-  box-shadow: 0 12px 24px rgba(15, 12, 40, 0.08);
+  box-shadow: var(--glass-shadow-md), var(--glass-highlight);
+  background: color-mix(in srgb, var(--surface) 94%, var(--accent) 6%);
 }
 
 .stepper-item.active {
   background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 14%, transparent), color-mix(in srgb, var(--surface) 94%, transparent));
-  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
-  box-shadow: 0 18px 32px rgba(15, 12, 40, 0.14);
+  box-shadow: var(--glass-shadow-md), 0 18px 32px rgba(103, 80, 164, 0.22);
   transform: translateX(4px);
 }
 
 .stepper-item.complete {
-  border-color: color-mix(in srgb, var(--accent) 34%, transparent);
+  box-shadow: var(--glass-shadow-md), var(--glass-highlight);
+  background: color-mix(in srgb, var(--accent-weak) 26%, var(--glass-surface-strong));
 }
 
 .indicator {
@@ -324,16 +324,15 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
   font-weight: 700;
   font-size: 0.88rem;
   color: color-mix(in srgb, var(--fg) 85%, transparent);
-  background: color-mix(in srgb, var(--surface-veil) 70%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border) 30%, transparent);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+  background: var(--glass-surface-soft);
+  border: none;
+  box-shadow: var(--glass-shadow-sm), var(--glass-highlight);
 }
 
 .stepper-item.active .indicator,
 .stepper-item.complete .indicator {
   background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 75%, transparent), color-mix(in srgb, var(--accent) 45%, transparent));
   color: color-mix(in srgb, var(--bg) 96%, transparent);
-  border-color: transparent;
   box-shadow: 0 10px 22px rgba(249, 193, 73, 0.35);
 }
 
@@ -386,9 +385,9 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
   min-height: 0;
   padding: 1.45rem 1.55rem;
   border-radius: 1.3rem;
-  background: color-mix(in srgb, var(--surface) 99%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border) 26%, transparent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 20px 38px rgba(15, 12, 40, 0.08);
+  background: var(--glass-surface-strong);
+  border: none;
+  box-shadow: var(--glass-shadow-md), var(--glass-highlight);
 }
 
 .progress {
@@ -418,10 +417,10 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
 }
 
 .review-hint {
-  border: 1px dashed color-mix(in srgb, var(--border) 40%, transparent);
   border-radius: var(--radius-lg);
   padding: 1.25rem;
-  background: color-mix(in srgb, var(--surface-veil) 68%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent-weak) 32%, transparent), var(--glass-surface-strong));
+  box-shadow: var(--glass-shadow-sm), var(--glass-highlight);
 }
 
 .review-hint h4 {
@@ -440,8 +439,19 @@ const progress = computed(() => Math.round(((current.value + 1) / steps.value.le
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  border-top: 1px solid color-mix(in srgb, var(--border) 28%, transparent);
+  position: relative;
+  border-top: none;
   padding-top: 1.25rem;
+}
+
+.wizard-nav::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(to right, transparent, color-mix(in srgb, var(--border-soft) 80%, transparent), transparent);
+  opacity: 0.85;
+  pointer-events: none;
 }
 
 .nav-meta {

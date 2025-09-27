@@ -129,11 +129,11 @@ function updateFeature(idx: number, patch: Partial<Feature>) {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: color-mix(in srgb, var(--surface-veil) 70%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border) 24%, transparent);
+  background: var(--glass-surface-soft);
+  border: none;
   border-radius: 1rem;
   padding: 0.9rem 1rem;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  box-shadow: var(--glass-shadow-sm), var(--glass-highlight);
 }
 
 .header-label {
@@ -154,9 +154,9 @@ function updateFeature(idx: number, patch: Partial<Feature>) {
 .editor-card {
   padding: 1rem 1.1rem;
   border-radius: 1.1rem;
-  background: color-mix(in srgb, var(--surface-veil) 68%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border) 26%, transparent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  background: var(--glass-surface-strong);
+  border: none;
+  box-shadow: var(--glass-shadow-md), var(--glass-highlight);
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);

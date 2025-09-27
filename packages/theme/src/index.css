@@ -205,6 +205,12 @@
   --border-soft: rgba(103, 80, 164, 0.12);
   --border-muted: rgba(103, 80, 164, 0.08);
   --border-strong: #79747E;
+  --glass-shadow-sm: 0 12px 28px rgba(32, 24, 64, 0.14);
+  --glass-shadow-md: 0 18px 42px rgba(28, 21, 58, 0.18);
+  --glass-shadow-lg: 0 30px 64px rgba(21, 16, 48, 0.22);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+  --glass-surface-soft: color-mix(in srgb, var(--surface-veil) 60%, transparent);
+  --glass-surface-strong: color-mix(in srgb, var(--surface-veil) 72%, transparent);
   --accent: #6750A4;
   --accent-weak: #EADDFF;
   --accent-strong: #21005D;

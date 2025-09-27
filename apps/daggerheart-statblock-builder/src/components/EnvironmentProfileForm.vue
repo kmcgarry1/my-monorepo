@@ -142,9 +142,9 @@ function applyDifficulty() {
   gap: var(--space-sm);
   padding: 1.1rem 1.2rem;
   border-radius: 1.1rem;
-  background: color-mix(in srgb, var(--surface-veil) 66%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border) 24%, transparent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  background: var(--glass-surface-strong);
+  border: none;
+  box-shadow: var(--glass-shadow-md), var(--glass-highlight);
 }
 
 .form-section + .form-section {
