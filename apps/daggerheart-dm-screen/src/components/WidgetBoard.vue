@@ -7,7 +7,9 @@ import ConditionsQuickRef from './widgets/ConditionsQuickRef.vue';
 import SRDLibrary from './widgets/SRDLibrary.vue';
 import DiceOracle from './widgets/DiceOracle.vue';
 import ThreatsAndHooks from './widgets/ThreatsAndHooks.vue';
-import type { WidgetState } from '../types';
+import CustomWidgetLibrary from './widgets/CustomWidgetLibrary.vue';
+import CustomWidget from './widgets/CustomWidget.vue';
+import type { CreateWidgetPayload, WidgetState } from '../types';
 
 const componentMap: Record<string, Component> = {
   EncounterTimeline,
@@ -15,7 +17,9 @@ const componentMap: Record<string, Component> = {
   ConditionsQuickRef,
   SRDLibrary,
   DiceOracle,
-  ThreatsAndHooks
+  ThreatsAndHooks,
+  CustomWidgetLibrary,
+  CustomWidget
 };
 
 const props = defineProps<{
@@ -28,7 +32,15 @@ const emit = defineEmits<{
   (e: 'update:size', payload: { id: string; width: number; height: number }): void;
   (e: 'focus', id: string): void;
   (e: 'toggle-pin', id: string): void;
+  (e: 'create-widget', payload: CreateWidgetPayload): void;
 }>();
+
+function getWidgetProps(widget: WidgetState) {
+  if (widget.component === 'CustomWidget') {
+    return { config: widget.config };
+  }
+  return {};
+}
 </script>
 
 <template>
@@ -44,7 +56,11 @@ const emit = defineEmits<{
       @focus="emit('focus', widget.id)"
       @toggle-pin="emit('toggle-pin', widget.id)"
     >
-      <component :is="componentMap[widget.component] ?? componentMap.EncounterTimeline" />
+      <component
+        :is="componentMap[widget.component] ?? componentMap.EncounterTimeline"
+        v-bind="getWidgetProps(widget)"
+        @create-widget="(payload) => emit('create-widget', payload)"
+      />
     </DraggableWidget>
   </section>
 </template>

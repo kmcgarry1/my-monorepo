@@ -2,7 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import WidgetBoard from './components/WidgetBoard.vue';
 import DMToolbar from './components/DMToolbar.vue';
-import type { WidgetState } from './types';
+import type { CreateWidgetPayload, WidgetState } from './types';
 import { createInitialWidgets } from './data/widgets';
 
 const GRID_SIZE = 40;
@@ -10,6 +10,8 @@ const MIN_WIDTH = GRID_SIZE * 5;
 const MIN_HEIGHT = GRID_SIZE * 4;
 
 const widgets = ref<WidgetState[]>(createInitialWidgets());
+
+let customWidgetCounter = 1;
 
 const pinnedCount = computed(() => widgets.value.filter((widget) => widget.pinned).length);
 const isFullBleed = ref(false);
@@ -58,8 +60,12 @@ function updateWidgetSize(payload: { id: string; width: number; height: number }
   );
 }
 
+function getHighestZIndex() {
+  return widgets.value.reduce((max, widget) => Math.max(max, widget.zIndex), 0);
+}
+
 function bringWidgetToFront(id: string) {
-  const highest = Math.max(...widgets.value.map((widget) => widget.zIndex));
+  const highest = getHighestZIndex();
   widgets.value = widgets.value.map((widget) =>
     widget.id === id
       ? {
@@ -68,6 +74,38 @@ function bringWidgetToFront(id: string) {
         }
       : widget
   );
+}
+
+function getNextCustomPosition() {
+  const nonPinned = widgets.value.filter((widget) => !widget.pinned);
+  const index = nonPinned.length;
+  const column = index % 3;
+  const row = Math.floor(index / 3);
+  const baseX = snapToGrid(160 + column * 220);
+  const baseY = snapToGrid(160 + row * 220);
+  return { x: baseX, y: baseY };
+}
+
+function addCustomWidget(payload: CreateWidgetPayload) {
+  const highest = getHighestZIndex();
+  const { x, y } = getNextCustomPosition();
+  const newWidget: WidgetState = {
+    id: `custom-${customWidgetCounter++}`,
+    title: payload.title,
+    icon: payload.icon,
+    accent: payload.accent,
+    description: payload.description,
+    position: { x, y },
+    size: {
+      width: Math.max(MIN_WIDTH, snapToGrid(payload.size.width)),
+      height: Math.max(MIN_HEIGHT, snapToGrid(payload.size.height))
+    },
+    component: payload.component,
+    zIndex: highest + 1,
+    config: payload.config
+  };
+
+  widgets.value = [...widgets.value, newWidget];
 }
 
 function togglePin(id: string) {
@@ -195,6 +233,7 @@ onBeforeUnmount(() => {
         @update:size="updateWidgetSize"
         @focus="bringWidgetToFront"
         @toggle-pin="togglePin"
+        @create-widget="addCustomWidget"
       />
     </div>
   </div>
