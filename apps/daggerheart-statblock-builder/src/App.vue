@@ -9,7 +9,11 @@ import {
   provideDesignStyle,
   useMaterialDisplay,
 } from '@my-monorepo/ui'
-import { AndroidNavigationRail } from '@my-monorepo/ui-platform'
+import {
+  AppleGlassControlStrip,
+  MaterialAndroidNavigationRail,
+  MaterialWebTopBar,
+} from '@my-monorepo/ui-platform'
 import BuilderHero from './components/BuilderHero.vue'
 import BuilderInsights from './components/BuilderInsights.vue'
 import BuilderWizardOverlay from './components/BuilderWizardOverlay.vue'
@@ -23,7 +27,7 @@ import { getTierGuide } from './lib/tierGuides'
 import { glossaryOpen, openGlossary } from './lib/glossaryState'
 import { useClientPlatform } from './composables/useClientPlatform'
 
-provideDesignStyle({ preset: 'material-desktop', responsive: true })
+provideDesignStyle({ preset: 'material3-web', responsive: true })
 
 const {
   sbType,
@@ -233,7 +237,7 @@ watch(glossaryOpen, (isOpen) => {
       <div class="nav-rail__logo" aria-hidden="true">
         <span class="nav-rail__brand">DH</span>
       </div>
-      <AndroidNavigationRail
+      <MaterialAndroidNavigationRail
         v-model="navSelection"
         class="nav-rail__menu"
         :items="navItems"
@@ -248,80 +252,91 @@ watch(glossaryOpen, (isOpen) => {
     </aside>
 
     <main class="layout-surface" role="main">
-      <header v-if="isPhone" class="expressive-top-bar" role="banner">
-        <div class="expressive-top-bar__meta">
+      <AppleGlassControlStrip
+        v-if="isPhone"
+        class="expressive-top-bar"
+        role="banner"
+        :back-label="null"
+      >
+        <template #leading>
           <div class="expressive-top-bar__brand" aria-hidden="true">
             <span class="expressive-top-bar__logo">DH</span>
-            <span class="expressive-top-bar__eyebrow">Daggerheart builder</span>
           </div>
+        </template>
+        <template #title>
           <div class="expressive-top-bar__headline">
+            <span class="expressive-top-bar__eyebrow">Daggerheart builder</span>
             <span class="expressive-top-bar__title">{{ displayName }}</span>
             <span class="expressive-top-bar__subtitle">{{ topAppBarSubtitle }}</span>
           </div>
-        </div>
+        </template>
+        <template #trailing>
+          <div class="expressive-top-bar__actions">
+            <AppIconButton
+              class="expressive-top-bar__icon"
+              name="dice"
+              variant="surface"
+              size="md"
+              aria-label="Open guided build"
+              @click="openWizard"
+            />
+            <AppIconButton
+              class="expressive-top-bar__icon"
+              name="sparkles"
+              variant="surface"
+              size="md"
+              aria-label="Open name helper"
+              @click="openNameReference"
+            />
+            <AppIconButton
+              class="expressive-top-bar__icon"
+              name="trash"
+              variant="surface"
+              size="md"
+              aria-label="Reset statblock"
+              @click="resetAll"
+            />
+            <AppIconButton
+              class="expressive-top-bar__icon"
+              name="print"
+              variant="surface"
+              size="md"
+              aria-label="Print statblock"
+              @click="handlePrint"
+            />
+          </div>
+        </template>
+      </AppleGlassControlStrip>
 
-        <div class="expressive-top-bar__actions">
-          <AppIconButton
-            class="expressive-top-bar__icon"
-            name="dice"
-            variant="surface"
-            size="md"
-            aria-label="Open guided build"
-            @click="openWizard"
-          />
-          <AppIconButton
-            class="expressive-top-bar__icon"
-            name="sparkles"
-            variant="surface"
-            size="md"
-            aria-label="Open name helper"
-            @click="openNameReference"
-          />
-          <AppIconButton
-            class="expressive-top-bar__icon"
-            name="trash"
-            variant="surface"
-            size="md"
-            aria-label="Reset statblock"
-            @click="resetAll"
-          />
-          <AppIconButton
-            class="expressive-top-bar__icon"
-            name="print"
-            variant="surface"
-            size="md"
-            aria-label="Print statblock"
-            @click="handlePrint"
-          />
-        </div>
-      </header>
-
-      <header v-else class="top-app-bar" role="banner">
-        <div class="top-app-bar__headline">
-          <span class="top-app-bar__eyebrow">Daggerheart builder</span>
-          <span class="top-app-bar__title">{{ displayName }}</span>
-          <span class="top-app-bar__subtitle">{{ topAppBarSubtitle }}</span>
-        </div>
-
-        <div class="top-app-bar__actions">
-          <AppButton variant="elevated" size="sm" class="top-app-bar__action" @click="openWizard">
-            <AppIcon name="dice" size="sm" />
-            <span>Guided build</span>
-          </AppButton>
-          <AppButton variant="outlined" size="sm" class="top-app-bar__action" @click="resetAll">
-            <AppIcon name="trash" size="sm" />
-            <span>Reset</span>
-          </AppButton>
-          <AppIconButton
-            class="top-app-bar__icon"
-            name="print"
-            variant="surface"
-            size="sm"
-            aria-label="Print statblock"
-            @click="handlePrint"
-          />
-        </div>
-      </header>
+      <MaterialWebTopBar v-else class="top-app-bar" role="banner">
+        <template #title>
+          <div class="top-app-bar__headline">
+            <span class="top-app-bar__eyebrow">Daggerheart builder</span>
+            <span class="top-app-bar__title">{{ displayName }}</span>
+            <span class="top-app-bar__subtitle">{{ topAppBarSubtitle }}</span>
+          </div>
+        </template>
+        <template #actions>
+          <div class="top-app-bar__actions">
+            <AppButton variant="elevated" size="sm" class="top-app-bar__action" @click="openWizard">
+              <AppIcon name="dice" size="sm" />
+              <span>Guided build</span>
+            </AppButton>
+            <AppButton variant="outlined" size="sm" class="top-app-bar__action" @click="resetAll">
+              <AppIcon name="trash" size="sm" />
+              <span>Reset</span>
+            </AppButton>
+            <AppIconButton
+              class="top-app-bar__icon"
+              name="print"
+              variant="surface"
+              size="sm"
+              aria-label="Print statblock"
+              @click="handlePrint"
+            />
+          </div>
+        </template>
+      </MaterialWebTopBar>
 
       <nav v-if="isPhone" class="mobile-action-bar" aria-label="Builder navigation">
         <button class="mobile-action" type="button" :class="{ 'is-active': navSelection === 'builder' }">
@@ -717,14 +732,10 @@ watch(glossaryOpen, (isOpen) => {
 
 .expressive-top-bar {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: clamp(1rem, 5vw, 1.4rem);
-  border-radius: 1.4rem;
-  background: color-mix(in srgb, var(--md-sys-color-surface-container-high, var(--surface)) 96%, transparent);
-  box-shadow: 0 18px 42px rgba(12, 8, 30, 0.22),
-    0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline-variant, rgba(24, 20, 44, 0.26)) 32%, transparent);
+  padding: 0;
 }
 
 .expressive-top-bar__meta {
@@ -886,12 +897,9 @@ watch(glossaryOpen, (isOpen) => {
   align-items: center;
   justify-content: space-between;
   gap: clamp(1rem, 2.5vw, 1.8rem);
-  padding: clamp(0.85rem, 2vw, 1.25rem) clamp(1rem, 2vw, 1.6rem);
-  border-radius: 1.8rem;
-  background: color-mix(in srgb, var(--md-sys-color-surface-container-high, var(--surface-translucent)) 94%, transparent);
-  box-shadow: 0 20px 44px rgba(18, 12, 54, 0.18),
-    0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline-variant, transparent) 38%, transparent);
-  backdrop-filter: blur(18px);
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .top-app-bar__headline {

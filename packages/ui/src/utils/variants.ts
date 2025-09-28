@@ -18,7 +18,8 @@ const sharedButtonBase = [
 
 const familyAdjustments: Record<DesignStyleContext['family'], string> = {
   material: 'rounded-[var(--radius-md)] font-medium',
-  apple: 'rounded-[calc(var(--radius-lg)*1.08)] font-semibold backdrop-blur-[18px] backdrop-saturate-[180%] bg-clip-padding',
+  apple:
+    'rounded-[calc(var(--radius-xl)*0.75)] font-semibold backdrop-blur-[28px] backdrop-saturate-[180%] bg-clip-padding shadow-[var(--shadow-level2)]',
 }
 
 const densityAdjustments: Record<DesignStyleContext['density'], string> = {
@@ -27,10 +28,8 @@ const densityAdjustments: Record<DesignStyleContext['density'], string> = {
 }
 
 const presetAdjustments: Partial<Record<DesignStyleContext['preset'], string>> = {
-  'material-mobile': 'rounded-[var(--radius-lg)]',
-  'material-compact': 'rounded-[var(--radius-lg)]',
-  'cupertino-mobile': 'rounded-full shadow-[var(--shadow-level1)]',
-  'cupertino-desktop': 'shadow-[var(--shadow-level1)]',
+  'material3-android': 'rounded-[var(--radius-lg)]',
+  'apple-glass': 'rounded-[2.5rem] shadow-[var(--shadow-level3)]',
 }
 
 export function buttonBaseForStyle(style: Pick<DesignStyleContext, 'family' | 'density' | 'preset' | 'featureFlags'>) {
@@ -45,10 +44,8 @@ export function buttonBaseForStyle(style: Pick<DesignStyleContext, 'family' | 'd
 }
 
 const iconButtonAdjustments: Partial<Record<DesignStyleContext['preset'], string>> = {
-  'cupertino-mobile': 'rounded-full',
-  'cupertino-desktop': 'rounded-[calc(var(--radius-lg)*1.1)]',
-  'material-mobile': 'rounded-[var(--radius-lg)]',
-  'material-compact': 'rounded-[var(--radius-lg)]',
+  'material3-android': 'rounded-[var(--radius-lg)]',
+  'apple-glass': 'rounded-full',
 }
 
 export function iconButtonBaseForStyle(style: Pick<DesignStyleContext, 'family' | 'preset' | 'featureFlags'>) {

@@ -1,6 +1,6 @@
-import type { DefineComponent } from 'vue'
-
 declare module '@my-monorepo/ui-platform' {
+  import type { DefineComponent } from 'vue'
+
   type PlatformIcon =
     | 'sword'
     | 'arrows'
@@ -22,7 +22,7 @@ declare module '@my-monorepo/ui-platform' {
     value: string
   }
 
-  export const AndroidNavigationRail: DefineComponent<
+  export const MaterialAndroidNavigationRail: DefineComponent<
     {
       items: NavigationRailItem[]
       modelValue?: string
@@ -40,12 +40,22 @@ declare module '@my-monorepo/ui-platform' {
     }
   >
 
-  export const CupertinoNavigationBar: DefineComponent<
+  export const MaterialWebTopBar: DefineComponent<
     {
       title?: string
+      subtitle?: string | null
+      elevated?: boolean
+      align?: 'start' | 'center'
+      divider?: boolean
+    }
+  >
+
+  export const AppleGlassControlStrip: DefineComponent<
+    {
+      title?: string
+      subtitle?: string | null
       backLabel?: string | null
-      translucent?: boolean
-      backBehavior?: 'none' | 'default'
+      floating?: boolean
     },
     {},
     {},
