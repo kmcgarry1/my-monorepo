@@ -1,6 +1,15 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { AppButton, AppIcon, AppIconButton, fadeScale, fadeSlideUp, useMaterialDisplay } from '@my-monorepo/ui'
+import { computed, ref, watch } from 'vue'
+import {
+  AppButton,
+  AppIcon,
+  AppIconButton,
+  fadeScale,
+  fadeSlideUp,
+  provideDesignStyle,
+  useMaterialDisplay,
+} from '@my-monorepo/ui'
+import { AndroidNavigationRail, CupertinoNavigationBar } from '@my-monorepo/ui-platform'
 import BuilderHero from './components/BuilderHero.vue'
 import BuilderInsights from './components/BuilderInsights.vue'
 import BuilderWizardOverlay from './components/BuilderWizardOverlay.vue'
@@ -11,7 +20,9 @@ import GlossaryDrawer from './components/GlossaryDrawer.vue'
 import NameReferenceDrawer from './components/NameReferenceDrawer.vue'
 import { useStatblockBuilder } from './composables/useStatblockBuilder'
 import { getTierGuide } from './lib/tierGuides'
-import { openGlossary } from './lib/glossaryState'
+import { glossaryOpen, openGlossary } from './lib/glossaryState'
+
+provideDesignStyle({ preset: 'material-desktop', responsive: true })
 
 const {
   sbType,
@@ -28,6 +39,16 @@ const {
   loadPreset
 } = useStatblockBuilder()
 
+type NavValue = 'builder' | 'guided' | 'names' | 'glossary'
+
+const navItems: Array<{ icon: 'sword' | 'dice' | 'sparkles' | 'book'; label: string; value: NavValue }> = [
+  { icon: 'sword', label: 'Builder', value: 'builder' },
+  { icon: 'dice', label: 'Guided', value: 'guided' },
+  { icon: 'sparkles', label: 'Name DB', value: 'names' },
+  { icon: 'book', label: 'Glossary', value: 'glossary' },
+]
+
+const navSelection = ref<NavValue>('builder')
 const showWizard = ref(false)
 const wizardKey = ref(0)
 const showNameReference = ref(false)
@@ -105,12 +126,16 @@ const panelMotion = fadeSlideUp
 const previewMotion = fadeScale
 
 function openWizard() {
+  navSelection.value = 'guided'
   showWizard.value = true
 }
 
 function closeWizard() {
   showWizard.value = false
   wizardKey.value += 1
+  if (navSelection.value === 'guided') {
+    navSelection.value = 'builder'
+  }
 }
 
 function handleFinish() {
@@ -118,11 +143,35 @@ function handleFinish() {
 }
 
 function openNameReference() {
+  navSelection.value = 'names'
   showNameReference.value = true
 }
 
 function closeNameReference() {
   showNameReference.value = false
+  if (navSelection.value === 'names') {
+    navSelection.value = 'builder'
+  }
+}
+
+function handleNavSelect(value: NavValue | string) {
+  const next = navItems.find((item) => item.value === value)?.value ?? 'builder'
+
+  switch (next) {
+    case 'builder':
+      navSelection.value = 'builder'
+      break
+    case 'guided':
+      openWizard()
+      break
+    case 'names':
+      openNameReference()
+      break
+    case 'glossary':
+      navSelection.value = 'glossary'
+      openGlossary()
+      break
+  }
 }
 
 function handleUpdateSbType(value: 'enemy' | 'environment') {
@@ -157,6 +206,14 @@ function handleUpdateTraits(value: string) {
 function handlePrint() {
   window.print()
 }
+
+watch(glossaryOpen, (isOpen) => {
+  if (isOpen) {
+    navSelection.value = 'glossary'
+  } else if (navSelection.value === 'glossary') {
+    navSelection.value = 'builder'
+  }
+})
 </script>
 
 <template>
@@ -171,34 +228,17 @@ function handlePrint() {
       <div class="nav-rail__logo" aria-hidden="true">
         <span class="nav-rail__brand">DH</span>
       </div>
-      <nav class="nav-rail__actions" aria-label="Primary">
-        <button class="nav-rail__action is-active" type="button">
-          <AppIcon name="sword" size="sm" />
-          <span>Builder</span>
-        </button>
-        <button class="nav-rail__action" type="button" @click="openWizard">
-          <AppIcon name="dice" size="sm" />
-          <span>Guided</span>
-        </button>
-        <button
-          class="nav-rail__action"
-          type="button"
-          :class="{ 'is-active': showNameReference }"
-          @click="openNameReference"
-        >
-          <AppIcon name="sparkles" size="sm" />
-          <span>Name DB</span>
-        </button>
-        <button class="nav-rail__action" type="button" @click="openGlossary()">
-          <AppIcon name="book" size="sm" />
-          <span>Glossary</span>
-        </button>
-      </nav>
+      <AndroidNavigationRail
+        v-model="navSelection"
+        class="nav-rail__menu"
+        :items="navItems"
+        @select="handleNavSelect"
+      />
       <div class="nav-rail__footer">
-        <button class="nav-rail__action" type="button" @click="handlePrint">
+        <AppButton class="nav-rail__print" variant="surface" size="sm" @click="handlePrint">
           <AppIcon name="print" size="sm" />
           <span>Print</span>
-        </button>
+        </AppButton>
       </div>
     </aside>
 
@@ -230,62 +270,73 @@ function handlePrint() {
         </div>
       </header>
 
-      <header v-else class="mobile-app-bar" role="banner">
-        <div class="mobile-app-bar__brand">
-          <span class="mobile-app-bar__logo" aria-hidden="true">DH</span>
+      <CupertinoNavigationBar v-else class="mobile-app-bar" :title="displayName" back-behavior="none">
+        <template #leading>
+          <div class="mobile-app-bar__brand">
+            <span class="mobile-app-bar__logo" aria-hidden="true">DH</span>
+          </div>
+        </template>
+        <template #title>
           <div class="mobile-app-bar__headline">
             <span class="mobile-app-bar__eyebrow">Daggerheart builder</span>
             <span class="mobile-app-bar__title">{{ displayName }}</span>
             <span class="mobile-app-bar__subtitle">{{ topAppBarSubtitle }}</span>
           </div>
-        </div>
-        <div class="mobile-app-bar__actions">
-          <AppIconButton
-            class="mobile-app-bar__icon"
-            name="dice"
-            variant="surface"
-            size="sm"
-            aria-label="Open guided build"
-            @click="openWizard"
-          />
-          <AppIconButton
-            class="mobile-app-bar__icon"
-            name="trash"
-            variant="surface"
-            size="sm"
-            aria-label="Reset statblock"
-            @click="resetAll"
-          />
-          <AppIconButton
-            class="mobile-app-bar__icon"
-            name="print"
-            variant="surface"
-            size="sm"
-            aria-label="Print statblock"
-            @click="handlePrint"
-          />
-        </div>
-      </header>
+        </template>
+        <template #trailing>
+          <div class="mobile-app-bar__actions">
+            <AppIconButton
+              class="mobile-app-bar__icon"
+              name="dice"
+              variant="surface"
+              size="sm"
+              aria-label="Open guided build"
+              @click="openWizard"
+            />
+            <AppIconButton
+              class="mobile-app-bar__icon"
+              name="trash"
+              variant="surface"
+              size="sm"
+              aria-label="Reset statblock"
+              @click="resetAll"
+            />
+            <AppIconButton
+              class="mobile-app-bar__icon"
+              name="print"
+              variant="surface"
+              size="sm"
+              aria-label="Print statblock"
+              @click="handlePrint"
+            />
+          </div>
+        </template>
+      </CupertinoNavigationBar>
 
       <nav v-if="isPhone" class="mobile-action-bar" aria-label="Builder navigation">
-        <button class="mobile-action is-active" type="button">
+        <button class="mobile-action" type="button" :class="{ 'is-active': navSelection === 'builder' }">
           <AppIcon name="sword" size="sm" />
           <span>Builder</span>
         </button>
-        <button class="mobile-action" type="button" @click="openWizard">
+        <button class="mobile-action" type="button" :class="{ 'is-active': navSelection === 'guided' }" @click="openWizard">
           <AppIcon name="dice" size="sm" />
           <span>Guided</span>
         </button>
         <button
           class="mobile-action"
           type="button"
-          :class="{ 'is-active': showNameReference }"
+          :class="{ 'is-active': navSelection === 'names' }"
           @click="openNameReference"
         >
           <AppIcon name="sparkles" size="sm" />
           <span>Name DB</span>
         </button>
-        <button class="mobile-action" type="button" @click="openGlossary()">
+        <button
+          class="mobile-action"
+          type="button"
+          :class="{ 'is-active': navSelection === 'glossary' }"
+          @click="handleNavSelect('glossary')"
+        >
           <AppIcon name="book" size="sm" />
           <span>Glossary</span>
         </button>
@@ -504,12 +555,9 @@ function handlePrint() {
   transform: translateY(-1px);
 }
 
-.nav-rail__actions {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(0.75rem, 2vw, 1rem);
+.nav-rail__menu {
   width: 100%;
-  align-items: center;
+  flex: 1 1 auto;
 }
 
 .nav-rail__footer {
@@ -519,39 +567,13 @@ function handlePrint() {
   justify-content: center;
 }
 
-.nav-rail__action {
+.nav-rail__print {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.55rem 0.4rem;
-  border-radius: 1.2rem;
-  border: none;
-  background: transparent;
-  color: color-mix(in srgb, var(--md-sys-color-on-surface-variant, var(--muted)) 85%, transparent);
-  font-size: 0.72rem;
-  font-weight: 600;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  cursor: pointer;
-  transition: background 140ms ease, color 140ms ease, box-shadow 140ms ease;
-}
-
-.nav-rail__action:is(:hover, :focus-visible) {
-  background: color-mix(in srgb, var(--md-sys-color-surface-container-high, var(--surface)) 92%, transparent);
-  color: var(--md-sys-color-on-surface, var(--fg));
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline, rgba(255, 255, 255, 0.3)) 40%, transparent);
-}
-
-.nav-rail__action.is-active {
-  background: color-mix(in srgb, var(--md-sys-color-secondary-container, var(--surface)) 92%, transparent);
-  color: var(--md-sys-color-on-secondary-container, var(--fg));
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline-variant, rgba(255, 255, 255, 0.3)) 45%, transparent);
-}
-
-.nav-rail__action span {
-  white-space: nowrap;
 }
 
 .layout-surface {
@@ -593,9 +615,6 @@ function handlePrint() {
 }
 
 .mobile-app-bar {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
   padding: clamp(0.9rem, 4vw, 1.1rem) clamp(1rem, 5vw, 1.4rem);
   border-radius: 1.4rem;
   background: color-mix(in srgb, var(--md-sys-color-surface-container-high, var(--surface)) 96%, transparent);
@@ -843,21 +862,16 @@ function handlePrint() {
     height: 48px;
   }
 
-  .nav-rail__actions {
-    flex-direction: row;
-    gap: 0.6rem;
-    justify-content: center;
-  }
-
   .nav-rail__footer {
     margin-top: 0;
   }
 
-  .nav-rail__action {
-    flex-direction: row;
-    gap: 0.35rem;
-    font-size: 0.75rem;
-    padding: 0.55rem 0.85rem;
+  .nav-rail__menu {
+    width: auto;
+  }
+
+  .nav-rail__print {
+    width: auto;
   }
 
   .layout-surface {
@@ -898,13 +912,8 @@ function handlePrint() {
     gap: 0.75rem;
   }
 
-  .nav-rail__actions {
+  .nav-rail__menu {
     width: 100%;
-    justify-content: space-between;
-  }
-
-  .nav-rail__action span {
-    font-size: 0.68rem;
   }
 
   .layout-surface {

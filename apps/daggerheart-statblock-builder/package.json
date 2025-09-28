@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@my-monorepo/ui": "workspace:*",
+    "@my-monorepo/ui-platform": "workspace:*",
     "@my-monorepo/theme": "workspace:*",
     "vue": "^3.5.18"
   },
