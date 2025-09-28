@@ -4,11 +4,16 @@ const props = defineProps<{
   subtitle: string;
   pinnedCount: number;
   totalWidgets: number;
+  fullBleed: boolean;
+  fullscreen: boolean;
+  phoneLayout: boolean;
 }>();
 
 const emit = defineEmits<{
   (e: 'reset'): void;
   (e: 'cascade'): void;
+  (e: 'toggle-full-bleed'): void;
+  (e: 'toggle-fullscreen'): void;
 }>();
 </script>
 
@@ -30,8 +35,25 @@ const emit = defineEmits<{
         <span class="label">Pinned</span>
         <span class="value">{{ pinnedCount }}</span>
       </div>
+      <div v-if="props.phoneLayout" class="layout-pill">Phone layout</div>
     </div>
     <div class="actions">
+      <button
+        type="button"
+        class="ghost"
+        :aria-pressed="props.fullBleed"
+        @click="emit('toggle-full-bleed')"
+      >
+        {{ props.fullBleed ? 'Standard Window' : 'Full Window' }}
+      </button>
+      <button
+        type="button"
+        class="ghost"
+        :aria-pressed="props.fullscreen"
+        @click="emit('toggle-fullscreen')"
+      >
+        {{ props.fullscreen ? 'Exit Fullscreen' : 'Go Fullscreen' }}
+      </button>
       <button type="button" class="ghost" @click="emit('cascade')">Cascade Layout</button>
       <button type="button" class="primary" @click="emit('reset')">Reset Board</button>
     </div>
@@ -108,9 +130,21 @@ const emit = defineEmits<{
   font-variant-numeric: tabular-nums;
 }
 
+.layout-pill {
+  align-self: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(118, 174, 255, 0.35);
+  background: rgba(12, 21, 33, 0.6);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .actions {
   display: flex;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 button {
@@ -133,6 +167,11 @@ button.ghost {
   color: #e6f1ff;
 }
 
+.ghost[aria-pressed='true'] {
+  background: rgba(118, 174, 255, 0.25);
+  border-color: rgba(118, 174, 255, 0.65);
+}
+
 button.primary {
   background: linear-gradient(135deg, rgba(118, 174, 255, 0.9), rgba(94, 219, 255, 0.65));
   color: #041220;
@@ -152,6 +191,16 @@ button:hover {
   .metrics,
   .actions {
     justify-self: start;
+  }
+}
+
+@media (max-width: 640px) {
+  .actions {
+    width: 100%;
+  }
+
+  .actions button {
+    flex: 1 1 48%;
   }
 }
 </style>

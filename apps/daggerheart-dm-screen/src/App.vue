@@ -1,22 +1,57 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import WidgetBoard from './components/WidgetBoard.vue';
 import DMToolbar from './components/DMToolbar.vue';
 import type { WidgetState } from './types';
 import { createInitialWidgets } from './data/widgets';
 
+const GRID_SIZE = 40;
+const MIN_WIDTH = GRID_SIZE * 5;
+const MIN_HEIGHT = GRID_SIZE * 4;
+
 const widgets = ref<WidgetState[]>(createInitialWidgets());
 
 const pinnedCount = computed(() => widgets.value.filter((widget) => widget.pinned).length);
+const isFullBleed = ref(false);
+const isFullscreen = ref(false);
+const isPhoneLayout = ref(false);
+
+let phoneMediaQuery: MediaQueryList | null = null;
+
+function snapToGrid(value: number) {
+  return Math.round(value / GRID_SIZE) * GRID_SIZE;
+}
 
 function updateWidgetPosition(payload: { id: string; x: number; y: number }) {
+  if (isPhoneLayout.value) {
+    return;
+  }
+
   widgets.value = widgets.value.map((widget) =>
     widget.id === payload.id
       ? {
           ...widget,
           position: {
-            x: Math.round(payload.x),
-            y: Math.round(payload.y)
+            x: snapToGrid(payload.x),
+            y: snapToGrid(payload.y)
+          }
+        }
+      : widget
+  );
+}
+
+function updateWidgetSize(payload: { id: string; width: number; height: number }) {
+  if (isPhoneLayout.value) {
+    return;
+  }
+
+  widgets.value = widgets.value.map((widget) =>
+    widget.id === payload.id
+      ? {
+          ...widget,
+          size: {
+            width: Math.max(MIN_WIDTH, snapToGrid(payload.width)),
+            height: Math.max(MIN_HEIGHT, snapToGrid(payload.height))
           }
         }
       : widget
@@ -71,8 +106,8 @@ function cascadeWidgets() {
     updated.push({
       ...widget,
       position: {
-        x: newX,
-        y: newY
+        x: snapToGrid(newX),
+        y: snapToGrid(newY)
       }
     });
 
@@ -86,23 +121,78 @@ function cascadeWidgets() {
 
   widgets.value = updated;
 }
+
+function toggleFullBleed() {
+  isFullBleed.value = !isFullBleed.value;
+}
+
+function toggleFullscreen() {
+  if (!isFullscreen.value) {
+    const root = document.documentElement as HTMLElement & {
+      webkitRequestFullscreen?: () => Promise<void>;
+    };
+    const request = root.requestFullscreen?.() ?? root.webkitRequestFullscreen?.();
+    if (request && typeof request.catch === 'function') {
+      request.catch(() => {
+        isFullscreen.value = false;
+      });
+    }
+  } else {
+    const exit = document.exitFullscreen?.();
+    if (exit && typeof exit.catch === 'function') {
+      exit.catch(() => {
+        isFullscreen.value = Boolean(document.fullscreenElement);
+      });
+    }
+  }
+}
+
+function handleFullscreenChange() {
+  isFullscreen.value = Boolean(document.fullscreenElement);
+}
+
+function updatePhoneLayoutState() {
+  if (!phoneMediaQuery) {
+    return;
+  }
+  isPhoneLayout.value = phoneMediaQuery.matches;
+}
+
+onMounted(() => {
+  document.addEventListener('fullscreenchange', handleFullscreenChange);
+  phoneMediaQuery = window.matchMedia('(max-width: 720px)');
+  phoneMediaQuery.addEventListener('change', updatePhoneLayoutState);
+  updatePhoneLayoutState();
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  phoneMediaQuery?.removeEventListener('change', updatePhoneLayoutState);
+});
 </script>
 
 <template>
-  <div class="app-shell">
+  <div class="app-shell" :class="{ 'app-shell--full': isFullBleed, 'app-shell--phone': isPhoneLayout }">
     <div class="aurora" aria-hidden="true"></div>
-    <div class="content">
+    <div class="content" :class="{ 'content--full': isFullBleed }">
       <DMToolbar
         title="Daggerheart Director"
         subtitle="A living control board for guiding dramatic encounters"
         :pinned-count="pinnedCount"
         :total-widgets="widgets.length"
+        :full-bleed="isFullBleed"
+        :fullscreen="isFullscreen"
+        :phone-layout="isPhoneLayout"
         @reset="resetLayout"
         @cascade="cascadeWidgets"
+        @toggle-full-bleed="toggleFullBleed"
+        @toggle-fullscreen="toggleFullscreen"
       />
       <WidgetBoard
         :widgets="widgets"
+        :disable-interactions="isPhoneLayout"
         @update:position="updateWidgetPosition"
+        @update:size="updateWidgetSize"
         @focus="bringWidgetToFront"
         @toggle-pin="togglePin"
       />
@@ -119,6 +209,10 @@ function cascadeWidgets() {
     radial-gradient(circle at 85% 0%, rgba(255, 120, 221, 0.14), transparent 40%),
     radial-gradient(circle at 50% 80%, rgba(95, 255, 198, 0.12), transparent 45%),
     #05080f;
+}
+
+.app-shell--full {
+  padding: 0;
 }
 
 .aurora {
@@ -149,5 +243,31 @@ function cascadeWidgets() {
   display: flex;
   flex-direction: column;
   gap: 32px;
+}
+
+.content--full {
+  min-height: 100vh;
+  padding: 12px clamp(12px, 2vw, 32px) 32px;
+}
+
+.content--full .board {
+  min-height: calc(100vh - 220px);
+}
+
+@media (max-width: 900px) {
+  .content {
+    padding: 32px clamp(20px, 5vw, 42px) 48px;
+  }
+}
+
+@media (max-width: 720px) {
+  .content {
+    padding: 24px 16px 32px;
+    gap: 24px;
+  }
+
+  .app-shell--phone .content {
+    min-height: 100vh;
+  }
 }
 </style>

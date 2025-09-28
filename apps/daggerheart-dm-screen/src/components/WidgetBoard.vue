@@ -20,23 +20,27 @@ const componentMap: Record<string, Component> = {
 
 const props = defineProps<{
   widgets: WidgetState[];
+  disableInteractions?: boolean;
 }>();
 
 const emit = defineEmits<{
   (e: 'update:position', payload: { id: string; x: number; y: number }): void;
+  (e: 'update:size', payload: { id: string; width: number; height: number }): void;
   (e: 'focus', id: string): void;
   (e: 'toggle-pin', id: string): void;
 }>();
 </script>
 
 <template>
-  <section class="board" aria-label="Daggerheart control board">
+  <section class="board" :class="{ 'board--mobile': props.disableInteractions }" aria-label="Daggerheart control board">
     <div class="grid-surface" aria-hidden="true"></div>
     <DraggableWidget
       v-for="widget in props.widgets"
       :key="widget.id"
       :widget="widget"
+      :disable-interactions="props.disableInteractions"
       @dragging="(payload) => emit('update:position', payload)"
+      @resizing="(payload) => emit('update:size', payload)"
       @focus="emit('focus', widget.id)"
       @toggle-pin="emit('toggle-pin', widget.id)"
     >
@@ -56,6 +60,14 @@ const emit = defineEmits<{
   padding: 32px;
 }
 
+.board--mobile {
+  min-height: 0;
+  padding: 20px 16px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .grid-surface {
   position: absolute;
   inset: 0;
@@ -64,5 +76,24 @@ const emit = defineEmits<{
   background-size: 120px 120px;
   opacity: 0.4;
   pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  .board {
+    padding: 28px;
+    min-height: 640px;
+  }
+}
+
+@media (max-width: 720px) {
+  .board {
+    border-radius: 24px;
+    border-width: 1px;
+  }
+
+  .grid-surface {
+    opacity: 0.25;
+    background-size: 80px 80px;
+  }
 }
 </style>
