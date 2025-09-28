@@ -6,7 +6,9 @@ export const widgetComponents = [
   'ConditionsQuickRef',
   'SRDLibrary',
   'DiceOracle',
-  'ThreatsAndHooks'
+  'ThreatsAndHooks',
+  'CustomWidgetLibrary',
+  'CustomWidget'
 ] as const;
 
 export type WidgetComponentName = (typeof widgetComponents)[number];
@@ -15,6 +17,18 @@ const baseZ = 10;
 
 export function createInitialWidgets(): WidgetState[] {
   return [
+    {
+      id: 'widget-library',
+      title: 'Widget Library',
+      icon: '🧩',
+      accent: 'linear-gradient(135deg, rgba(110, 160, 255, 0.6), rgba(160, 92, 255, 0.4))',
+      description: 'Build bespoke trackers, notes, and reference cards.',
+      position: { x: 40, y: 40 },
+      size: { width: 420, height: 420 },
+      component: 'CustomWidgetLibrary',
+      zIndex: baseZ + 2,
+      pinned: true
+    },
     {
       id: 'encounter-timeline',
       title: 'Encounter Timeline',
@@ -31,7 +45,7 @@ export function createInitialWidgets(): WidgetState[] {
       title: 'Momentum & Stress',
       icon: '💠',
       accent: 'linear-gradient(135deg, rgba(86, 196, 255, 0.6), rgba(86, 132, 255, 0.4))',
-      description: 'Manage the party\'s shared resources.',
+      description: "Manage the party's shared resources.",
       position: { x: 520, y: 120 },
       size: { width: 320, height: 280 },
       component: 'MomentumTracker',
