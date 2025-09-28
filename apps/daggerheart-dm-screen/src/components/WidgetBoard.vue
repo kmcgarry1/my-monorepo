@@ -1,0 +1,68 @@
+<script setup lang="ts">
+import type { Component } from 'vue';
+import DraggableWidget from './DraggableWidget.vue';
+import EncounterTimeline from './widgets/EncounterTimeline.vue';
+import MomentumTracker from './widgets/MomentumTracker.vue';
+import ConditionsQuickRef from './widgets/ConditionsQuickRef.vue';
+import SRDLibrary from './widgets/SRDLibrary.vue';
+import DiceOracle from './widgets/DiceOracle.vue';
+import ThreatsAndHooks from './widgets/ThreatsAndHooks.vue';
+import type { WidgetState } from '../types';
+
+const componentMap: Record<string, Component> = {
+  EncounterTimeline,
+  MomentumTracker,
+  ConditionsQuickRef,
+  SRDLibrary,
+  DiceOracle,
+  ThreatsAndHooks
+};
+
+const props = defineProps<{
+  widgets: WidgetState[];
+}>();
+
+const emit = defineEmits<{
+  (e: 'update:position', payload: { id: string; x: number; y: number }): void;
+  (e: 'focus', id: string): void;
+  (e: 'toggle-pin', id: string): void;
+}>();
+</script>
+
+<template>
+  <section class="board" aria-label="Daggerheart control board">
+    <div class="grid-surface" aria-hidden="true"></div>
+    <DraggableWidget
+      v-for="widget in props.widgets"
+      :key="widget.id"
+      :widget="widget"
+      @dragging="(payload) => emit('update:position', payload)"
+      @focus="emit('focus', widget.id)"
+      @toggle-pin="emit('toggle-pin', widget.id)"
+    >
+      <component :is="componentMap[widget.component] ?? componentMap.EncounterTimeline" />
+    </DraggableWidget>
+  </section>
+</template>
+
+<style scoped>
+.board {
+  position: relative;
+  min-height: 740px;
+  border-radius: 32px;
+  border: 1px solid rgba(104, 150, 255, 0.25);
+  background: linear-gradient(180deg, rgba(7, 12, 22, 0.82), rgba(7, 12, 22, 0.96));
+  overflow: hidden;
+  padding: 32px;
+}
+
+.grid-surface {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(96, 144, 255, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(96, 144, 255, 0.08) 1px, transparent 1px);
+  background-size: 120px 120px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+</style>
