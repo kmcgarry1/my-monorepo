@@ -9,7 +9,7 @@ import DiceOracle from './widgets/DiceOracle.vue';
 import ThreatsAndHooks from './widgets/ThreatsAndHooks.vue';
 import CustomWidgetLibrary from './widgets/CustomWidgetLibrary.vue';
 import CustomWidget from './widgets/CustomWidget.vue';
-import type { CreateWidgetPayload, WidgetState } from '../types';
+import type { CreateWidgetPayload, CustomWidgetConfig, UpdateWidgetPayload, WidgetState } from '../types';
 
 const componentMap: Record<string, Component> = {
   EncounterTimeline,
@@ -33,11 +33,18 @@ const emit = defineEmits<{
   (e: 'focus', id: string): void;
   (e: 'toggle-pin', id: string): void;
   (e: 'create-widget', payload: CreateWidgetPayload): void;
+  (e: 'update-config', payload: { id: string; config: CustomWidgetConfig }): void;
+  (e: 'update-widget', payload: UpdateWidgetPayload): void;
+  (e: 'delete-widget', id: string): void;
 }>();
 
 function getWidgetProps(widget: WidgetState) {
   if (widget.component === 'CustomWidget') {
-    return { config: widget.config };
+    return { config: widget.config, widgetId: widget.id };
+  }
+  if (widget.component === 'CustomWidgetLibrary') {
+    const customWidgets = props.widgets.filter((item) => item.component === 'CustomWidget');
+    return { customWidgets };
   }
   return {};
 }
@@ -60,6 +67,9 @@ function getWidgetProps(widget: WidgetState) {
         :is="componentMap[widget.component] ?? componentMap.EncounterTimeline"
         v-bind="getWidgetProps(widget)"
         @create-widget="(payload) => emit('create-widget', payload)"
+        @update-config="(payload) => emit('update-config', payload)"
+        @update-widget="(payload) => emit('update-widget', payload)"
+        @delete-widget="(id) => emit('delete-widget', id)"
       />
     </DraggableWidget>
   </section>

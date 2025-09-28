@@ -1,17 +1,58 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import WidgetBoard from './components/WidgetBoard.vue';
 import DMToolbar from './components/DMToolbar.vue';
-import type { CreateWidgetPayload, WidgetState } from './types';
+import type { CreateWidgetPayload, CustomWidgetConfig, UpdateWidgetPayload, WidgetState } from './types';
 import { createInitialWidgets } from './data/widgets';
 
 const GRID_SIZE = 40;
 const MIN_WIDTH = GRID_SIZE * 5;
 const MIN_HEIGHT = GRID_SIZE * 4;
 
-const widgets = ref<WidgetState[]>(createInitialWidgets());
+const STORAGE_KEY = 'daggerheart-dm-widgets';
 
-let customWidgetCounter = 1;
+function loadPersistedWidgets(): WidgetState[] | null {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  const raw = window.localStorage.getItem(STORAGE_KEY);
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return parsed as WidgetState[];
+    }
+    window.localStorage.removeItem(STORAGE_KEY);
+  } catch (error) {
+    console.warn('Failed to parse stored widget layout:', error);
+    window.localStorage.removeItem(STORAGE_KEY);
+    return null;
+  }
+
+  return null;
+}
+
+function getNextCustomIndex(existing: WidgetState[]): number {
+  return (
+    existing.reduce((max, widget) => {
+      const match = /custom-(\d+)/.exec(widget.id);
+      if (!match) {
+        return max;
+      }
+      const value = Number.parseInt(match[1], 10);
+      return Number.isFinite(value) ? Math.max(max, value) : max;
+    }, 0) + 1
+  );
+}
+
+const initialWidgets = loadPersistedWidgets() ?? createInitialWidgets();
+const widgets = ref<WidgetState[]>(initialWidgets);
+
+let customWidgetCounter = getNextCustomIndex(initialWidgets);
 
 const pinnedCount = computed(() => widgets.value.filter((widget) => widget.pinned).length);
 const isFullBleed = ref(false);
@@ -19,6 +60,17 @@ const isFullscreen = ref(false);
 const isPhoneLayout = ref(false);
 
 let phoneMediaQuery: MediaQueryList | null = null;
+
+watch(
+  widgets,
+  (next) => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  },
+  { deep: true, immediate: true }
+);
 
 function snapToGrid(value: number) {
   return Math.round(value / GRID_SIZE) * GRID_SIZE;
@@ -108,6 +160,41 @@ function addCustomWidget(payload: CreateWidgetPayload) {
   widgets.value = [...widgets.value, newWidget];
 }
 
+function updateWidgetConfig(payload: { id: string; config: CustomWidgetConfig }) {
+  widgets.value = widgets.value.map((widget) =>
+    widget.id === payload.id
+      ? {
+          ...widget,
+          config: payload.config
+        }
+      : widget
+  );
+}
+
+function updateCustomWidget(payload: UpdateWidgetPayload) {
+  widgets.value = widgets.value.map((widget) =>
+    widget.id === payload.id
+      ? {
+          ...widget,
+          title: payload.title,
+          icon: payload.icon,
+          accent: payload.accent,
+          description: payload.description,
+          size: {
+            width: Math.max(MIN_WIDTH, snapToGrid(payload.size.width)),
+            height: Math.max(MIN_HEIGHT, snapToGrid(payload.size.height))
+          },
+          component: widget.component,
+          config: payload.config
+        }
+      : widget
+  );
+}
+
+function deleteCustomWidget(id: string) {
+  widgets.value = widgets.value.filter((widget) => widget.id !== id);
+}
+
 function togglePin(id: string) {
   widgets.value = widgets.value.map((widget) =>
     widget.id === id
@@ -121,6 +208,10 @@ function togglePin(id: string) {
 
 function resetLayout() {
   widgets.value = createInitialWidgets();
+  if (typeof window !== 'undefined') {
+    window.localStorage.removeItem(STORAGE_KEY);
+  }
+  customWidgetCounter = getNextCustomIndex(widgets.value);
 }
 
 function cascadeWidgets() {
@@ -234,6 +325,9 @@ onBeforeUnmount(() => {
         @focus="bringWidgetToFront"
         @toggle-pin="togglePin"
         @create-widget="addCustomWidget"
+        @update-config="updateWidgetConfig"
+        @update-widget="updateCustomWidget"
+        @delete-widget="deleteCustomWidget"
       />
     </div>
   </div>
