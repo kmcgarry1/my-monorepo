@@ -9,7 +9,17 @@ utilities.
 
 ```ts
 import { provideDesignStyle } from '@my-monorepo/ui'
-import { CupertinoNavigationBar } from '@my-monorepo/ui-platform'
+import {
+  MaterialWebTopBar,
+  MaterialAndroidNavigationRail,
+  AppleGlassControlStrip,
+} from '@my-monorepo/ui-platform'
 
-provideDesignStyle({ preset: 'cupertino-mobile' })
+provideDesignStyle({ preset: 'material3-web', responsive: true })
 ```
+
+Each exported shell focuses on a single device family:
+
+- `MaterialWebTopBar` — responsive Material 3 top app bar tuned for widescreen web layouts.
+- `MaterialAndroidNavigationRail` — compact navigation rail that matches Material 3 guidance for Android.
+- `AppleGlassControlStrip` — floating glassmorphic toolbar inspired by visionOS and Apple Glass.

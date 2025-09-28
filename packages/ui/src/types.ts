@@ -28,12 +28,7 @@ export type ControlVariant = 'filled' | 'outlined' | 'text' | 'outline'
 export type ControlSize = 'sm' | 'md' | 'lg'
 
 // Global design style coordination
-export type DesignStylePreset =
-  | 'material-desktop'
-  | 'material-mobile'
-  | 'material-compact'
-  | 'cupertino-desktop'
-  | 'cupertino-mobile'
+export type DesignStylePreset = 'material3-web' | 'material3-android' | 'apple-glass'
 
 export type DesignStyleFamily = 'material' | 'apple'
 export type DesignDensity = 'comfortable' | 'compact'

@@ -10,35 +10,23 @@ import { useBreakpoints } from './useBreakpoints'
 const DESIGN_STYLE_SYMBOL = Symbol('DesignStyle')
 
 const presetFamilyMap: Record<DesignStylePreset, DesignStyleFamily> = {
-  'material-desktop': 'material',
-  'material-mobile': 'material',
-  'material-compact': 'material',
-  'cupertino-desktop': 'apple',
-  'cupertino-mobile': 'apple',
+  'material3-web': 'material',
+  'material3-android': 'material',
+  'apple-glass': 'apple',
 }
 
 const defaultFeatureFlags: Record<DesignStylePreset, Record<string, boolean>> = {
-  'material-desktop': {
+  'material3-web': {
     'buttons.uppercase': true,
     'buttons.fullWidthMobile': false,
     'buttons.autoBlock': false,
   },
-  'material-mobile': {
+  'material3-android': {
     'buttons.uppercase': true,
     'buttons.fullWidthMobile': true,
     'buttons.autoBlock': true,
   },
-  'material-compact': {
-    'buttons.uppercase': true,
-    'buttons.fullWidthMobile': true,
-    'buttons.autoBlock': true,
-  },
-  'cupertino-desktop': {
-    'buttons.uppercase': false,
-    'buttons.fullWidthMobile': false,
-    'buttons.autoBlock': false,
-  },
-  'cupertino-mobile': {
+  'apple-glass': {
     'buttons.uppercase': false,
     'buttons.fullWidthMobile': true,
     'buttons.autoBlock': true,
@@ -46,11 +34,9 @@ const defaultFeatureFlags: Record<DesignStylePreset, Record<string, boolean>> = 
 }
 
 const densityDefaults: Record<DesignStylePreset, DesignDensity> = {
-  'material-desktop': 'comfortable',
-  'material-mobile': 'compact',
-  'material-compact': 'compact',
-  'cupertino-desktop': 'comfortable',
-  'cupertino-mobile': 'compact',
+  'material3-web': 'comfortable',
+  'material3-android': 'compact',
+  'apple-glass': 'comfortable',
 }
 
 function createContext(preset: DesignStylePreset, density?: DesignDensity): DesignStyleContext {
@@ -64,7 +50,7 @@ function createContext(preset: DesignStylePreset, density?: DesignDensity): Desi
   })
 }
 
-const fallbackContext = createContext('material-desktop')
+const fallbackContext = createContext('material3-web')
 
 export interface ProvideDesignStyleOptions {
   preset?: DesignStylePreset
@@ -84,7 +70,7 @@ export interface PlatformPresetLike {
 }
 
 export function provideDesignStyle(options: ProvideDesignStyleOptions = {}) {
-  const preset = options.preset ?? 'material-desktop'
+  const preset = options.preset ?? 'material3-web'
   const ctx = createContext(preset, options.density)
 
   if (options.featureFlags) {
@@ -94,10 +80,15 @@ export function provideDesignStyle(options: ProvideDesignStyleOptions = {}) {
   let breakpoints: ReturnType<typeof useBreakpoints> | null = null
   if (options.responsive) {
     breakpoints = useBreakpoints()
+    const mobileFallback: Record<DesignStyleFamily, DesignStylePreset> = {
+      material: 'material3-android',
+      apple: 'apple-glass',
+    }
+
     watchEffect(() => {
       if (!breakpoints) return
       if (breakpoints.mobile.value) {
-        const mobilePreset = ctx.family === 'apple' ? 'cupertino-mobile' : 'material-mobile'
+        const mobilePreset = mobileFallback[ctx.family] ?? ctx.preset
         ctx.preset = mobilePreset
         ctx.density = densityDefaults[mobilePreset]
         ctx.family = presetFamilyMap[mobilePreset]

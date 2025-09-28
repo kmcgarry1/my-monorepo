@@ -19,12 +19,7 @@ import {
 
 export type ThemePreference = ThemeName | 'system'
 
-export type PlatformDesignStyle =
-  | 'material-desktop'
-  | 'material-mobile'
-  | 'material-compact'
-  | 'cupertino-desktop'
-  | 'cupertino-mobile'
+export type PlatformDesignStyle = 'material3-web' | 'material3-android' | 'apple-glass'
 
 export type PlatformDensity = 'comfortable' | 'compact'
 
@@ -216,58 +211,37 @@ export const themeOptions = themeOrder.map((value) => ({
 }>
 
 export const platformPresets = {
-  materialDesktop: {
-    id: 'materialDesktop',
-    label: 'Material Desktop',
-    description: 'Spacious layout with Material Aurora theme and uppercase button treatments.',
+  materialWeb: {
+    id: 'materialWeb',
+    label: 'Material 3 Web',
+    description: 'Spacious Material 3 layout for desktop browsers with elevated surfaces and uppercase buttons.',
     theme: 'material-aurora',
-    designStyle: 'material-desktop',
+    designStyle: 'material3-web',
     density: 'comfortable',
     featureFlags: {
       'buttons.uppercase': true,
       'buttons.fullWidthMobile': false,
     },
   },
-  materialCompact: {
-    id: 'materialCompact',
-    label: 'Material Compact',
-    description: 'Denser Material layout ideal for tablets or condensed desktop panels.',
-    theme: 'material-aurora',
-    designStyle: 'material-compact',
-    density: 'compact',
-    featureFlags: {
-      'buttons.fullWidthMobile': true,
-    },
-  },
-  materialMobile: {
-    id: 'materialMobile',
-    label: 'Material Mobile',
-    description: 'Adaptive Material experience tuned for narrow viewports and touch targets.',
+  materialAndroid: {
+    id: 'materialAndroid',
+    label: 'Material 3 Android',
+    description: 'Touch-first Material navigation and compact spacing tuned for Android devices.',
     theme: 'material-midnight',
-    designStyle: 'material-mobile',
+    designStyle: 'material3-android',
     density: 'compact',
     featureFlags: {
+      'buttons.uppercase': true,
       'buttons.fullWidthMobile': true,
     },
   },
-  cupertinoDesktop: {
-    id: 'cupertinoDesktop',
-    label: 'Cupertino Desktop',
-    description: 'Translucent surfaces and crisp typography styled after macOS/iOS split view UIs.',
-    theme: 'apple-sky',
-    designStyle: 'cupertino-desktop',
-    density: 'comfortable',
-    featureFlags: {
-      'buttons.uppercase': false,
-    },
-  },
-  cupertinoMobile: {
-    id: 'cupertinoMobile',
-    label: 'Cupertino Mobile',
-    description: 'Rounded pill controls, blur effects, and Apple Midnight theme for handheld devices.',
+  appleGlass: {
+    id: 'appleGlass',
+    label: 'Apple Glass',
+    description: 'Spatial Apple design with glassmorphism treatments inspired by visionOS.',
     theme: 'apple-midnight',
-    designStyle: 'cupertino-mobile',
-    density: 'compact',
+    designStyle: 'apple-glass',
+    density: 'comfortable',
     featureFlags: {
       'buttons.uppercase': false,
       'buttons.fullWidthMobile': true,
