@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { btnBase, btnSizes, btnVariants, cx } from '../utils/variants'
+import { buttonBaseForStyle, btnSizes, btnVariants, cx } from '../utils/variants'
+import { useDesignFeatureFlags, useDesignStyle } from '../composables/useDesignStyle'
 import type { ButtonVariant } from '../types'
 
 const props = withDefaults(defineProps<{
@@ -32,11 +33,17 @@ const aliasMap: Record<ButtonVariant, keyof typeof btnVariants> = {
 
 const normalizedVariant = computed(() => aliasMap[props.variant] ?? 'filled')
 
+const designStyle = useDesignStyle()
+const featureFlags = useDesignFeatureFlags()
+
+const baseClass = computed(() => buttonBaseForStyle(designStyle))
+const autoBlock = computed(() => featureFlags.value['buttons.autoBlock'] ?? false)
+
 const klass = computed(() => cx(
-  btnBase,
+  baseClass.value,
   btnSizes[props.size],
   btnVariants[normalizedVariant.value] ?? btnVariants.filled,
-  props.block ? 'w-full' : '',
+  props.block || autoBlock.value ? 'w-full' : '',
   props.disabled || props.loading ? 'pointer-events-none opacity-60' : ''
 ))
 </script>

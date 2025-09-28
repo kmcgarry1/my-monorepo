@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import AppIcon from './AppIcon.vue'
-import { btnBase, btnVariants, iconBtnSizes, cx } from '../utils/variants'
+import { iconButtonBaseForStyle, btnVariants, iconBtnSizes, cx } from '../utils/variants'
+import { useDesignStyle } from '../composables/useDesignStyle'
 import type { ButtonVariant, IconButtonSize } from '../types'
 
 const props = withDefaults(defineProps<{
@@ -39,8 +40,11 @@ const aliasMap: Record<ButtonVariant, keyof typeof btnVariants> = {
 
 const normalizedVariant = computed(() => aliasMap[props.variant] ?? 'outlined')
 
+const designStyle = useDesignStyle()
+const baseClass = computed(() => iconButtonBaseForStyle(designStyle))
+
 const klass = computed(() => cx(
-  btnBase,
+  baseClass.value,
   iconBtnSizes[props.size],
   btnVariants[normalizedVariant.value] ?? btnVariants.outlined
 ))

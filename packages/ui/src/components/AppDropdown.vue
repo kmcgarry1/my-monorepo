@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { cx, btnBase, btnSizes, btnVariants } from '../utils/variants'
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import { cx, buttonBaseForStyle, btnSizes, btnVariants } from '../utils/variants'
 import { fadeScale } from '../utils/motion'
 import AppIcon from './AppIcon.vue'
+import { useDesignFeatureFlags, useDesignStyle } from '../composables/useDesignStyle'
 import type { ButtonVariant, ButtonSize, DropdownAlign } from '../types'
 
 type Item = { label: string; value: string; icon?: 'sword'|'book'|'download'|'copy'|'print'|'info'|'plus'|'palette' }
@@ -20,6 +21,27 @@ const itemSize = (size: ButtonSize) => size==='xs' ? 'px-3 py-1.5 text-[0.66rem]
 
 const open = ref(false)
 const root = ref<HTMLElement | null>(null)
+
+const designStyle = useDesignStyle()
+const featureFlags = useDesignFeatureFlags()
+
+const triggerBaseClass = computed(() => buttonBaseForStyle(designStyle))
+const triggerClass = computed(() =>
+  cx(triggerBaseClass.value, btnSizes[props.size], btnVariants[props.variant] ?? btnVariants.surface),
+)
+
+const itemTypography = computed(() =>
+  featureFlags.value['buttons.uppercase']
+    ? 'font-medium uppercase tracking-[0.08em]'
+    : 'font-medium normal-case tracking-[0.01em] text-[length:inherit]',
+)
+
+const itemBaseClass = computed(() =>
+  cx(
+    'flex w-full items-center gap-3 text-left text-[color:var(--md-sys-color-on-surface)] transition-[color,background] duration-[var(--motion-duration-sm)] hover:bg-[color-mix(in srgb,var(--accent) 12%,transparent)] focus-visible:outline-none focus-visible:bg-[color-mix(in srgb,var(--accent) 15%,transparent)]',
+    itemTypography.value,
+  ),
+)
 
 function onDocClick(e: MouseEvent) {
   if (!root.value) return
@@ -41,7 +63,7 @@ function choose(v: string) {
       :title="props.buttonTitle"
       type="button"
       @click="open = !open"
-      :class="cx(btnBase, btnSizes[props.size], btnVariants[props.variant] ?? btnVariants.surface)"
+      :class="triggerClass"
     >
       <slot name="button" />
     </button>
@@ -59,7 +81,7 @@ function choose(v: string) {
           :key="it.value"
           type="button"
           @click="choose(it.value)"
-          :class="['flex w-full items-center gap-3 text-left font-medium uppercase tracking-[0.08em] text-[color:var(--md-sys-color-on-surface)] transition-[color,background] duration-[var(--motion-duration-sm)] hover:bg-[color-mix(in srgb,var(--accent) 12%,transparent)] focus-visible:outline-none focus-visible:bg-[color-mix(in srgb,var(--accent) 15%,transparent)]', itemSize(props.size)]"
+          :class="[itemBaseClass, itemSize(props.size)]"
         >
           <AppIcon v-if="it.icon" :name="it.icon" />
           <span>{{ it.label }}</span>
