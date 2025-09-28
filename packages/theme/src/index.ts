@@ -296,7 +296,7 @@ export function applyPlatformPreset(
     throw new Error(`Unknown platform preset: ${String(presetOrId)}`)
   }
 
-  const appliedTheme = applyTheme(preset.theme, options)
+  const appliedTheme = applyTheme(preset.theme, options) as ThemeName
 
   return {
     preset,
