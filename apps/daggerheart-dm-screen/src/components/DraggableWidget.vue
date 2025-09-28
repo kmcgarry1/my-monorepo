@@ -4,12 +4,14 @@ import type { WidgetState } from '../types';
 
 const props = defineProps<{
   widget: WidgetState;
+  disableInteractions?: boolean;
 }>();
 
 const emit = defineEmits<{
   (e: 'dragging', payload: { id: string; x: number; y: number }): void;
   (e: 'focus'): void;
   (e: 'toggle-pin'): void;
+  (e: 'resizing', payload: { id: string; width: number; height: number }): void;
 }>();
 
 const root = ref<HTMLElement | null>(null);
@@ -20,11 +22,20 @@ let startPointerX = 0;
 let startPointerY = 0;
 let startX = 0;
 let startY = 0;
+let isResizing = false;
+let resizePointerId: number | null = null;
+let startWidth = 0;
+let startHeight = 0;
+let resizeHandleEl: HTMLElement | null = null;
+
+function interactionsDisabled() {
+  return Boolean(props.disableInteractions);
+}
 
 function onPointerDown(event: PointerEvent) {
   emit('focus');
 
-  if (props.widget.pinned) {
+  if (props.widget.pinned || interactionsDisabled()) {
     return;
   }
 
@@ -93,8 +104,83 @@ function cleanup() {
   window.removeEventListener('pointermove', onPointerMove);
 }
 
+function onResizePointerDown(event: PointerEvent) {
+  if (props.widget.pinned || interactionsDisabled()) {
+    return;
+  }
+
+  const handle = event.currentTarget as HTMLElement | null;
+  if (!handle) {
+    return;
+  }
+
+  event.stopPropagation();
+  event.preventDefault();
+
+  isResizing = true;
+  resizePointerId = event.pointerId;
+  startPointerX = event.clientX;
+  startPointerY = event.clientY;
+  startWidth = props.widget.size.width;
+  startHeight = props.widget.size.height;
+  resizeHandleEl = handle;
+
+  handle.setPointerCapture(resizePointerId);
+  handle.addEventListener('lostpointercapture', cleanupResize, { once: true });
+
+  window.addEventListener('pointermove', onResizePointerMove);
+  window.addEventListener('pointerup', onResizePointerUp, { once: true });
+}
+
+function onResizePointerMove(event: PointerEvent) {
+  if (!isResizing || event.pointerId !== resizePointerId) {
+    return;
+  }
+
+  const deltaX = event.clientX - startPointerX;
+  const deltaY = event.clientY - startPointerY;
+
+  let nextWidth = startWidth + deltaX;
+  let nextHeight = startHeight + deltaY;
+
+  const element = root.value;
+  const board = element?.parentElement as HTMLElement | null;
+
+  if (board) {
+    const maxWidth = Math.max(board.clientWidth - props.widget.position.x, 120);
+    const maxHeight = Math.max(board.clientHeight - props.widget.position.y, 120);
+    nextWidth = Math.min(Math.max(nextWidth, 200), maxWidth);
+    nextHeight = Math.min(Math.max(nextHeight, 160), maxHeight);
+  }
+
+  emit('resizing', {
+    id: props.widget.id,
+    width: nextWidth,
+    height: nextHeight
+  });
+}
+
+function onResizePointerUp(event: PointerEvent) {
+  if (event.pointerId !== resizePointerId) {
+    return;
+  }
+
+  cleanupResize();
+}
+
+function cleanupResize() {
+  if (resizePointerId !== null) {
+    window.removeEventListener('pointermove', onResizePointerMove);
+    resizeHandleEl?.releasePointerCapture(resizePointerId);
+  }
+  isResizing = false;
+  resizePointerId = null;
+  resizeHandleEl = null;
+}
+
 onBeforeUnmount(() => {
   cleanup();
+  cleanupResize();
 });
 </script>
 
@@ -102,7 +188,7 @@ onBeforeUnmount(() => {
   <article
     ref="root"
     class="widget"
-    :class="{ pinned: widget.pinned }"
+    :class="{ pinned: widget.pinned, disabled: disableInteractions }"
     :style="{
       top: `${widget.position.y}px`,
       left: `${widget.position.x}px`,
@@ -130,6 +216,13 @@ onBeforeUnmount(() => {
     <section class="widget__body">
       <slot />
     </section>
+    <span
+      v-if="!widget.pinned && !disableInteractions"
+      class="resize-handle"
+      :data-resize-id="widget.id"
+      @pointerdown="onResizePointerDown"
+      aria-hidden="true"
+    ></span>
   </article>
 </template>
 
@@ -160,6 +253,10 @@ onBeforeUnmount(() => {
 
 .widget.pinned {
   box-shadow: 0 14px 40px rgba(5, 14, 28, 0.4), inset 0 0 0 1px rgba(120, 182, 255, 0.32);
+}
+
+.widget.disabled {
+  cursor: default;
 }
 
 .widget__header {
@@ -236,5 +333,47 @@ onBeforeUnmount(() => {
 
 .widget:active {
   transform: scale(1.01);
+}
+
+.resize-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  right: 8px;
+  bottom: 8px;
+  border-radius: 4px;
+  background: rgba(118, 174, 255, 0.45);
+  border: 1px solid rgba(118, 174, 255, 0.7);
+  cursor: se-resize;
+  box-shadow: 0 4px 12px rgba(6, 16, 32, 0.45);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.widget:not(.pinned):hover .resize-handle,
+.widget:not(.pinned):focus-within .resize-handle {
+  opacity: 1;
+}
+
+@media (max-width: 720px) {
+  .widget {
+    position: relative;
+    width: 100% !important;
+    height: auto !important;
+    left: 0 !important;
+    top: 0 !important;
+  }
+
+  .widget::before {
+    opacity: 0.18;
+  }
+
+  .widget__header {
+    cursor: default;
+  }
+
+  .resize-handle {
+    display: none;
+  }
 }
 </style>
