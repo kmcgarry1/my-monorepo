@@ -9,7 +9,7 @@ import {
   provideDesignStyle,
   useMaterialDisplay,
 } from '@my-monorepo/ui'
-import { AndroidNavigationRail, CupertinoNavigationBar } from '@my-monorepo/ui-platform'
+import { AndroidNavigationRail } from '@my-monorepo/ui-platform'
 import BuilderHero from './components/BuilderHero.vue'
 import BuilderInsights from './components/BuilderInsights.vue'
 import BuilderWizardOverlay from './components/BuilderWizardOverlay.vue'
@@ -21,6 +21,7 @@ import NameReferenceDrawer from './components/NameReferenceDrawer.vue'
 import { useStatblockBuilder } from './composables/useStatblockBuilder'
 import { getTierGuide } from './lib/tierGuides'
 import { glossaryOpen, openGlossary } from './lib/glossaryState'
+import { useClientPlatform } from './composables/useClientPlatform'
 
 provideDesignStyle({ preset: 'material-desktop', responsive: true })
 
@@ -53,6 +54,7 @@ const showWizard = ref(false)
 const wizardKey = ref(0)
 const showNameReference = ref(false)
 const { deviceClasses, isPhone } = useMaterialDisplay()
+const { isMobileBrowser, isDesktopBrowser } = useClientPlatform()
 
 const isEnemy = computed(() => sbType.value === 'enemy')
 const typeLabel = computed(() => (isEnemy.value ? 'Enemy' : 'Environment'))
@@ -217,7 +219,10 @@ watch(glossaryOpen, (isOpen) => {
 </script>
 
 <template>
-  <div class="app-shell" :class="deviceClasses">
+  <div
+    class="app-shell"
+    :class="[deviceClasses, { 'is-mobile-browser': isMobileBrowser, 'is-desktop-browser': isDesktopBrowser }]"
+  >
     <div class="shell-background" aria-hidden="true">
       <div class="shell-layer shell-layer--primary" />
       <div class="shell-layer shell-layer--accent" />
@@ -243,7 +248,55 @@ watch(glossaryOpen, (isOpen) => {
     </aside>
 
     <main class="layout-surface" role="main">
-      <header v-if="!isPhone" class="top-app-bar" role="banner">
+      <header v-if="isPhone" class="expressive-top-bar" role="banner">
+        <div class="expressive-top-bar__meta">
+          <div class="expressive-top-bar__brand" aria-hidden="true">
+            <span class="expressive-top-bar__logo">DH</span>
+            <span class="expressive-top-bar__eyebrow">Daggerheart builder</span>
+          </div>
+          <div class="expressive-top-bar__headline">
+            <span class="expressive-top-bar__title">{{ displayName }}</span>
+            <span class="expressive-top-bar__subtitle">{{ topAppBarSubtitle }}</span>
+          </div>
+        </div>
+
+        <div class="expressive-top-bar__actions">
+          <AppIconButton
+            class="expressive-top-bar__icon"
+            name="dice"
+            variant="surface"
+            size="md"
+            aria-label="Open guided build"
+            @click="openWizard"
+          />
+          <AppIconButton
+            class="expressive-top-bar__icon"
+            name="sparkles"
+            variant="surface"
+            size="md"
+            aria-label="Open name helper"
+            @click="openNameReference"
+          />
+          <AppIconButton
+            class="expressive-top-bar__icon"
+            name="trash"
+            variant="surface"
+            size="md"
+            aria-label="Reset statblock"
+            @click="resetAll"
+          />
+          <AppIconButton
+            class="expressive-top-bar__icon"
+            name="print"
+            variant="surface"
+            size="md"
+            aria-label="Print statblock"
+            @click="handlePrint"
+          />
+        </div>
+      </header>
+
+      <header v-else class="top-app-bar" role="banner">
         <div class="top-app-bar__headline">
           <span class="top-app-bar__eyebrow">Daggerheart builder</span>
           <span class="top-app-bar__title">{{ displayName }}</span>
@@ -269,49 +322,6 @@ watch(glossaryOpen, (isOpen) => {
           />
         </div>
       </header>
-
-      <CupertinoNavigationBar v-else class="mobile-app-bar" :title="displayName" back-behavior="none">
-        <template #leading>
-          <div class="mobile-app-bar__brand">
-            <span class="mobile-app-bar__logo" aria-hidden="true">DH</span>
-          </div>
-        </template>
-        <template #title>
-          <div class="mobile-app-bar__headline">
-            <span class="mobile-app-bar__eyebrow">Daggerheart builder</span>
-            <span class="mobile-app-bar__title">{{ displayName }}</span>
-            <span class="mobile-app-bar__subtitle">{{ topAppBarSubtitle }}</span>
-          </div>
-        </template>
-        <template #trailing>
-          <div class="mobile-app-bar__actions">
-            <AppIconButton
-              class="mobile-app-bar__icon"
-              name="dice"
-              variant="surface"
-              size="sm"
-              aria-label="Open guided build"
-              @click="openWizard"
-            />
-            <AppIconButton
-              class="mobile-app-bar__icon"
-              name="trash"
-              variant="surface"
-              size="sm"
-              aria-label="Reset statblock"
-              @click="resetAll"
-            />
-            <AppIconButton
-              class="mobile-app-bar__icon"
-              name="print"
-              variant="surface"
-              size="sm"
-              aria-label="Print statblock"
-              @click="handlePrint"
-            />
-          </div>
-        </template>
-      </CupertinoNavigationBar>
 
       <nav v-if="isPhone" class="mobile-action-bar" aria-label="Builder navigation">
         <button class="mobile-action" type="button" :class="{ 'is-active': navSelection === 'builder' }">
@@ -342,79 +352,174 @@ watch(glossaryOpen, (isOpen) => {
         </button>
       </nav>
 
-      <section class="layout-overview">
-        <Transition
-          appear
-          :enter-active-class="heroMotion.enterActiveClass"
-          :enter-from-class="heroMotion.enterFromClass"
-          :enter-to-class="heroMotion.enterToClass"
-          :leave-active-class="heroMotion.leaveActiveClass"
-          :leave-from-class="heroMotion.leaveFromClass"
-          :leave-to-class="heroMotion.leaveToClass"
-        >
-          <BuilderHero
-            class="layout-overview__hero"
-            :display-name="displayName"
-            :type-label="typeLabel"
-            :summary-message="summaryMessage"
-            :tier-status="tierStatus"
-            :highlighted-meta="highlightedMeta"
-            @open-wizard="openWizard"
-            @reset="resetAll"
-          />
-        </Transition>
+      <template v-if="isPhone">
+        <section class="mobile-stack">
+          <Transition
+            appear
+            :enter-active-class="heroMotion.enterActiveClass"
+            :enter-from-class="heroMotion.enterFromClass"
+            :enter-to-class="heroMotion.enterToClass"
+            :leave-active-class="heroMotion.leaveActiveClass"
+            :leave-from-class="heroMotion.leaveFromClass"
+            :leave-to-class="heroMotion.leaveToClass"
+          >
+            <div class="mobile-card mobile-card--hero">
+              <BuilderHero
+                class="mobile-card__content"
+                :display-name="displayName"
+                :type-label="typeLabel"
+                :summary-message="summaryMessage"
+                :tier-status="tierStatus"
+                :highlighted-meta="highlightedMeta"
+                @open-wizard="openWizard"
+                @reset="resetAll"
+              />
+            </div>
+          </Transition>
 
-        <Transition
-          appear
-          :enter-active-class="toolbarMotion.enterActiveClass"
-          :enter-from-class="toolbarMotion.enterFromClass"
-          :enter-to-class="toolbarMotion.enterToClass"
-          :leave-active-class="toolbarMotion.leaveActiveClass"
-          :leave-from-class="toolbarMotion.leaveFromClass"
-          :leave-to-class="toolbarMotion.leaveToClass"
-        >
-          <Toolbar
-            class="layout-overview__controls"
-            :sbType="sbType"
-            :enemy="enemy"
-            :environment="environment"
-            :theme="theme"
-            @update:theme="setTheme"
-            @reset="resetAll"
-            @load-preset="loadPreset"
-          />
-        </Transition>
-      </section>
+          <Transition
+            appear
+            :enter-active-class="toolbarMotion.enterActiveClass"
+            :enter-from-class="toolbarMotion.enterFromClass"
+            :enter-to-class="toolbarMotion.enterToClass"
+            :leave-active-class="toolbarMotion.leaveActiveClass"
+            :leave-from-class="toolbarMotion.leaveFromClass"
+            :leave-to-class="toolbarMotion.leaveToClass"
+          >
+            <div class="mobile-card mobile-card--controls">
+              <Toolbar
+                class="mobile-card__content"
+                :sbType="sbType"
+                :enemy="enemy"
+                :environment="environment"
+                :theme="theme"
+                @update:theme="setTheme"
+                @reset="resetAll"
+                @load-preset="loadPreset"
+              />
+            </div>
+          </Transition>
 
-      <section class="layout-grid">
-        <Transition
-          appear
-          :enter-active-class="panelMotion.enterActiveClass"
-          :enter-from-class="panelMotion.enterFromClass"
-          :enter-to-class="panelMotion.enterToClass"
-          :leave-active-class="panelMotion.leaveActiveClass"
-          :leave-from-class="panelMotion.leaveFromClass"
-          :leave-to-class="panelMotion.leaveToClass"
-        >
-          <div class="layout-primary">
-            <BuilderInsights :summary-meta="summaryMeta" :tier-callout="tierCallout" :type-label="typeLabel" />
-          </div>
-        </Transition>
+          <Transition
+            appear
+            :enter-active-class="previewMotion.enterActiveClass"
+            :enter-from-class="previewMotion.enterFromClass"
+            :enter-to-class="previewMotion.enterToClass"
+            :leave-active-class="previewMotion.leaveActiveClass"
+            :leave-from-class="previewMotion.leaveFromClass"
+            :leave-to-class="previewMotion.leaveToClass"
+          >
+            <div class="mobile-card mobile-card--preview">
+              <div class="mobile-card__heading">
+                <AppIcon name="book" size="sm" />
+                <span>Preview</span>
+              </div>
+              <StatblockPreview
+                class="mobile-card__content"
+                :key="sbType"
+                :sbType="sbType"
+                :enemy="enemy"
+                :environment="environment"
+              />
+            </div>
+          </Transition>
 
-        <Transition
-          appear
-          :enter-active-class="previewMotion.enterActiveClass"
-          :enter-from-class="previewMotion.enterFromClass"
-          :enter-to-class="previewMotion.enterToClass"
-          :leave-active-class="previewMotion.leaveActiveClass"
-          :leave-from-class="previewMotion.leaveFromClass"
-          :leave-to-class="previewMotion.leaveToClass"
-        >
-          <div class="layout-preview">
-            <StatblockPreview :key="sbType" :sbType="sbType" :enemy="enemy" :environment="environment" />
-          </div>
-        </Transition>
-      </section>
+          <Transition
+            appear
+            :enter-active-class="panelMotion.enterActiveClass"
+            :enter-from-class="panelMotion.enterFromClass"
+            :enter-to-class="panelMotion.enterToClass"
+            :leave-active-class="panelMotion.leaveActiveClass"
+            :leave-from-class="panelMotion.leaveFromClass"
+            :leave-to-class="panelMotion.leaveToClass"
+          >
+            <div class="mobile-card mobile-card--insights">
+              <BuilderInsights
+                class="mobile-card__content"
+                :summary-meta="summaryMeta"
+                :tier-callout="tierCallout"
+                :type-label="typeLabel"
+              />
+            </div>
+          </Transition>
+        </section>
+      </template>
+
+      <template v-else>
+        <section class="layout-overview">
+          <Transition
+            appear
+            :enter-active-class="heroMotion.enterActiveClass"
+            :enter-from-class="heroMotion.enterFromClass"
+            :enter-to-class="heroMotion.enterToClass"
+            :leave-active-class="heroMotion.leaveActiveClass"
+            :leave-from-class="heroMotion.leaveFromClass"
+            :leave-to-class="heroMotion.leaveToClass"
+          >
+            <BuilderHero
+              class="layout-overview__hero"
+              :display-name="displayName"
+              :type-label="typeLabel"
+              :summary-message="summaryMessage"
+              :tier-status="tierStatus"
+              :highlighted-meta="highlightedMeta"
+              @open-wizard="openWizard"
+              @reset="resetAll"
+            />
+          </Transition>
+
+          <Transition
+            appear
+            :enter-active-class="toolbarMotion.enterActiveClass"
+            :enter-from-class="toolbarMotion.enterFromClass"
+            :enter-to-class="toolbarMotion.enterToClass"
+            :leave-active-class="toolbarMotion.leaveActiveClass"
+            :leave-from-class="toolbarMotion.leaveFromClass"
+            :leave-to-class="toolbarMotion.leaveToClass"
+          >
+            <Toolbar
+              class="layout-overview__controls"
+              :sbType="sbType"
+              :enemy="enemy"
+              :environment="environment"
+              :theme="theme"
+              @update:theme="setTheme"
+              @reset="resetAll"
+              @load-preset="loadPreset"
+            />
+          </Transition>
+        </section>
+
+        <section class="layout-grid">
+          <Transition
+            appear
+            :enter-active-class="panelMotion.enterActiveClass"
+            :enter-from-class="panelMotion.enterFromClass"
+            :enter-to-class="panelMotion.enterToClass"
+            :leave-active-class="panelMotion.leaveActiveClass"
+            :leave-from-class="panelMotion.leaveFromClass"
+            :leave-to-class="panelMotion.leaveToClass"
+          >
+            <div class="layout-primary">
+              <BuilderInsights :summary-meta="summaryMeta" :tier-callout="tierCallout" :type-label="typeLabel" />
+            </div>
+          </Transition>
+
+          <Transition
+            appear
+            :enter-active-class="previewMotion.enterActiveClass"
+            :enter-from-class="previewMotion.enterFromClass"
+            :enter-to-class="previewMotion.enterToClass"
+            :leave-active-class="previewMotion.leaveActiveClass"
+            :leave-from-class="previewMotion.leaveFromClass"
+            :leave-to-class="previewMotion.leaveToClass"
+          >
+            <div class="layout-preview">
+              <StatblockPreview :key="sbType" :sbType="sbType" :enemy="enemy" :environment="environment" />
+            </div>
+          </Transition>
+        </section>
+      </template>
     </main>
 
     <BuilderWizardOverlay
@@ -604,36 +709,42 @@ watch(glossaryOpen, (isOpen) => {
   gap: 1.6rem;
 }
 
-.app-shell.is-phone .layout-overview {
-  grid-template-columns: 1fr;
-  gap: clamp(1rem, 5vw, 1.4rem);
+.app-shell.is-mobile-browser .layout-surface {
+  box-shadow: 0 26px 55px rgba(16, 10, 40, 0.24),
+    0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline-variant, rgba(24, 22, 46, 0.24)) 30%, transparent);
+  backdrop-filter: blur(20px);
 }
 
-.app-shell.is-phone .layout-grid {
-  grid-template-columns: 1fr;
-  gap: clamp(1rem, 6vw, 1.6rem);
-}
-
-.mobile-app-bar {
-  padding: clamp(0.9rem, 4vw, 1.1rem) clamp(1rem, 5vw, 1.4rem);
+.expressive-top-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(1rem, 5vw, 1.4rem);
   border-radius: 1.4rem;
   background: color-mix(in srgb, var(--md-sys-color-surface-container-high, var(--surface)) 96%, transparent);
-  box-shadow: 0 16px 40px rgba(14, 10, 44, 0.18),
-    0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline-variant, rgba(40, 35, 70, 0.22)) 32%, transparent);
+  box-shadow: 0 18px 42px rgba(12, 8, 30, 0.22),
+    0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline-variant, rgba(24, 20, 44, 0.26)) 32%, transparent);
 }
 
-.mobile-app-bar__brand {
+.expressive-top-bar__meta {
   display: flex;
-  gap: 0.9rem;
-  align-items: center;
+  align-items: flex-start;
+  gap: 0.75rem;
 }
 
-.mobile-app-bar__logo {
+.expressive-top-bar__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.expressive-top-bar__logo {
   display: grid;
   place-items: center;
   width: 46px;
   height: 46px;
-  border-radius: 16px;
+  border-radius: 1.5rem;
   background: color-mix(in srgb, var(--md-sys-color-primary) 22%, transparent);
   color: var(--md-sys-color-on-primary, #fff);
   font-weight: 700;
@@ -642,40 +753,88 @@ watch(glossaryOpen, (isOpen) => {
   font-size: 0.9rem;
 }
 
-.mobile-app-bar__headline {
+.expressive-top-bar__eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--md-sys-color-on-surface-variant, var(--muted)) 86%, transparent);
+}
+
+.expressive-top-bar__headline {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
 
-.mobile-app-bar__eyebrow {
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--md-sys-color-on-surface-variant, var(--muted)) 85%, transparent);
-}
-
-.mobile-app-bar__title {
+.expressive-top-bar__title {
   font-weight: 700;
-  font-size: 1.3rem;
+  font-size: clamp(1.35rem, 6vw, 1.6rem);
   letter-spacing: -0.01em;
 }
 
-.mobile-app-bar__subtitle {
+.expressive-top-bar__subtitle {
   font-size: 0.82rem;
   line-height: 1.2;
   color: color-mix(in srgb, var(--md-sys-color-on-surface-variant, var(--muted)) 85%, transparent);
 }
 
-.mobile-app-bar__actions {
+.expressive-top-bar__actions {
   display: flex;
-  gap: 0.6rem;
-  justify-content: flex-end;
+  gap: 0.55rem;
 }
 
-.mobile-app-bar__icon {
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline-variant, rgba(255, 255, 255, 0.2)) 30%, transparent);
-  background: color-mix(in srgb, var(--md-sys-color-surface-container-high, var(--surface)) 92%, transparent);
+.expressive-top-bar__icon {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline-variant, rgba(255, 255, 255, 0.2)) 32%, transparent);
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-highest, var(--surface)) 94%, transparent);
+}
+
+.mobile-stack {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 5vw, 1.6rem);
+}
+
+.mobile-card {
+  position: relative;
+  border-radius: 1.3rem;
+  padding: clamp(1rem, 5vw, 1.35rem);
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-high, var(--surface)) 94%, transparent);
+  box-shadow: 0 16px 36px rgba(12, 8, 32, 0.18),
+    0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline-variant, rgba(30, 26, 50, 0.24)) 30%, transparent);
+  backdrop-filter: blur(14px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.9rem, 4vw, 1.2rem);
+}
+
+.mobile-card--hero {
+  padding-block: clamp(1.2rem, 6vw, 1.6rem);
+  background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--md-sys-color-primary-container) 28%, transparent),
+      color-mix(in srgb, var(--md-sys-color-secondary-container) 18%, transparent)
+    ),
+    color-mix(in srgb, var(--md-sys-color-surface-container-high, var(--surface)) 92%, transparent);
+  color: var(--md-sys-color-on-primary-container, var(--fg));
+}
+
+.mobile-card--preview {
+  gap: clamp(0.6rem, 3vw, 0.8rem);
+}
+
+.mobile-card__heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--md-sys-color-on-surface-variant, var(--muted)) 88%, transparent);
+}
+
+.mobile-card__content {
+  border-radius: inherit;
 }
 
 .mobile-action-bar {
