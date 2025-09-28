@@ -19,6 +19,29 @@ import {
 
 export type ThemePreference = ThemeName | 'system'
 
+export type PlatformDesignStyle =
+  | 'material-desktop'
+  | 'material-mobile'
+  | 'material-compact'
+  | 'cupertino-desktop'
+  | 'cupertino-mobile'
+
+export type PlatformDensity = 'comfortable' | 'compact'
+
+export interface PlatformPreset {
+  id: string
+  label: string
+  description: string
+  /** Theme that should be activated before applying the preset. */
+  theme: ThemeName
+  /** Design style hint passed down to the UI package. */
+  designStyle: PlatformDesignStyle
+  /** Density hint for component spacing. */
+  density: PlatformDensity
+  /** Optional feature flags toggled alongside the preset. */
+  featureFlags?: Record<string, boolean>
+}
+
 export const THEME_STORAGE_KEY = 'my-monorepo:theme'
 
 const themeVariableNames: ThemeVariableName[] = [...themeVariablesList]
@@ -191,6 +214,98 @@ export const themeOptions = themeOrder.map((value) => ({
   family: 'material' | 'apple'
   mode: 'light' | 'dark'
 }>
+
+export const platformPresets = {
+  materialDesktop: {
+    id: 'materialDesktop',
+    label: 'Material Desktop',
+    description: 'Spacious layout with Material Aurora theme and uppercase button treatments.',
+    theme: 'material-aurora',
+    designStyle: 'material-desktop',
+    density: 'comfortable',
+    featureFlags: {
+      'buttons.uppercase': true,
+      'buttons.fullWidthMobile': false,
+    },
+  },
+  materialCompact: {
+    id: 'materialCompact',
+    label: 'Material Compact',
+    description: 'Denser Material layout ideal for tablets or condensed desktop panels.',
+    theme: 'material-aurora',
+    designStyle: 'material-compact',
+    density: 'compact',
+    featureFlags: {
+      'buttons.fullWidthMobile': true,
+    },
+  },
+  materialMobile: {
+    id: 'materialMobile',
+    label: 'Material Mobile',
+    description: 'Adaptive Material experience tuned for narrow viewports and touch targets.',
+    theme: 'material-midnight',
+    designStyle: 'material-mobile',
+    density: 'compact',
+    featureFlags: {
+      'buttons.fullWidthMobile': true,
+    },
+  },
+  cupertinoDesktop: {
+    id: 'cupertinoDesktop',
+    label: 'Cupertino Desktop',
+    description: 'Translucent surfaces and crisp typography styled after macOS/iOS split view UIs.',
+    theme: 'apple-sky',
+    designStyle: 'cupertino-desktop',
+    density: 'comfortable',
+    featureFlags: {
+      'buttons.uppercase': false,
+    },
+  },
+  cupertinoMobile: {
+    id: 'cupertinoMobile',
+    label: 'Cupertino Mobile',
+    description: 'Rounded pill controls, blur effects, and Apple Midnight theme for handheld devices.',
+    theme: 'apple-midnight',
+    designStyle: 'cupertino-mobile',
+    density: 'compact',
+    featureFlags: {
+      'buttons.uppercase': false,
+      'buttons.fullWidthMobile': true,
+    },
+  },
+} satisfies Record<string, PlatformPreset>
+
+export type PlatformPresetId = keyof typeof platformPresets
+
+export interface ApplyPlatformPresetResult {
+  preset: PlatformPreset
+  appliedTheme: ThemeName
+  designStyle: PlatformDesignStyle
+  density: PlatformDensity
+  featureFlags: Record<string, boolean>
+}
+
+export function applyPlatformPreset(
+  presetOrId: PlatformPresetId | PlatformPreset,
+  options: ApplyThemeOptions = {},
+): ApplyPlatformPresetResult {
+  const preset: PlatformPreset | undefined =
+    typeof presetOrId === 'string' ? platformPresets[presetOrId] : presetOrId
+
+  if (!preset) {
+    throw new Error(`Unknown platform preset: ${String(presetOrId)}`)
+  }
+
+  const appliedTheme = applyTheme(preset.theme, options)
+
+  return {
+    preset,
+    appliedTheme,
+    designStyle: preset.designStyle,
+    density: preset.density,
+    featureFlags: { ...(preset.featureFlags ?? {}) },
+  }
+}
 
 export {
   defaultThemeName,
