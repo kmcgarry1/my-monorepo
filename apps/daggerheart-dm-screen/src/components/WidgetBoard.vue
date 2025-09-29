@@ -48,6 +48,22 @@ function getWidgetProps(widget: WidgetState) {
   }
   return {};
 }
+
+function handleCreateWidget(payload: CreateWidgetPayload) {
+  emit('create-widget', payload);
+}
+
+function handleUpdateConfig(payload: { id: string; config: CustomWidgetConfig }) {
+  emit('update-config', payload);
+}
+
+function handleUpdateWidget(payload: UpdateWidgetPayload) {
+  emit('update-widget', payload);
+}
+
+function handleDeleteWidget(id: string) {
+  emit('delete-widget', id);
+}
 </script>
 
 <template>
@@ -66,10 +82,10 @@ function getWidgetProps(widget: WidgetState) {
       <component
         :is="componentMap[widget.component] ?? componentMap.EncounterTimeline"
         v-bind="getWidgetProps(widget)"
-        @create-widget="(payload) => emit('create-widget', payload)"
-        @update-config="(payload) => emit('update-config', payload)"
-        @update-widget="(payload) => emit('update-widget', payload)"
-        @delete-widget="(id) => emit('delete-widget', id)"
+        @create-widget="handleCreateWidget"
+        @update-config="handleUpdateConfig"
+        @update-widget="handleUpdateWidget"
+        @delete-widget="handleDeleteWidget"
       />
     </DraggableWidget>
   </section>
