@@ -94,12 +94,19 @@ function handleDeleteWidget(id: string) {
 <style scoped>
 .board {
   position: relative;
-  min-height: 740px;
-  border-radius: 32px;
-  border: 1px solid rgba(104, 150, 255, 0.25);
-  background: linear-gradient(180deg, rgba(7, 12, 22, 0.82), rgba(7, 12, 22, 0.96));
+  min-height: 680px;
+  border-radius: 26px;
+  border: 1px solid var(--surface-border);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), var(--surface-strong));
+  box-shadow: 0 26px 60px rgba(7, 14, 26, 0.38);
   overflow: hidden;
-  padding: 32px;
+  padding: 26px 28px;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.board:hover {
+  border-color: rgba(150, 190, 245, 0.28);
+  box-shadow: 0 32px 70px rgba(6, 13, 24, 0.42);
 }
 
 .board--mobile {
@@ -108,34 +115,35 @@ function handleDeleteWidget(id: string) {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  box-shadow: none;
 }
 
 .grid-surface {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(rgba(96, 144, 255, 0.12) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(96, 144, 255, 0.08) 1px, transparent 1px);
-  background-size: 120px 120px;
-  opacity: 0.4;
+  background-image: linear-gradient(rgba(130, 165, 220, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(130, 165, 220, 0.08) 1px, transparent 1px);
+  background-size: 96px 96px;
+  opacity: 0.35;
   pointer-events: none;
 }
 
 @media (max-width: 900px) {
   .board {
-    padding: 28px;
-    min-height: 640px;
+    padding: 24px;
+    min-height: 600px;
   }
 }
 
 @media (max-width: 720px) {
   .board {
-    border-radius: 24px;
+    border-radius: 22px;
     border-width: 1px;
   }
 
   .grid-surface {
-    opacity: 0.25;
-    background-size: 80px 80px;
+    opacity: 0.22;
+    background-size: 72px 72px;
   }
 }
 </style>

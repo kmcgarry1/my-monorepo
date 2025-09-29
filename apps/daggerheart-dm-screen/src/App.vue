@@ -5,7 +5,7 @@ import DMToolbar from './components/DMToolbar.vue';
 import type { CreateWidgetPayload, CustomWidgetConfig, UpdateWidgetPayload, WidgetState } from './types';
 import { createInitialWidgets } from './data/widgets';
 
-const GRID_SIZE = 40;
+const GRID_SIZE = 32;
 const MIN_WIDTH = GRID_SIZE * 5;
 const MIN_HEIGHT = GRID_SIZE * 4;
 
@@ -133,8 +133,8 @@ function getNextCustomPosition() {
   const index = nonPinned.length;
   const column = index % 3;
   const row = Math.floor(index / 3);
-  const baseX = snapToGrid(160 + column * 220);
-  const baseY = snapToGrid(160 + row * 220);
+  const baseX = snapToGrid(96 + column * (MIN_WIDTH + GRID_SIZE * 5));
+  const baseY = snapToGrid(96 + row * (MIN_HEIGHT + GRID_SIZE * 6));
   return { x: baseX, y: baseY };
 }
 
@@ -216,10 +216,10 @@ function resetLayout() {
 
 function cascadeWidgets() {
   const updated: WidgetState[] = [];
-  const gap = 28;
-  const columnWidth = 360;
-  const startX = 48;
-  const startY = 120;
+  const gap = GRID_SIZE * 0.75;
+  const columnWidth = MIN_WIDTH + GRID_SIZE * 5;
+  const startX = GRID_SIZE * 2;
+  const startY = GRID_SIZE * 3;
   let column = 0;
   let columnHeight = 0;
 
@@ -338,10 +338,7 @@ onBeforeUnmount(() => {
   position: relative;
   min-height: 100vh;
   overflow: hidden;
-  background: radial-gradient(circle at 12% 8%, rgba(100, 146, 255, 0.18), transparent 55%),
-    radial-gradient(circle at 85% 0%, rgba(255, 120, 221, 0.14), transparent 40%),
-    radial-gradient(circle at 50% 80%, rgba(95, 255, 198, 0.12), transparent 45%),
-    #05080f;
+  background: linear-gradient(180deg, #0d1726 0%, #0b1422 36%, #08101b 100%);
 }
 
 .app-shell--full {
@@ -351,36 +348,26 @@ onBeforeUnmount(() => {
 .aurora {
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 220px,
-      rgba(104, 150, 255, 0.03) 220px,
-      rgba(104, 150, 255, 0.03) 440px
-    ),
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 220px,
-      rgba(104, 150, 255, 0.03) 220px,
-      rgba(104, 150, 255, 0.03) 440px
-    );
-  mask: linear-gradient(180deg, rgba(5, 8, 15, 1) 0%, rgba(5, 8, 15, 0.45) 40%, rgba(5, 8, 15, 0) 100%);
+  background: radial-gradient(circle at 10% -10%, rgba(109, 173, 255, 0.28), transparent 55%),
+    radial-gradient(circle at 90% -20%, rgba(255, 176, 196, 0.22), transparent 50%),
+    radial-gradient(circle at 50% 80%, rgba(95, 255, 198, 0.18), transparent 55%);
+  opacity: 0.85;
+  filter: blur(6px) saturate(1.1);
   pointer-events: none;
 }
 
 .content {
   position: relative;
   z-index: 2;
-  padding: 48px clamp(32px, 4vw, 72px) 72px;
+  padding: 40px clamp(32px, 4vw, 68px) 64px;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
 }
 
 .content--full {
   min-height: 100vh;
-  padding: 12px clamp(12px, 2vw, 32px) 32px;
+  padding: 16px clamp(16px, 2vw, 32px) 32px;
 }
 
 .content--full .board {
@@ -389,14 +376,14 @@ onBeforeUnmount(() => {
 
 @media (max-width: 900px) {
   .content {
-    padding: 32px clamp(20px, 5vw, 42px) 48px;
+    padding: 32px clamp(20px, 5vw, 42px) 44px;
   }
 }
 
 @media (max-width: 720px) {
   .content {
     padding: 24px 16px 32px;
-    gap: 24px;
+    gap: 20px;
   }
 
   .app-shell--phone .content {

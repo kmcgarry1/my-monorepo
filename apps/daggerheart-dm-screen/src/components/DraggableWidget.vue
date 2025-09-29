@@ -7,6 +7,9 @@ const props = defineProps<{
   disableInteractions?: boolean;
 }>();
 
+const MIN_WIDTH = 160;
+const MIN_HEIGHT = 128;
+
 const emit = defineEmits<{
   (e: 'dragging', payload: { id: string; x: number; y: number }): void;
   (e: 'focus'): void;
@@ -147,10 +150,10 @@ function onResizePointerMove(event: PointerEvent) {
   const board = element?.parentElement as HTMLElement | null;
 
   if (board) {
-    const maxWidth = Math.max(board.clientWidth - props.widget.position.x, 120);
-    const maxHeight = Math.max(board.clientHeight - props.widget.position.y, 120);
-    nextWidth = Math.min(Math.max(nextWidth, 200), maxWidth);
-    nextHeight = Math.min(Math.max(nextHeight, 160), maxHeight);
+    const maxWidth = Math.max(board.clientWidth - props.widget.position.x, MIN_WIDTH);
+    const maxHeight = Math.max(board.clientHeight - props.widget.position.y, MIN_HEIGHT);
+    nextWidth = Math.min(Math.max(nextWidth, MIN_WIDTH), maxWidth);
+    nextHeight = Math.min(Math.max(nextHeight, MIN_HEIGHT), maxHeight);
   }
 
   emit('resizing', {
@@ -231,28 +234,32 @@ onBeforeUnmount(() => {
   position: absolute;
   display: flex;
   flex-direction: column;
-  border-radius: 24px;
-  background: var(--surface);
-  border: 1px solid rgba(120, 182, 255, 0.18);
-  box-shadow: 0 22px 60px rgba(6, 16, 32, 0.6), inset 0 0 0 1px rgba(120, 182, 255, 0.16);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), var(--surface));
+  border: 1px solid rgba(138, 180, 235, 0.22);
+  box-shadow: 0 18px 52px rgba(7, 15, 29, 0.45);
   color: inherit;
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(16px) saturate(1.05);
   overflow: hidden;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition: box-shadow 0.24s ease, transform 0.24s ease;
 }
 
 .widget::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--accent);
-  opacity: 0.32;
+  background: radial-gradient(circle at top, color-mix(in srgb, var(--accent) 65%, transparent) 0%, transparent 68%);
+  opacity: 0.18;
   pointer-events: none;
   mix-blend-mode: screen;
 }
 
+.widget:hover {
+  box-shadow: 0 22px 60px rgba(6, 13, 26, 0.5);
+}
+
 .widget.pinned {
-  box-shadow: 0 14px 40px rgba(5, 14, 28, 0.4), inset 0 0 0 1px rgba(120, 182, 255, 0.32);
+  box-shadow: 0 16px 48px rgba(5, 12, 24, 0.38);
 }
 
 .widget.disabled {
@@ -263,11 +270,13 @@ onBeforeUnmount(() => {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 16px;
-  padding: 18px 20px 14px;
+  gap: 14px;
+  padding: 16px 18px 12px;
   cursor: grab;
   position: relative;
   z-index: 2;
+  background: color-mix(in srgb, var(--surface-strong) 82%, transparent);
+  border-bottom: 1px solid rgba(138, 180, 235, 0.18);
 }
 
 .widget.pinned .widget__header {
@@ -277,53 +286,59 @@ onBeforeUnmount(() => {
 .icon {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 16px;
-  background: rgba(5, 12, 24, 0.6);
-  box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.12);
-  font-size: 1.6rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--accent) 40%, rgba(15, 26, 40, 0.82));
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.15);
+  font-size: 1.45rem;
 }
 
 .meta h2 {
   margin: 0 0 4px;
-  font-size: 1.1rem;
-  letter-spacing: 0.06em;
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .meta p {
   margin: 0;
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.87rem;
 }
 
 .pin {
-  background: rgba(8, 16, 30, 0.7);
-  border: 1px solid rgba(120, 182, 255, 0.4);
+  background: rgba(22, 32, 48, 0.72);
+  border: 1px solid rgba(138, 180, 235, 0.4);
   border-radius: 999px;
   padding: 8px 16px;
-  color: rgba(220, 236, 255, 0.9);
+  color: rgba(229, 239, 255, 0.92);
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
 .pin[aria-pressed='true'] {
-  background: rgba(120, 182, 255, 0.24);
+  background: rgba(138, 180, 235, 0.24);
+  border-color: rgba(138, 180, 235, 0.6);
 }
 
 .pin:focus-visible {
-  outline: 2px solid rgba(134, 198, 255, 0.8);
+  outline: 2px solid rgba(150, 198, 255, 0.82);
   outline-offset: 2px;
+}
+
+.pin:hover {
+  transform: translateY(-1px);
 }
 
 .widget__body {
   position: relative;
   z-index: 1;
   flex: 1;
-  padding: 0 20px 20px;
+  padding: 2px 18px 18px;
   overflow: hidden;
 }
 
@@ -337,15 +352,15 @@ onBeforeUnmount(() => {
 
 .resize-handle {
   position: absolute;
-  width: 20px;
-  height: 20px;
-  right: 8px;
-  bottom: 8px;
-  border-radius: 4px;
-  background: rgba(118, 174, 255, 0.45);
-  border: 1px solid rgba(118, 174, 255, 0.7);
+  width: 18px;
+  height: 18px;
+  right: 10px;
+  bottom: 10px;
+  border-radius: 6px;
+  background: rgba(148, 190, 255, 0.55);
+  border: 1px solid rgba(148, 190, 255, 0.75);
   cursor: se-resize;
-  box-shadow: 0 4px 12px rgba(6, 16, 32, 0.45);
+  box-shadow: 0 4px 14px rgba(7, 14, 26, 0.45);
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -365,11 +380,12 @@ onBeforeUnmount(() => {
   }
 
   .widget::before {
-    opacity: 0.18;
+    opacity: 0.12;
   }
 
   .widget__header {
     cursor: default;
+    border-bottom-color: transparent;
   }
 
   .resize-handle {

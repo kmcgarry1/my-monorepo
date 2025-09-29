@@ -1,14 +1,14 @@
 :root {
   color-scheme: dark;
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: radial-gradient(circle at top left, #1d2b3a, #0c1016 55%, #05070a);
-  color: #f5f7fb;
-  --surface: rgba(13, 22, 33, 0.9);
-  --surface-strong: rgba(24, 36, 50, 0.95);
-  --surface-border: rgba(105, 144, 195, 0.35);
-  --accent-glow: rgba(68, 169, 255, 0.35);
-  --text-secondary: rgba(223, 230, 244, 0.7);
-  --grid-line: rgba(107, 142, 186, 0.08);
+  background: linear-gradient(180deg, #101b2d 0%, #0c1625 40%, #0a1421 100%);
+  color: #f4f6fb;
+  --surface: rgba(17, 28, 42, 0.86);
+  --surface-strong: rgba(24, 36, 52, 0.92);
+  --surface-border: rgba(138, 180, 235, 0.22);
+  --accent-glow: rgba(92, 178, 255, 0.28);
+  --text-secondary: rgba(220, 228, 240, 0.72);
+  --grid-line: rgba(118, 156, 206, 0.12);
 }
 
 * {

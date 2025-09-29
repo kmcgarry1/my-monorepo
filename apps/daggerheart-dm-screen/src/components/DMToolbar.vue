@@ -64,14 +64,14 @@ const emit = defineEmits<{
 .toolbar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto;
-  gap: 32px;
+  gap: 28px;
   align-items: center;
-  padding: 24px 32px;
-  background: linear-gradient(135deg, rgba(21, 36, 58, 0.82), rgba(10, 16, 28, 0.92));
-  border: 1px solid rgba(118, 174, 255, 0.2);
-  border-radius: 28px;
-  box-shadow: 0 24px 60px rgba(8, 18, 36, 0.65);
-  backdrop-filter: blur(18px);
+  padding: 20px 28px;
+  background: linear-gradient(135deg, rgba(25, 36, 54, 0.72), rgba(14, 22, 35, 0.9));
+  border: 1px solid rgba(138, 180, 235, 0.24);
+  border-radius: 26px;
+  box-shadow: 0 22px 56px rgba(6, 14, 28, 0.45);
+  backdrop-filter: blur(16px) saturate(1.05);
 }
 
 .identity {
@@ -95,21 +95,22 @@ const emit = defineEmits<{
 .glyph {
   display: grid;
   place-items: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, rgba(255, 167, 94, 0.65), rgba(255, 89, 141, 0.45));
-  font-size: 1.6rem;
-  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.15);
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255, 196, 121, 0.7), rgba(255, 115, 162, 0.48));
+  font-size: 1.55rem;
+  box-shadow: inset 0 0 16px rgba(255, 255, 255, 0.18);
 }
 
 .metrics {
   display: flex;
-  gap: 24px;
-  padding: 12px 20px;
-  border-radius: 18px;
-  background: rgba(13, 22, 36, 0.7);
-  border: 1px solid rgba(104, 150, 255, 0.2);
+  gap: 20px;
+  padding: 10px 18px;
+  border-radius: 16px;
+  background: rgba(20, 30, 46, 0.62);
+  border: 1px solid rgba(138, 180, 235, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(138, 180, 235, 0.08);
 }
 
 .metric {
@@ -134,8 +135,8 @@ const emit = defineEmits<{
   align-self: center;
   padding: 6px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(118, 174, 255, 0.35);
-  background: rgba(12, 21, 33, 0.6);
+  border: 1px solid rgba(138, 180, 235, 0.35);
+  background: rgba(18, 30, 46, 0.65);
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -149,11 +150,11 @@ const emit = defineEmits<{
 
 button {
   border-radius: 999px;
-  padding: 12px 22px;
+  padding: 11px 20px;
   border: 1px solid transparent;
   cursor: pointer;
   letter-spacing: 0.04em;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 
 button:focus-visible {
@@ -162,20 +163,20 @@ button:focus-visible {
 }
 
 button.ghost {
-  background: rgba(12, 21, 33, 0.75);
-  border-color: rgba(118, 174, 255, 0.35);
-  color: #e6f1ff;
+  background: rgba(22, 32, 48, 0.7);
+  border-color: rgba(138, 180, 235, 0.35);
+  color: #e8f1ff;
 }
 
 .ghost[aria-pressed='true'] {
-  background: rgba(118, 174, 255, 0.25);
-  border-color: rgba(118, 174, 255, 0.65);
+  background: rgba(138, 180, 235, 0.22);
+  border-color: rgba(138, 180, 235, 0.6);
 }
 
 button.primary {
-  background: linear-gradient(135deg, rgba(118, 174, 255, 0.9), rgba(94, 219, 255, 0.65));
+  background: linear-gradient(135deg, rgba(132, 192, 255, 0.92), rgba(108, 212, 255, 0.68));
   color: #041220;
-  box-shadow: 0 12px 30px rgba(66, 149, 255, 0.35);
+  box-shadow: 0 12px 30px rgba(80, 170, 255, 0.32);
 }
 
 button:hover {
