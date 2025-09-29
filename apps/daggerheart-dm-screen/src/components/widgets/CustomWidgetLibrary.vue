@@ -11,7 +11,9 @@ import type {
   CustomTrackerTrack,
   CustomWidgetConfig,
   CustomWidgetTemplate,
-  WidgetSize
+  UpdateWidgetPayload,
+  WidgetSize,
+  WidgetState
 } from '../../types';
 
 interface WidgetTemplateDefinition {
@@ -100,6 +102,8 @@ const accentPresets = [
   { label: 'Void Prism', value: 'linear-gradient(135deg, rgba(110, 160, 255, 0.6), rgba(160, 92, 255, 0.4))' }
 ];
 
+const props = defineProps<{ customWidgets?: WidgetState[] }>();
+
 const selectedTemplateId = ref<CustomWidgetTemplate>(templates[0].id);
 const title = ref('');
 const icon = ref('');
@@ -108,14 +112,30 @@ const description = ref('');
 const feedback = ref('');
 
 const noteBody = ref('');
-const checklistItems = ref<string[]>([]);
+const checklistItems = ref<CustomChecklistItem[]>([]);
 const trackerTracks = ref<CustomTrackerTrack[]>([]);
 const statSummary = ref('');
 const statEntries = ref<CustomStatBlockEntry[]>([]);
+const size = ref<WidgetSize>({ ...templates[0].size });
 
-const emit = defineEmits<{ (e: 'create-widget', payload: CreateWidgetPayload): void }>();
+const editingWidgetId = ref<string | null>(null);
+const editingSourceConfig = ref<CustomWidgetConfig | null>(null);
 
+const emit = defineEmits<{
+  (e: 'create-widget', payload: CreateWidgetPayload): void;
+  (e: 'update-widget', payload: UpdateWidgetPayload): void;
+  (e: 'delete-widget', id: string): void;
+}>();
+
+const managedWidgets = computed(() => {
+  if (!props.customWidgets) {
+    return [] as WidgetState[];
+  }
+  return [...props.customWidgets].sort((a, b) => a.title.localeCompare(b.title));
+});
 const selectedTemplate = computed(() => templates.find((template) => template.id === selectedTemplateId.value)!);
+const isEditing = computed(() => editingWidgetId.value !== null);
+const editingWidget = computed(() => managedWidgets.value.find((widget) => widget.id === editingWidgetId.value) ?? null);
 
 function applyTemplateDefaults(template: WidgetTemplateDefinition) {
   title.value = template.name;
@@ -125,28 +145,56 @@ function applyTemplateDefaults(template: WidgetTemplateDefinition) {
 
   if (template.defaults.type === 'note') {
     noteBody.value = (template.defaults as CustomNoteConfig).body;
+  } else {
+    noteBody.value = '';
   }
 
   if (template.defaults.type === 'checklist') {
     const checklist = template.defaults as CustomChecklistConfig;
-    checklistItems.value = checklist.items.map((item) => item.text);
+    checklistItems.value = checklist.items.map((item) => ({ text: item.text, complete: Boolean(item.complete) }));
+  } else {
+    checklistItems.value = [];
   }
 
   if (template.defaults.type === 'tracker') {
     const tracker = template.defaults as CustomTrackerConfig;
     trackerTracks.value = tracker.tracks.map((track) => ({ ...track }));
+  } else {
+    trackerTracks.value = [];
   }
 
   if (template.defaults.type === 'stat-block') {
     const statBlock = template.defaults as CustomStatBlockConfig;
     statSummary.value = statBlock.summary ?? '';
     statEntries.value = statBlock.entries.map((entry) => ({ ...entry }));
+  } else {
+    statSummary.value = '';
+    statEntries.value = [];
   }
+
+  size.value = { ...template.size };
 }
 
 watch(
   () => selectedTemplate.value,
   (template) => {
+    if (isEditing.value) {
+      if (template.id !== editingSourceConfig.value?.type) {
+        const preserved = {
+          title: title.value,
+          icon: icon.value,
+          accent: accent.value,
+          description: description.value
+        };
+        applyTemplateDefaults(template);
+        title.value = preserved.title;
+        icon.value = preserved.icon;
+        accent.value = preserved.accent;
+        description.value = preserved.description;
+        editingSourceConfig.value = null;
+      }
+      return;
+    }
     applyTemplateDefaults(template);
   },
   { immediate: true }
@@ -160,13 +208,13 @@ function selectTemplate(id: CustomWidgetTemplate) {
 }
 
 function addChecklistItem() {
-  checklistItems.value = [...checklistItems.value, ''];
+  checklistItems.value = [...checklistItems.value, { text: '', complete: false }];
 }
 
 function updateChecklistItem(index: number, value: string) {
-  const next = [...checklistItems.value];
-  next[index] = value;
-  checklistItems.value = next;
+  checklistItems.value = checklistItems.value.map((item, idx) =>
+    idx === index ? { ...item, text: value } : item
+  );
 }
 
 function removeChecklistItem(index: number) {
@@ -181,18 +229,19 @@ function addTracker() {
 }
 
 function updateTrack(index: number, key: keyof CustomTrackerTrack, value: string) {
-  const next = [...trackerTracks.value];
-  const target = next[index];
-  if (!target) {
-    return;
-  }
-  if (key === 'label') {
-    target.label = value;
-  } else {
+  trackerTracks.value = trackerTracks.value.map((track, idx) => {
+    if (idx !== index) {
+      return track;
+    }
+    if (key === 'label') {
+      return { ...track, label: value };
+    }
     const numeric = Number.parseInt(value, 10);
-    target[key] = Number.isFinite(numeric) ? Math.max(numeric, 0) : 0;
-  }
-  trackerTracks.value = next;
+    return {
+      ...track,
+      [key]: Number.isFinite(numeric) ? Math.max(numeric, 0) : 0
+    } as CustomTrackerTrack;
+  });
 }
 
 function removeTrack(index: number) {
@@ -220,6 +269,12 @@ function removeStatEntry(index: number) {
 function buildConfig(template: WidgetTemplateDefinition): CustomWidgetConfig {
   if (template.id === 'note') {
     const fallback = (template.defaults as CustomNoteConfig).body;
+    if (!noteBody.value.trim() && editingSourceConfig.value?.type === 'note') {
+      return {
+        type: 'note',
+        body: editingSourceConfig.value.body
+      };
+    }
     return {
       type: 'note',
       body: noteBody.value.trim() || fallback
@@ -228,14 +283,23 @@ function buildConfig(template: WidgetTemplateDefinition): CustomWidgetConfig {
 
   if (template.id === 'checklist') {
     const fallback = (template.defaults as CustomChecklistConfig).items;
-    const items: CustomChecklistItem[] = checklistItems.value
-      .map((item) => item.trim())
-      .filter(Boolean)
-      .map((text) => ({ text, complete: false }));
+    const trimmed = checklistItems.value
+      .map((item) => ({ text: item.text.trim(), complete: Boolean(item.complete) }))
+      .filter((item) => item.text);
+    const existing = editingSourceConfig.value?.type === 'checklist' ? editingSourceConfig.value.items : [];
+    const baseItems = trimmed.length
+      ? trimmed
+      : existing.length
+      ? existing.map((item) => ({ text: item.text, complete: Boolean(item.complete) }))
+      : fallback;
+    const items = baseItems.map((item) => {
+      const match = existing.find((original) => original.text === item.text);
+      return match ? { ...item, complete: Boolean(match.complete) } : { ...item, complete: Boolean(item.complete) };
+    });
 
     return {
       type: 'checklist',
-      items: items.length ? items : fallback
+      items
     };
   }
 
@@ -249,9 +313,22 @@ function buildConfig(template: WidgetTemplateDefinition): CustomWidgetConfig {
       }))
       .filter((track) => track.max > 0);
 
+    if (!tracks.length) {
+      if (editingSourceConfig.value?.type === 'tracker') {
+        return {
+          type: 'tracker',
+          tracks: editingSourceConfig.value.tracks.map((track) => ({ ...track }))
+        };
+      }
+      return {
+        type: 'tracker',
+        tracks: fallback.map((track) => ({ ...track }))
+      };
+    }
+
     return {
       type: 'tracker',
-      tracks: tracks.length ? tracks : fallback
+      tracks
     };
   }
 
@@ -262,8 +339,17 @@ function buildConfig(template: WidgetTemplateDefinition): CustomWidgetConfig {
 
   return {
     type: 'stat-block',
-    summary: statSummary.value.trim() || fallback.summary,
-    entries: entries.length ? entries : fallback.entries
+    summary:
+      statSummary.value.trim() ||
+      (editingSourceConfig.value?.type === 'stat-block' && editingSourceConfig.value.summary
+        ? editingSourceConfig.value.summary
+        : fallback.summary),
+    entries:
+      entries.length
+        ? entries
+        : editingSourceConfig.value?.type === 'stat-block'
+        ? editingSourceConfig.value.entries.map((entry) => ({ ...entry }))
+        : fallback.entries
   };
 }
 
@@ -275,17 +361,107 @@ function onCreateWidget() {
     accent: accent.value || template.accent,
     description: description.value.trim() || template.description,
     component: 'CustomWidget',
-    size: template.size,
+    size: size.value,
     config: buildConfig(template)
   };
 
+  if (isEditing.value && editingWidgetId.value) {
+    const updatePayload: UpdateWidgetPayload = {
+      id: editingWidgetId.value,
+      ...payload
+    };
+    emit('update-widget', updatePayload);
+    editingSourceConfig.value = updatePayload.config ?? null;
+    const message = `${payload.title} updated.`;
+    feedback.value = message;
+    setTimeout(() => {
+      if (feedback.value === message) {
+        feedback.value = '';
+      }
+    }, 3200);
+    return;
+  }
+
   emit('create-widget', payload);
-  feedback.value = `${payload.title} added to the board.`;
+  const message = `${payload.title} added to the board.`;
+  feedback.value = message;
   setTimeout(() => {
-    if (feedback.value === `${payload.title} added to the board.`) {
+    if (feedback.value === message) {
       feedback.value = '';
     }
   }, 3200);
+}
+
+function loadConfigForEditing(config?: CustomWidgetConfig | null) {
+  if (!config) {
+    noteBody.value = '';
+    checklistItems.value = [];
+    trackerTracks.value = [];
+    statSummary.value = '';
+    statEntries.value = [];
+    return;
+  }
+
+  if (config.type === 'note') {
+    noteBody.value = config.body;
+    checklistItems.value = [];
+    trackerTracks.value = [];
+    statSummary.value = '';
+    statEntries.value = [];
+    return;
+  }
+
+  if (config.type === 'checklist') {
+    checklistItems.value = config.items.map((item) => ({ ...item }));
+    noteBody.value = '';
+    trackerTracks.value = [];
+    statSummary.value = '';
+    statEntries.value = [];
+    return;
+  }
+
+  if (config.type === 'tracker') {
+    trackerTracks.value = config.tracks.map((track) => ({ ...track }));
+    noteBody.value = '';
+    checklistItems.value = [];
+    statSummary.value = '';
+    statEntries.value = [];
+    return;
+  }
+
+  statSummary.value = config.summary ?? '';
+  statEntries.value = config.entries.map((entry) => ({ ...entry }));
+  noteBody.value = '';
+  checklistItems.value = [];
+  trackerTracks.value = [];
+}
+
+function beginEditing(widget: WidgetState) {
+  editingWidgetId.value = widget.id;
+  editingSourceConfig.value = widget.config ?? null;
+  title.value = widget.title;
+  icon.value = widget.icon;
+  accent.value = widget.accent;
+  description.value = widget.description ?? '';
+  size.value = { ...widget.size };
+  const templateId = widget.config?.type ?? templates[0].id;
+  selectedTemplateId.value = templateId;
+  loadConfigForEditing(widget.config ?? null);
+  feedback.value = '';
+}
+
+function exitEditing() {
+  editingWidgetId.value = null;
+  editingSourceConfig.value = null;
+  feedback.value = '';
+  applyTemplateDefaults(selectedTemplate.value);
+}
+
+function deleteWidget(id: string) {
+  emit('delete-widget', id);
+  if (editingWidgetId.value === id) {
+    exitEditing();
+  }
 }
 </script>
 
@@ -311,7 +487,41 @@ function onCreateWidget() {
       </button>
     </div>
 
+    <section class="manage" aria-label="Custom widgets on the board">
+      <header>
+        <h4>Board widgets</h4>
+        <p>Jump back into any custom helper to tweak or retire it.</p>
+      </header>
+      <p v-if="!managedWidgets.length" class="manage__empty">Create a custom widget to see it listed here.</p>
+      <ul v-else class="manage__list">
+        <li v-for="widget in managedWidgets" :key="widget.id">
+          <div class="manage__meta">
+            <span class="manage__icon" aria-hidden="true">{{ widget.icon }}</span>
+            <div>
+              <h5>{{ widget.title }}</h5>
+              <p v-if="widget.description">{{ widget.description }}</p>
+            </div>
+          </div>
+          <div class="manage__actions">
+            <button type="button" class="secondary" @click="beginEditing(widget)">Edit</button>
+            <button
+              type="button"
+              class="danger"
+              @click="deleteWidget(widget.id)"
+              :aria-label="`Remove ${widget.title}`"
+            >
+              Remove
+            </button>
+          </div>
+        </li>
+      </ul>
+    </section>
+
     <form class="builder" @submit.prevent="onCreateWidget">
+      <div v-if="isEditing" class="editing-banner" role="status" aria-live="polite">
+        <span>Editing {{ editingWidget?.title ?? 'widget' }}</span>
+        <button type="button" class="secondary" @click="exitEditing">Done</button>
+      </div>
       <fieldset>
         <legend>Widget identity</legend>
         <div class="grid">
@@ -371,7 +581,7 @@ function onCreateWidget() {
               class="list-row"
             >
               <input
-                :value="item"
+                :value="item.text"
                 type="text"
                 placeholder="Checklist item"
                 @input="updateChecklistItem(index, ($event.target as HTMLInputElement).value)"
@@ -437,9 +647,15 @@ function onCreateWidget() {
       </section>
 
       <footer class="builder__footer">
-        <button type="submit" class="primary">Add widget to board</button>
+        <button type="submit" class="primary">{{ isEditing ? 'Update widget' : 'Add widget to board' }}</button>
         <span v-if="feedback" class="feedback" role="status">{{ feedback }}</span>
-        <span class="size-hint">Default size: {{ selectedTemplate.size.width }} × {{ selectedTemplate.size.height }} px</span>
+        <span class="size-hint">
+          {{
+            isEditing
+              ? `Current size: ${size.width} × ${size.height} px`
+              : `Default size: ${selectedTemplate.size.width} × ${selectedTemplate.size.height} px`
+          }}
+        </span>
       </footer>
     </form>
   </div>
@@ -465,6 +681,121 @@ function onCreateWidget() {
 .templates {
   display: grid;
   gap: 12px;
+}
+
+.manage {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(118, 174, 255, 0.25);
+  background: rgba(10, 18, 30, 0.45);
+}
+
+.manage header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.manage h4 {
+  margin: 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.manage p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(188, 208, 240, 0.7);
+}
+
+.manage__empty {
+  margin: 0;
+  font-size: 0.82rem;
+  color: rgba(180, 198, 230, 0.65);
+}
+
+.manage__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.manage__list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(118, 174, 255, 0.28);
+  background: rgba(8, 16, 28, 0.55);
+}
+
+.manage__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.manage__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: rgba(6, 12, 22, 0.55);
+  font-size: 1.4rem;
+}
+
+.manage__meta h5 {
+  margin: 0 0 2px;
+  font-size: 0.9rem;
+}
+
+.manage__meta p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: rgba(178, 198, 230, 0.6);
+}
+
+.manage__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.danger {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 120, 150, 0.45);
+  background: rgba(60, 20, 36, 0.55);
+  color: rgba(255, 204, 220, 0.9);
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.danger:focus-visible {
+  outline: 2px solid rgba(255, 150, 188, 0.75);
+  outline-offset: 2px;
+}
+
+.editing-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(118, 174, 255, 0.3);
+  background: rgba(12, 20, 34, 0.65);
+  color: rgba(200, 220, 255, 0.85);
+  font-size: 0.9rem;
 }
 
 .template {

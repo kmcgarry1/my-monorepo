@@ -10,7 +10,11 @@ import type {
   CustomWidgetConfig
 } from '../../types';
 
-const props = defineProps<{ config?: CustomWidgetConfig }>();
+const props = defineProps<{ config?: CustomWidgetConfig; widgetId: string }>();
+
+const emit = defineEmits<{
+  (e: 'update-config', payload: { id: string; config: CustomWidgetConfig }): void;
+}>();
 
 const checklistItems = ref<CustomChecklistItem[]>([]);
 const trackerTracks = ref<CustomTrackerTrack[]>([]);
@@ -65,16 +69,30 @@ watch(
 );
 
 function toggleChecklistItem(index: number) {
+  if (props.config?.type !== 'checklist') {
+    return;
+  }
   const next = [...checklistItems.value];
   const target = next[index];
   if (!target) {
     return;
   }
   next[index] = { ...target, complete: !target.complete };
-  checklistItems.value = next;
+  const updatedItems = next.map((item) => ({ ...item }));
+  checklistItems.value = updatedItems;
+  emit('update-config', {
+    id: props.widgetId,
+    config: {
+      type: 'checklist',
+      items: updatedItems
+    }
+  });
 }
 
 function adjustTrack(index: number, delta: number) {
+  if (props.config?.type !== 'tracker') {
+    return;
+  }
   const next = [...trackerTracks.value];
   const target = next[index];
   if (!target) {
@@ -85,7 +103,15 @@ function adjustTrack(index: number, delta: number) {
     current: Math.min(Math.max(target.current + delta, 0), Math.max(target.max, 0))
   };
   next[index] = updated;
-  trackerTracks.value = next;
+  const updatedTracks = next.map((track) => ({ ...track }));
+  trackerTracks.value = updatedTracks;
+  emit('update-config', {
+    id: props.widgetId,
+    config: {
+      type: 'tracker',
+      tracks: updatedTracks
+    }
+  });
 }
 </script>
 

@@ -76,3 +76,5 @@ export interface CreateWidgetPayload {
   size: WidgetSize;
   config?: CustomWidgetConfig;
 }
+
+export type UpdateWidgetPayload = CreateWidgetPayload & { id: string };
