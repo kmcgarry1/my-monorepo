@@ -8,6 +8,7 @@ import { createInitialWidgets } from './data/widgets';
 const GRID_SIZE = 32;
 const MIN_WIDTH = GRID_SIZE * 5;
 const MIN_HEIGHT = GRID_SIZE * 4;
+const CANVAS_PADDING = GRID_SIZE * 4;
 
 const STORAGE_KEY = 'daggerheart-dm-widgets';
 
@@ -49,8 +50,102 @@ function getNextCustomIndex(existing: WidgetState[]): number {
   );
 }
 
+type Rect = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+function createRect(widget: WidgetState): Rect {
+  return {
+    x: widget.position.x,
+    y: widget.position.y,
+    width: widget.size.width,
+    height: widget.size.height
+  };
+}
+
+function rectsOverlap(a: Rect, b: Rect) {
+  return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
+}
+
+function resolveRect(allWidgets: WidgetState[], widgetId: string, target: Rect): Rect {
+  const others = allWidgets
+    .filter((widget) => widget.id !== widgetId)
+    .map((widget) => ({ ...createRect(widget) }));
+
+  const baseX = snapToGrid(Math.max(target.x, 0));
+  const baseY = snapToGrid(Math.max(target.y, 0));
+  const desiredWidth = Math.max(snapToGrid(target.width), MIN_WIDTH);
+  const desiredHeight = Math.max(snapToGrid(target.height), MIN_HEIGHT);
+  const maxExistingRight = others.reduce((max, rect) => Math.max(max, rect.x + rect.width), desiredWidth);
+  const rightLimit = Math.max(maxExistingRight + CANVAS_PADDING * 8, baseX + desiredWidth + CANVAS_PADDING * 4);
+
+  let attempt = 0;
+  const maxAttempts = Math.max(others.length * 40, 600);
+  let x = baseX;
+  let y = baseY;
+
+  while (attempt < maxAttempts) {
+    const candidate: Rect = {
+      x,
+      y,
+      width: desiredWidth,
+      height: desiredHeight
+    };
+
+    const collider = others.find((rect) => rectsOverlap(candidate, rect));
+
+    if (!collider) {
+      return candidate;
+    }
+
+    const shiftRight = snapToGrid(collider.x + collider.width + GRID_SIZE);
+
+    if (shiftRight + desiredWidth <= rightLimit) {
+      x = shiftRight;
+    } else {
+      x = baseX;
+      y = snapToGrid(Math.max(y, collider.y + collider.height + GRID_SIZE));
+    }
+
+    attempt += 1;
+  }
+
+  return {
+    x,
+    y,
+    width: desiredWidth,
+    height: desiredHeight
+  };
+}
+
+function calculateBoardSize(state: WidgetState[]): { width: number; height: number } {
+  if (state.length === 0) {
+    return { width: MIN_WIDTH + CANVAS_PADDING * 2, height: MIN_HEIGHT + CANVAS_PADDING * 2 };
+  }
+
+  const { maxRight, maxBottom } = state.reduce(
+    (acc, widget) => {
+      const rect = createRect(widget);
+      return {
+        maxRight: Math.max(acc.maxRight, rect.x + rect.width),
+        maxBottom: Math.max(acc.maxBottom, rect.y + rect.height)
+      };
+    },
+    { maxRight: 0, maxBottom: 0 }
+  );
+
+  return {
+    width: Math.max(maxRight + CANVAS_PADDING, MIN_WIDTH * 4),
+    height: Math.max(maxBottom + CANVAS_PADDING, MIN_HEIGHT * 3)
+  };
+}
+
 const initialWidgets = loadPersistedWidgets() ?? createInitialWidgets();
 const widgets = ref<WidgetState[]>(initialWidgets);
+const boardSize = computed(() => calculateBoardSize(widgets.value));
 
 let customWidgetCounter = getNextCustomIndex(initialWidgets);
 
@@ -81,13 +176,31 @@ function updateWidgetPosition(payload: { id: string; x: number; y: number }) {
     return;
   }
 
-  widgets.value = widgets.value.map((widget) =>
+  const nextWidgets = widgets.value.map((widget) => ({ ...widget }));
+  const target = nextWidgets.find((widget) => widget.id === payload.id);
+
+  if (!target) {
+    return;
+  }
+
+  const resolved = resolveRect(nextWidgets, payload.id, {
+    x: payload.x,
+    y: payload.y,
+    width: target.size.width,
+    height: target.size.height
+  });
+
+  widgets.value = nextWidgets.map((widget) =>
     widget.id === payload.id
       ? {
           ...widget,
           position: {
-            x: snapToGrid(payload.x),
-            y: snapToGrid(payload.y)
+            x: resolved.x,
+            y: resolved.y
+          },
+          size: {
+            width: resolved.width,
+            height: resolved.height
           }
         }
       : widget
@@ -99,13 +212,31 @@ function updateWidgetSize(payload: { id: string; width: number; height: number }
     return;
   }
 
-  widgets.value = widgets.value.map((widget) =>
+  const nextWidgets = widgets.value.map((widget) => ({ ...widget }));
+  const target = nextWidgets.find((widget) => widget.id === payload.id);
+
+  if (!target) {
+    return;
+  }
+
+  const resolved = resolveRect(nextWidgets, payload.id, {
+    x: target.position.x,
+    y: target.position.y,
+    width: payload.width,
+    height: payload.height
+  });
+
+  widgets.value = nextWidgets.map((widget) =>
     widget.id === payload.id
       ? {
           ...widget,
+          position: {
+            x: resolved.x,
+            y: resolved.y
+          },
           size: {
-            width: Math.max(MIN_WIDTH, snapToGrid(payload.width)),
-            height: Math.max(MIN_HEIGHT, snapToGrid(payload.height))
+            width: resolved.width,
+            height: resolved.height
           }
         }
       : widget
@@ -157,6 +288,16 @@ function addCustomWidget(payload: CreateWidgetPayload) {
     config: payload.config
   };
 
+  const resolved = resolveRect(widgets.value, newWidget.id, {
+    x: newWidget.position.x,
+    y: newWidget.position.y,
+    width: newWidget.size.width,
+    height: newWidget.size.height
+  });
+
+  newWidget.position = { x: resolved.x, y: resolved.y };
+  newWidget.size = { width: resolved.width, height: resolved.height };
+
   widgets.value = [...widgets.value, newWidget];
 }
 
@@ -172,7 +313,21 @@ function updateWidgetConfig(payload: { id: string; config: CustomWidgetConfig })
 }
 
 function updateCustomWidget(payload: UpdateWidgetPayload) {
-  widgets.value = widgets.value.map((widget) =>
+  const nextWidgets = widgets.value.map((widget) => ({ ...widget }));
+  const target = nextWidgets.find((widget) => widget.id === payload.id);
+
+  if (!target) {
+    return;
+  }
+
+  const resolved = resolveRect(nextWidgets, payload.id, {
+    x: target.position.x,
+    y: target.position.y,
+    width: payload.size.width,
+    height: payload.size.height
+  });
+
+  widgets.value = nextWidgets.map((widget) =>
     widget.id === payload.id
       ? {
           ...widget,
@@ -180,9 +335,13 @@ function updateCustomWidget(payload: UpdateWidgetPayload) {
           icon: payload.icon,
           accent: payload.accent,
           description: payload.description,
+          position: {
+            x: resolved.x,
+            y: resolved.y
+          },
           size: {
-            width: Math.max(MIN_WIDTH, snapToGrid(payload.size.width)),
-            height: Math.max(MIN_HEIGHT, snapToGrid(payload.size.height))
+            width: resolved.width,
+            height: resolved.height
           },
           component: widget.component,
           config: payload.config
@@ -215,7 +374,8 @@ function resetLayout() {
 }
 
 function cascadeWidgets() {
-  const updated: WidgetState[] = [];
+  const pinnedWidgets = widgets.value.filter((widget) => widget.pinned);
+  const updated: WidgetState[] = pinnedWidgets.map((widget) => ({ ...widget }));
   const gap = GRID_SIZE * 0.75;
   const columnWidth = MIN_WIDTH + GRID_SIZE * 5;
   const startX = GRID_SIZE * 2;
@@ -225,18 +385,30 @@ function cascadeWidgets() {
 
   for (const widget of widgets.value) {
     if (widget.pinned) {
-      updated.push(widget);
       continue;
     }
 
     const newX = startX + column * (columnWidth + gap);
     const newY = startY + columnHeight;
 
+    const desired: Rect = {
+      x: newX,
+      y: newY,
+      width: widget.size.width,
+      height: widget.size.height
+    };
+
+    const resolved = resolveRect(updated, widget.id, desired);
+
     updated.push({
       ...widget,
       position: {
-        x: snapToGrid(newX),
-        y: snapToGrid(newY)
+        x: resolved.x,
+        y: resolved.y
+      },
+      size: {
+        width: resolved.width,
+        height: resolved.height
       }
     });
 
@@ -320,6 +492,7 @@ onBeforeUnmount(() => {
       <WidgetBoard
         :widgets="widgets"
         :disable-interactions="isPhoneLayout"
+        :canvas-size="boardSize"
         @update:position="updateWidgetPosition"
         @update:size="updateWidgetSize"
         @focus="bringWidgetToFront"
