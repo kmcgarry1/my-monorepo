@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref } from 'vue';
-import { columnFromOffset, MIN_WIDGET_HEIGHT, MIN_WIDGET_WIDTH } from '../constants/layout';
+import { computed, onBeforeUnmount, ref } from 'vue';
+import { columnFromOffset, GRID_SIZE, MIN_WIDGET_HEIGHT, MIN_WIDGET_WIDTH } from '../constants/layout';
 import type { WidgetState } from '../types';
 
 const props = defineProps<{
@@ -10,6 +10,8 @@ const props = defineProps<{
 
 const MIN_WIDTH = MIN_WIDGET_WIDTH;
 const MIN_HEIGHT = MIN_WIDGET_HEIGHT;
+const KEYBOARD_STEP = GRID_SIZE;
+const KEYBOARD_STEP_FAST = GRID_SIZE * 3;
 
 const emit = defineEmits<{
   (e: 'dragging', payload: { id: string; x: number; y: number }): void;
@@ -20,6 +22,13 @@ const emit = defineEmits<{
 }>();
 
 const root = ref<HTMLElement | null>(null);
+
+const titleId = computed(() => `widget-${props.widget.id}-title`);
+const descriptionId = computed(() => `widget-${props.widget.id}-description`);
+const describedBy = computed(() => (props.widget.description ? descriptionId.value : undefined));
+const roleDescription = computed(() =>
+  props.widget.pinned ? 'Pinned dashboard widget' : 'Dashboard widget'
+);
 
 let isDragging = false;
 let pointerId: number | null = null;
@@ -32,6 +41,10 @@ let resizePointerId: number | null = null;
 let startWidth = 0;
 let startHeight = 0;
 let resizeHandleEl: HTMLElement | null = null;
+let dragFrame: number | null = null;
+let resizeFrame: number | null = null;
+let pendingDrag: { x: number; y: number } | null = null;
+let pendingResize: { width: number; height: number } | null = null;
 
 function interactionsDisabled() {
   return Boolean(props.disableInteractions);
@@ -81,7 +94,10 @@ function onPointerDown(event: PointerEvent) {
   element.addEventListener('lostpointercapture', cleanup, { once: true });
 
   window.addEventListener('pointermove', onPointerMove);
-  window.addEventListener('pointerup', onPointerUp, { once: true });
+  window.addEventListener('pointerup', onPointerUp);
+  window.addEventListener('pointercancel', onPointerCancel);
+  window.addEventListener('blur', handleWindowBlur);
+  document.addEventListener('visibilitychange', handleVisibilityChange);
 }
 
 function onPointerMove(event: PointerEvent) {
@@ -107,14 +123,18 @@ function onPointerMove(event: PointerEvent) {
 
   emitColumnHover(nextX);
 
-  emit('dragging', {
-    id: props.widget.id,
-    x: nextX,
-    y: nextY
-  });
+  scheduleDragEmit({ x: nextX, y: nextY });
 }
 
 function onPointerUp(event: PointerEvent) {
+  if (event.pointerId !== pointerId) {
+    return;
+  }
+
+  cleanup();
+}
+
+function onPointerCancel(event: PointerEvent) {
   if (event.pointerId !== pointerId) {
     return;
   }
@@ -130,8 +150,17 @@ function cleanup() {
   isDragging = false;
   pointerId = null;
   element?.classList.remove('is-dragging');
+  if (dragFrame !== null) {
+    cancelAnimationFrame(dragFrame);
+    dragFrame = null;
+  }
+  pendingDrag = null;
   emitColumnHover(null);
   window.removeEventListener('pointermove', onPointerMove);
+  window.removeEventListener('pointerup', onPointerUp);
+  window.removeEventListener('pointercancel', onPointerCancel);
+  window.removeEventListener('blur', handleWindowBlur);
+  document.removeEventListener('visibilitychange', handleVisibilityChange);
 }
 
 function onResizePointerDown(event: PointerEvent) {
@@ -159,7 +188,10 @@ function onResizePointerDown(event: PointerEvent) {
   handle.addEventListener('lostpointercapture', cleanupResize, { once: true });
 
   window.addEventListener('pointermove', onResizePointerMove);
-  window.addEventListener('pointerup', onResizePointerUp, { once: true });
+  window.addEventListener('pointerup', onResizePointerUp);
+  window.addEventListener('pointercancel', onResizePointerCancel);
+  window.addEventListener('blur', handleWindowBlur);
+  document.addEventListener('visibilitychange', handleVisibilityChange);
 
   root.value?.classList.add('is-resizing');
 }
@@ -185,11 +217,7 @@ function onResizePointerMove(event: PointerEvent) {
     nextHeight = Math.min(Math.max(nextHeight, MIN_HEIGHT), maxHeight);
   }
 
-  emit('resizing', {
-    id: props.widget.id,
-    width: nextWidth,
-    height: nextHeight
-  });
+  scheduleResizeEmit({ width: nextWidth, height: nextHeight });
 }
 
 function onResizePointerUp(event: PointerEvent) {
@@ -200,20 +228,162 @@ function onResizePointerUp(event: PointerEvent) {
   cleanupResize();
 }
 
+function onResizePointerCancel(event: PointerEvent) {
+  if (event.pointerId !== resizePointerId) {
+    return;
+  }
+
+  cleanupResize();
+}
+
 function cleanupResize() {
   if (resizePointerId !== null) {
     window.removeEventListener('pointermove', onResizePointerMove);
+    window.removeEventListener('pointerup', onResizePointerUp);
+    window.removeEventListener('pointercancel', onResizePointerCancel);
+    window.removeEventListener('blur', handleWindowBlur);
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
     resizeHandleEl?.releasePointerCapture(resizePointerId);
   }
   isResizing = false;
   resizePointerId = null;
   resizeHandleEl = null;
+  if (resizeFrame !== null) {
+    cancelAnimationFrame(resizeFrame);
+    resizeFrame = null;
+  }
+  pendingResize = null;
   root.value?.classList.remove('is-resizing');
 }
 
-onBeforeUnmount(() => {
+function scheduleDragEmit(payload: { x: number; y: number }) {
+  pendingDrag = payload;
+
+  if (dragFrame !== null) {
+    return;
+  }
+
+  dragFrame = requestAnimationFrame(() => {
+    dragFrame = null;
+    if (!pendingDrag) {
+      return;
+    }
+
+    emit('dragging', {
+      id: props.widget.id,
+      x: pendingDrag.x,
+      y: pendingDrag.y
+    });
+
+    pendingDrag = null;
+  });
+}
+
+function scheduleResizeEmit(payload: { width: number; height: number }) {
+  pendingResize = payload;
+
+  if (resizeFrame !== null) {
+    return;
+  }
+
+  resizeFrame = requestAnimationFrame(() => {
+    resizeFrame = null;
+    if (!pendingResize) {
+      return;
+    }
+
+    emit('resizing', {
+      id: props.widget.id,
+      width: pendingResize.width,
+      height: pendingResize.height
+    });
+
+    pendingResize = null;
+  });
+}
+
+function cancelActiveInteractions() {
   cleanup();
   cleanupResize();
+}
+
+function handleWindowBlur() {
+  cancelActiveInteractions();
+}
+
+function handleVisibilityChange() {
+  if (document.hidden) {
+    cancelActiveInteractions();
+  }
+}
+
+function onKeydown(event: KeyboardEvent) {
+  if (event.currentTarget !== event.target) {
+    return;
+  }
+
+  if (event.key === ' ' || event.key === 'Spacebar' || event.key === 'Enter') {
+    event.preventDefault();
+    emit('toggle-pin');
+    return;
+  }
+
+  if (props.widget.pinned || interactionsDisabled()) {
+    return;
+  }
+
+  const step = event.shiftKey ? KEYBOARD_STEP_FAST : KEYBOARD_STEP;
+  let handled = false;
+
+  switch (event.key) {
+    case 'ArrowUp':
+      handled = true;
+      nudgeWidget(0, -step);
+      break;
+    case 'ArrowDown':
+      handled = true;
+      nudgeWidget(0, step);
+      break;
+    case 'ArrowLeft':
+      handled = true;
+      nudgeWidget(-step, 0);
+      break;
+    case 'ArrowRight':
+      handled = true;
+      nudgeWidget(step, 0);
+      break;
+  }
+
+  if (handled) {
+    event.preventDefault();
+  }
+}
+
+function nudgeWidget(deltaX: number, deltaY: number) {
+  const element = root.value;
+  const board = getBoardCanvas(element);
+
+  let nextX = props.widget.position.x + deltaX;
+  let nextY = props.widget.position.y + deltaY;
+
+  if (board) {
+    const maxX = Math.max(board.clientWidth - props.widget.size.width, 0);
+    const maxY = Math.max(board.clientHeight - props.widget.size.height, 0);
+    nextX = Math.min(Math.max(nextX, 0), maxX);
+    nextY = Math.min(Math.max(nextY, 0), maxY);
+  }
+
+  emit('dragging', {
+    id: props.widget.id,
+    x: nextX,
+    y: nextY
+  });
+
+  emitColumnHover(null);
+}
+
+onBeforeUnmount(() => {
+  cancelActiveInteractions();
 });
 </script>
 
@@ -230,12 +400,19 @@ onBeforeUnmount(() => {
       zIndex: widget.zIndex,
       '--accent': widget.accent
     }"
+    role="group"
+    tabindex="0"
+    :aria-labelledby="titleId"
+    :aria-describedby="describedBy"
+    :aria-roledescription="roleDescription"
+    @focusin="emit('focus')"
+    @keydown="onKeydown"
   >
     <header class="widget__header" @pointerdown="onPointerDown">
       <span class="icon" aria-hidden="true">{{ widget.icon }}</span>
       <div class="meta">
-        <h2>{{ widget.title }}</h2>
-        <p>{{ widget.description }}</p>
+        <h2 :id="titleId">{{ widget.title }}</h2>
+        <p v-if="widget.description" :id="descriptionId">{{ widget.description }}</p>
       </div>
       <button
         type="button"
@@ -272,6 +449,11 @@ onBeforeUnmount(() => {
   backdrop-filter: blur(16px) saturate(1.05);
   overflow: hidden;
   transition: box-shadow 0.24s ease, transform 0.24s ease;
+}
+
+.widget:focus-visible {
+  outline: 2px solid rgba(150, 198, 255, 0.82);
+  outline-offset: 4px;
 }
 
 .widget::before {
@@ -410,26 +592,33 @@ onBeforeUnmount(() => {
   opacity: 1;
 }
 
-@media (max-width: 720px) {
-  .widget {
-    position: relative;
-    width: 100% !important;
-    height: auto !important;
-    left: 0 !important;
-    top: 0 !important;
-  }
+:global(.board--mobile .widget) {
+  position: relative;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  border-radius: 18px;
+  border: 1px solid rgba(138, 180, 235, 0.18);
+  box-shadow: 0 14px 34px rgba(7, 14, 26, 0.32);
+  transform: none !important;
+}
 
-  .widget::before {
-    opacity: 0.12;
-  }
+:global(.board--mobile .widget::before) {
+  opacity: 0.12;
+}
 
-  .widget__header {
-    cursor: default;
-    border-bottom-color: transparent;
-  }
+:global(.board--mobile .widget__header) {
+  cursor: default;
+  border-bottom-color: rgba(138, 180, 235, 0.12);
+  padding: 16px 16px 10px;
+}
 
-  .resize-handle {
-    display: none;
-  }
+:global(.board--mobile .widget__body) {
+  padding: 12px 16px 20px;
+}
+
+:global(.board--mobile .resize-handle) {
+  display: none;
 }
 </style>

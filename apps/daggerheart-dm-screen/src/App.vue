@@ -9,18 +9,95 @@ import {
   MIN_WIDGET_WIDTH,
   MIN_WIDGET_HEIGHT,
   COLUMN_COUNT,
-  COLUMN_STEP,
   clampColumnIndex,
   getColumnOffset,
-  getSpanWidth,
   normalizeColumnWidth
 } from './constants/layout';
+import { calculateBoardSize, normalizeWidgetLayout, resolveRect, snapToGrid } from './utils/layout';
 
 const MIN_WIDTH = MIN_WIDGET_WIDTH;
 const MIN_HEIGHT = MIN_WIDGET_HEIGHT;
-const CANVAS_PADDING = GRID_SIZE * 4;
 
 const STORAGE_KEY = 'daggerheart-dm-widgets';
+const STORAGE_VERSION = 1;
+
+type PersistedLayout = {
+  version: number;
+  widgets: WidgetState[];
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function isNumber(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+function isWidgetPosition(value: unknown): value is { x: number; y: number } {
+  return isRecord(value) && isNumber(value.x) && isNumber(value.y);
+}
+
+function isWidgetSize(value: unknown): value is { width: number; height: number } {
+  return isRecord(value) && isNumber(value.width) && isNumber(value.height);
+}
+
+function coerceWidgetState(value: unknown): WidgetState | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  if (
+    typeof value.id !== 'string' ||
+    typeof value.title !== 'string' ||
+    typeof value.icon !== 'string' ||
+    typeof value.accent !== 'string' ||
+    typeof value.component !== 'string' ||
+    !isWidgetPosition(value.position) ||
+    !isWidgetSize(value.size) ||
+    !isNumber(value.zIndex)
+  ) {
+    return null;
+  }
+
+  const config = value.config;
+
+  const widget: WidgetState = {
+    id: value.id,
+    title: value.title,
+    icon: value.icon,
+    accent: value.accent,
+    description: typeof value.description === 'string' ? value.description : undefined,
+    position: value.position,
+    size: value.size,
+    component: value.component,
+    pinned: typeof value.pinned === 'boolean' ? value.pinned : undefined,
+    zIndex: value.zIndex,
+    config: typeof config === 'object' && config !== null ? (config as CustomWidgetConfig) : undefined
+  };
+
+  return widget;
+}
+
+function sanitizeWidgets(value: unknown): WidgetState[] | null {
+  if (!Array.isArray(value)) {
+    return null;
+  }
+
+  const coerced = value
+    .map((item) => coerceWidgetState(item))
+    .filter((widget): widget is WidgetState => widget !== null);
+
+  if (coerced.length !== value.length) {
+    console.warn('Discarded invalid widgets from stored layout.');
+  }
+
+  if (coerced.length === 0 && value.length > 0) {
+    return null;
+  }
+
+  return coerced;
+}
 
 function loadPersistedWidgets(): WidgetState[] | null {
   if (typeof window === 'undefined') {
@@ -35,16 +112,41 @@ function loadPersistedWidgets(): WidgetState[] | null {
   try {
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed)) {
-      return parsed as WidgetState[];
+      return sanitizeWidgets(parsed);
     }
-    window.localStorage.removeItem(STORAGE_KEY);
+
+    if (isRecord(parsed)) {
+      const version = typeof parsed.version === 'number' ? parsed.version : 0;
+      if (version === STORAGE_VERSION && 'widgets' in parsed) {
+        const sanitized = sanitizeWidgets((parsed as PersistedLayout).widgets);
+        if (sanitized) {
+          return sanitized;
+        }
+      }
+    }
   } catch (error) {
     console.warn('Failed to parse stored widget layout:', error);
-    window.localStorage.removeItem(STORAGE_KEY);
-    return null;
   }
 
+  window.localStorage.removeItem(STORAGE_KEY);
   return null;
+}
+
+function persistWidgets(state: WidgetState[]) {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  const payload: PersistedLayout = {
+    version: STORAGE_VERSION,
+    widgets: state.map((widget) => ({
+      ...widget,
+      position: { ...widget.position },
+      size: { ...widget.size }
+    }))
+  };
+
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
 }
 
 function getNextCustomIndex(existing: WidgetState[]): number {
@@ -60,126 +162,11 @@ function getNextCustomIndex(existing: WidgetState[]): number {
   );
 }
 
-type Rect = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
-
-function createRect(widget: WidgetState): Rect {
-  return {
-    x: widget.position.x,
-    y: widget.position.y,
-    width: widget.size.width,
-    height: widget.size.height
-  };
-}
-
-function rectsOverlap(a: Rect, b: Rect) {
-  return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
-}
-
-function resolveRect(allWidgets: WidgetState[], widgetId: string, target: Rect): Rect {
-  const others = allWidgets
-    .filter((widget) => widget.id !== widgetId)
-    .map((widget) => ({ ...createRect(widget) }));
-
-  const { span, width: desiredWidth } = normalizeColumnWidth(Math.max(target.width, MIN_WIDTH));
-  const desiredHeight = Math.max(snapToGrid(target.height), MIN_HEIGHT);
-  const baseColumn = clampColumnIndex(Math.round(target.x / COLUMN_STEP), span);
-  const columnLimit = Math.max(COLUMN_COUNT - span, 0);
-
-  let column = baseColumn;
-  let y = snapToGrid(Math.max(target.y, 0));
-  let attempt = 0;
-  const maxAttempts = Math.max(others.length * COLUMN_COUNT * 6, 600);
-
-  while (attempt < maxAttempts) {
-    const candidate: Rect = {
-      x: getColumnOffset(column),
-      y,
-      width: desiredWidth,
-      height: desiredHeight
-    };
-
-    const collider = others.find((rect) => rectsOverlap(candidate, rect));
-
-    if (!collider) {
-      return candidate;
-    }
-
-    if (column < columnLimit) {
-      column += 1;
-    } else {
-      column = clampColumnIndex(baseColumn, span);
-      const nextY = snapToGrid(Math.max(y, collider.y + collider.height + GRID_SIZE));
-      y = nextY === y ? y + GRID_SIZE : nextY;
-    }
-
-    attempt += 1;
-  }
-
-  return {
-    x: getColumnOffset(clampColumnIndex(column, span)),
-    y,
-    width: desiredWidth,
-    height: desiredHeight
-  };
-}
-
-function calculateBoardSize(state: WidgetState[]): { width: number; height: number } {
-  if (state.length === 0) {
-    return {
-      width: getSpanWidth(COLUMN_COUNT) + CANVAS_PADDING,
-      height: MIN_HEIGHT + CANVAS_PADDING * 2
-    };
-  }
-
-  const { maxRight, maxBottom } = state.reduce(
-    (acc, widget) => {
-      const rect = createRect(widget);
-      return {
-        maxRight: Math.max(acc.maxRight, rect.x + rect.width),
-        maxBottom: Math.max(acc.maxBottom, rect.y + rect.height)
-      };
-    },
-    { maxRight: 0, maxBottom: 0 }
-  );
-
-  return {
-    width: Math.max(maxRight + CANVAS_PADDING, getSpanWidth(COLUMN_COUNT) + CANVAS_PADDING),
-    height: Math.max(maxBottom + CANVAS_PADDING, MIN_HEIGHT + CANVAS_PADDING * 2)
-  };
-}
-
-function normalizeWidgetLayout(state: WidgetState[]): WidgetState[] {
-  const next = state.map((widget) => ({
-    ...widget,
-    position: { ...widget.position },
-    size: { ...widget.size }
-  }));
-
-  for (const widget of next) {
-    const resolved = resolveRect(next, widget.id, {
-      x: widget.position.x,
-      y: widget.position.y,
-      width: widget.size.width,
-      height: widget.size.height
-    });
-
-    widget.position = { x: resolved.x, y: resolved.y };
-    widget.size = { width: resolved.width, height: resolved.height };
-  }
-
-  return next;
-}
-
 const initialWidgets = loadPersistedWidgets() ?? createInitialWidgets();
 const widgets = ref<WidgetState[]>(normalizeWidgetLayout(initialWidgets));
 const boardSize = computed(() => calculateBoardSize(widgets.value));
 
-let customWidgetCounter = getNextCustomIndex(initialWidgets);
+let customWidgetCounter = getNextCustomIndex(widgets.value);
 
 const pinnedCount = computed(() => widgets.value.filter((widget) => widget.pinned).length);
 const isFullBleed = ref(false);
@@ -187,6 +174,8 @@ const isFullscreen = ref(false);
 const isPhoneLayout = ref(false);
 
 let phoneMediaQuery: MediaQueryList | null = null;
+let persistTimer: number | null = null;
+let lastSerialized = JSON.stringify(widgets.value);
 
 watch(
   widgets,
@@ -194,14 +183,25 @@ watch(
     if (typeof window === 'undefined') {
       return;
     }
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  },
-  { deep: true, immediate: true }
-);
 
-function snapToGrid(value: number) {
-  return Math.round(value / GRID_SIZE) * GRID_SIZE;
-}
+    const serialized = JSON.stringify(next);
+    if (serialized === lastSerialized) {
+      return;
+    }
+
+    lastSerialized = serialized;
+
+    if (persistTimer !== null) {
+      clearTimeout(persistTimer);
+    }
+
+    persistTimer = window.setTimeout(() => {
+      persistWidgets(next);
+      persistTimer = null;
+    }, 150);
+  },
+  { deep: true }
+);
 
 function updateWidgetPosition(payload: { id: string; x: number; y: number }) {
   if (isPhoneLayout.value) {
@@ -399,16 +399,21 @@ function togglePin(id: string) {
 }
 
 function resetLayout() {
-  widgets.value = createInitialWidgets();
+  const reset = normalizeWidgetLayout(createInitialWidgets());
+  widgets.value = reset;
   if (typeof window !== 'undefined') {
     window.localStorage.removeItem(STORAGE_KEY);
   }
-  customWidgetCounter = getNextCustomIndex(widgets.value);
+  customWidgetCounter = getNextCustomIndex(reset);
 }
 
 function cascadeWidgets() {
   const pinnedWidgets = widgets.value.filter((widget) => widget.pinned);
-  const updated: WidgetState[] = pinnedWidgets.map((widget) => ({ ...widget }));
+  const updated: WidgetState[] = pinnedWidgets.map((widget) => ({
+    ...widget,
+    position: { ...widget.position },
+    size: { ...widget.size }
+  }));
   const gap = GRID_SIZE * 0.75;
   const columnWidth = MIN_WIDTH + GRID_SIZE * 5;
   const startX = GRID_SIZE * 2;
@@ -424,7 +429,7 @@ function cascadeWidgets() {
     const newX = startX + column * (columnWidth + gap);
     const newY = startY + columnHeight;
 
-    const desired: Rect = {
+    const desired = {
       x: newX,
       y: newY,
       width: widget.size.width,
@@ -453,7 +458,7 @@ function cascadeWidgets() {
     }
   }
 
-  widgets.value = updated;
+  widgets.value = normalizeWidgetLayout(updated);
 }
 
 function toggleFullBleed() {
@@ -502,6 +507,13 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.removeEventListener('fullscreenchange', handleFullscreenChange);
   phoneMediaQuery?.removeEventListener('change', updatePhoneLayoutState);
+  if (persistTimer !== null) {
+    clearTimeout(persistTimer);
+    if (typeof window !== 'undefined') {
+      persistWidgets(widgets.value);
+    }
+    persistTimer = null;
+  }
 });
 </script>
 
@@ -588,12 +600,14 @@ onBeforeUnmount(() => {
 
 @media (max-width: 720px) {
   .content {
-    padding: 24px 16px 32px;
-    gap: 20px;
+    padding: 20px 14px 32px;
+    gap: 22px;
   }
 
   .app-shell--phone .content {
     min-height: 100vh;
+    gap: 28px;
+    padding-bottom: 44px;
   }
 }
 </style>

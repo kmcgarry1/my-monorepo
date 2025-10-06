@@ -184,13 +184,16 @@ function handleHoverColumn(payload: { column: number | null }) {
   box-shadow: 0 32px 70px rgba(6, 13, 24, 0.42);
 }
 
+
 .board--mobile {
   min-height: 0;
   max-height: 100vh;
-  padding: 20px 16px 32px;
+  padding: 12px 0 28px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  border: none;
+  background: transparent;
   box-shadow: none;
   overflow-y: auto;
 }
@@ -200,9 +203,10 @@ function handleHoverColumn(payload: { column: number | null }) {
 }
 
 .board__mobile-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0 4px 12px;
 }
 
 .board__mobile-grid > * {
