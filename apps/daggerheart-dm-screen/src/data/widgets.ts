@@ -23,8 +23,8 @@ export function createInitialWidgets(): WidgetState[] {
       icon: '🧩',
       accent: 'linear-gradient(135deg, rgba(110, 160, 255, 0.6), rgba(160, 92, 255, 0.4))',
       description: 'Build bespoke trackers, notes, and reference cards.',
-      position: { x: 40, y: 40 },
-      size: { width: 420, height: 420 },
+      position: { x: 0, y: 32 },
+      size: { width: 480, height: 448 },
       component: 'CustomWidgetLibrary',
       zIndex: baseZ + 2,
       pinned: true
@@ -35,8 +35,8 @@ export function createInitialWidgets(): WidgetState[] {
       icon: '⏳',
       accent: 'linear-gradient(135deg, rgba(255, 138, 92, 0.6), rgba(255, 90, 90, 0.4))',
       description: 'Track initiative, rounds, and spotlight moments.',
-      position: { x: 40, y: 120 },
-      size: { width: 400, height: 360 },
+      position: { x: 512, y: 32 },
+      size: { width: 480, height: 384 },
       component: 'EncounterTimeline',
       zIndex: baseZ
     },
@@ -46,8 +46,8 @@ export function createInitialWidgets(): WidgetState[] {
       icon: '💠',
       accent: 'linear-gradient(135deg, rgba(86, 196, 255, 0.6), rgba(86, 132, 255, 0.4))',
       description: "Manage the party's shared resources.",
-      position: { x: 520, y: 120 },
-      size: { width: 320, height: 280 },
+      position: { x: 1024, y: 32 },
+      size: { width: 480, height: 320 },
       component: 'MomentumTracker',
       zIndex: baseZ - 1
     },
@@ -57,8 +57,8 @@ export function createInitialWidgets(): WidgetState[] {
       icon: '📖',
       accent: 'linear-gradient(135deg, rgba(168, 255, 120, 0.55), rgba(65, 211, 168, 0.35))',
       description: 'Daggerheart conditions at a glance.',
-      position: { x: 880, y: 160 },
-      size: { width: 320, height: 340 },
+      position: { x: 0, y: 512 },
+      size: { width: 480, height: 352 },
       component: 'ConditionsQuickRef',
       zIndex: baseZ - 2
     },
@@ -68,8 +68,8 @@ export function createInitialWidgets(): WidgetState[] {
       icon: '📚',
       accent: 'linear-gradient(135deg, rgba(255, 216, 102, 0.6), rgba(255, 164, 90, 0.35))',
       description: 'Domains, damage, boons, and consequences.',
-      position: { x: 120, y: 520 },
-      size: { width: 440, height: 320 },
+      position: { x: 512, y: 512 },
+      size: { width: 736, height: 352 },
       component: 'SRDLibrary',
       zIndex: baseZ - 3
     },
@@ -79,8 +79,8 @@ export function createInitialWidgets(): WidgetState[] {
       icon: '🎲',
       accent: 'linear-gradient(135deg, rgba(255, 120, 221, 0.55), rgba(162, 92, 255, 0.35))',
       description: 'Generate rolls and improv prompts.',
-      position: { x: 600, y: 440 },
-      size: { width: 360, height: 320 },
+      position: { x: 512, y: 896 },
+      size: { width: 480, height: 320 },
       component: 'DiceOracle',
       zIndex: baseZ - 4
     },
@@ -90,8 +90,8 @@ export function createInitialWidgets(): WidgetState[] {
       icon: '🕸️',
       accent: 'linear-gradient(135deg, rgba(92, 255, 208, 0.55), rgba(92, 164, 255, 0.35))',
       description: 'NPCs, looming dangers, and treasure sparks.',
-      position: { x: 960, y: 480 },
-      size: { width: 360, height: 340 },
+      position: { x: 1024, y: 896 },
+      size: { width: 480, height: 352 },
       component: 'ThreatsAndHooks',
       zIndex: baseZ - 5
     }

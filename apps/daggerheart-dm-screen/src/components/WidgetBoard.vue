@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Component } from 'vue';
+import { computed, ref, watch, type Component } from 'vue';
 import DraggableWidget from './DraggableWidget.vue';
 import EncounterTimeline from './widgets/EncounterTimeline.vue';
 import MomentumTracker from './widgets/MomentumTracker.vue';
@@ -10,6 +10,7 @@ import ThreatsAndHooks from './widgets/ThreatsAndHooks.vue';
 import CustomWidgetLibrary from './widgets/CustomWidgetLibrary.vue';
 import CustomWidget from './widgets/CustomWidget.vue';
 import type { CreateWidgetPayload, CustomWidgetConfig, UpdateWidgetPayload, WidgetState } from '../types';
+import { COLUMN_COUNT, COLUMN_STEP, COLUMN_WIDTH } from '../constants/layout';
 
 const componentMap: Record<string, Component> = {
   EncounterTimeline,
@@ -39,6 +40,27 @@ const emit = defineEmits<{
   (e: 'delete-widget', id: string): void;
 }>();
 
+const highlightedColumn = ref<number | null>(null);
+
+const columns = computed(() =>
+  Array.from({ length: COLUMN_COUNT }, (_, index) => ({
+    index,
+    style: {
+      width: `${COLUMN_WIDTH}px`,
+      left: `${index * COLUMN_STEP}px`
+    }
+  }))
+);
+
+watch(
+  () => props.disableInteractions,
+  (disabled) => {
+    if (disabled) {
+      highlightedColumn.value = null;
+    }
+  }
+);
+
 function getWidgetProps(widget: WidgetState) {
   if (widget.component === 'CustomWidget') {
     return { config: widget.config, widgetId: widget.id };
@@ -65,6 +87,10 @@ function handleUpdateWidget(payload: UpdateWidgetPayload) {
 function handleDeleteWidget(id: string) {
   emit('delete-widget', id);
 }
+
+function handleHoverColumn(payload: { column: number | null }) {
+  highlightedColumn.value = payload.column;
+}
 </script>
 
 <template>
@@ -72,13 +98,25 @@ function handleDeleteWidget(id: string) {
     <div
       v-if="!props.disableInteractions"
       class="board__canvas"
+      :class="{ 'board__canvas--dragging': highlightedColumn !== null }"
       data-board-canvas
       :style="{
         width: `${Math.max(props.canvasSize.width, 0)}px`,
-        height: `${Math.max(props.canvasSize.height, 0)}px`
+        height: `${Math.max(props.canvasSize.height, 0)}px`,
+        '--column-width': `${COLUMN_WIDTH}px`,
+        '--column-step': `${COLUMN_STEP}px`
       }"
     >
       <div class="grid-surface" aria-hidden="true"></div>
+      <div class="board__columns" aria-hidden="true">
+        <div
+          v-for="column in columns"
+          :key="column.index"
+          class="board__column"
+          :class="{ 'board__column--highlighted': highlightedColumn === column.index }"
+          :style="column.style"
+        ></div>
+      </div>
       <DraggableWidget
         v-for="widget in props.widgets"
         :key="widget.id"
@@ -88,6 +126,7 @@ function handleDeleteWidget(id: string) {
         @resizing="(payload) => emit('update:size', payload)"
         @focus="emit('focus', widget.id)"
         @toggle-pin="emit('toggle-pin', widget.id)"
+        @hover-column="handleHoverColumn"
       >
         <component
           :is="componentMap[widget.component] ?? componentMap.EncounterTimeline"
@@ -110,6 +149,7 @@ function handleDeleteWidget(id: string) {
         @resizing="(payload) => emit('update:size', payload)"
         @focus="emit('focus', widget.id)"
         @toggle-pin="emit('toggle-pin', widget.id)"
+        @hover-column="handleHoverColumn"
       >
         <component
           :is="componentMap[widget.component] ?? componentMap.EncounterTimeline"
@@ -155,16 +195,55 @@ function handleDeleteWidget(id: string) {
 .board__canvas {
   position: relative;
   min-width: 100%;
+  --column-width: 224px;
+  --column-step: calc(var(--column-width) + 32px);
+}
+
+.board__canvas--dragging .grid-surface {
+  opacity: 0.45;
 }
 
 .grid-surface {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(rgba(130, 165, 220, 0.12) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(130, 165, 220, 0.08) 1px, transparent 1px);
-  background-size: 96px 96px;
+  background-image: repeating-linear-gradient(
+      to right,
+      rgba(130, 165, 220, 0.18) 0,
+      rgba(130, 165, 220, 0.18) var(--column-width, 224px),
+      transparent var(--column-width, 224px),
+      transparent var(--column-step, 256px)
+    ),
+    linear-gradient(rgba(130, 165, 220, 0.12) 1px, transparent 1px);
+  background-size: var(--column-step, 256px) 100%, 96px 96px;
   opacity: 0.35;
   pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.board__columns {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.board__column {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(110, 160, 255, 0.16), rgba(30, 52, 86, 0.08));
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.board__canvas--dragging .board__column {
+  opacity: 0.16;
+}
+
+.board__column--highlighted {
+  opacity: 0.38;
+  box-shadow: 0 0 0 1px rgba(150, 190, 245, 0.38);
 }
 
 @media (max-width: 900px) {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onBeforeUnmount, ref } from 'vue';
+import { columnFromOffset, MIN_WIDGET_HEIGHT, MIN_WIDGET_WIDTH } from '../constants/layout';
 import type { WidgetState } from '../types';
 
 const props = defineProps<{
@@ -7,14 +8,15 @@ const props = defineProps<{
   disableInteractions?: boolean;
 }>();
 
-const MIN_WIDTH = 160;
-const MIN_HEIGHT = 128;
+const MIN_WIDTH = MIN_WIDGET_WIDTH;
+const MIN_HEIGHT = MIN_WIDGET_HEIGHT;
 
 const emit = defineEmits<{
   (e: 'dragging', payload: { id: string; x: number; y: number }): void;
   (e: 'focus'): void;
   (e: 'toggle-pin'): void;
   (e: 'resizing', payload: { id: string; width: number; height: number }): void;
+  (e: 'hover-column', payload: { column: number | null }): void;
 }>();
 
 const root = ref<HTMLElement | null>(null);
@@ -42,6 +44,16 @@ function getBoardCanvas(element: HTMLElement | null) {
   return element.closest<HTMLElement>('[data-board-canvas]') ?? element.parentElement;
 }
 
+function emitColumnHover(x: number | null) {
+  if (x === null) {
+    emit('hover-column', { column: null });
+    return;
+  }
+
+  const column = columnFromOffset(Math.max(x, 0));
+  emit('hover-column', { column });
+}
+
 function onPointerDown(event: PointerEvent) {
   emit('focus');
 
@@ -60,6 +72,8 @@ function onPointerDown(event: PointerEvent) {
   startPointerY = event.clientY;
   startX = props.widget.position.x;
   startY = props.widget.position.y;
+
+  emitColumnHover(startX);
 
   element.classList.add('is-dragging');
 
@@ -91,6 +105,8 @@ function onPointerMove(event: PointerEvent) {
     nextY = Math.min(Math.max(nextY, 0), maxY);
   }
 
+  emitColumnHover(nextX);
+
   emit('dragging', {
     id: props.widget.id,
     x: nextX,
@@ -114,6 +130,7 @@ function cleanup() {
   isDragging = false;
   pointerId = null;
   element?.classList.remove('is-dragging');
+  emitColumnHover(null);
   window.removeEventListener('pointermove', onPointerMove);
 }
 
