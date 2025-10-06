@@ -25,6 +25,7 @@ const componentMap: Record<string, Component> = {
 const props = defineProps<{
   widgets: WidgetState[];
   disableInteractions?: boolean;
+  canvasSize: { width: number; height: number };
 }>();
 
 const emit = defineEmits<{
@@ -68,26 +69,58 @@ function handleDeleteWidget(id: string) {
 
 <template>
   <section class="board" :class="{ 'board--mobile': props.disableInteractions }" aria-label="Daggerheart control board">
-    <div class="grid-surface" aria-hidden="true"></div>
-    <DraggableWidget
-      v-for="widget in props.widgets"
-      :key="widget.id"
-      :widget="widget"
-      :disable-interactions="props.disableInteractions"
-      @dragging="(payload) => emit('update:position', payload)"
-      @resizing="(payload) => emit('update:size', payload)"
-      @focus="emit('focus', widget.id)"
-      @toggle-pin="emit('toggle-pin', widget.id)"
+    <div
+      v-if="!props.disableInteractions"
+      class="board__canvas"
+      data-board-canvas
+      :style="{
+        width: `${Math.max(props.canvasSize.width, 0)}px`,
+        height: `${Math.max(props.canvasSize.height, 0)}px`
+      }"
     >
-      <component
-        :is="componentMap[widget.component] ?? componentMap.EncounterTimeline"
-        v-bind="getWidgetProps(widget)"
-        @create-widget="handleCreateWidget"
-        @update-config="handleUpdateConfig"
-        @update-widget="handleUpdateWidget"
-        @delete-widget="handleDeleteWidget"
-      />
-    </DraggableWidget>
+      <div class="grid-surface" aria-hidden="true"></div>
+      <DraggableWidget
+        v-for="widget in props.widgets"
+        :key="widget.id"
+        :widget="widget"
+        :disable-interactions="props.disableInteractions"
+        @dragging="(payload) => emit('update:position', payload)"
+        @resizing="(payload) => emit('update:size', payload)"
+        @focus="emit('focus', widget.id)"
+        @toggle-pin="emit('toggle-pin', widget.id)"
+      >
+        <component
+          :is="componentMap[widget.component] ?? componentMap.EncounterTimeline"
+          v-bind="getWidgetProps(widget)"
+          @create-widget="handleCreateWidget"
+          @update-config="handleUpdateConfig"
+          @update-widget="handleUpdateWidget"
+          @delete-widget="handleDeleteWidget"
+        />
+      </DraggableWidget>
+    </div>
+    <template v-else>
+      <div class="grid-surface" aria-hidden="true"></div>
+      <DraggableWidget
+        v-for="widget in props.widgets"
+        :key="widget.id"
+        :widget="widget"
+        :disable-interactions="props.disableInteractions"
+        @dragging="(payload) => emit('update:position', payload)"
+        @resizing="(payload) => emit('update:size', payload)"
+        @focus="emit('focus', widget.id)"
+        @toggle-pin="emit('toggle-pin', widget.id)"
+      >
+        <component
+          :is="componentMap[widget.component] ?? componentMap.EncounterTimeline"
+          v-bind="getWidgetProps(widget)"
+          @create-widget="handleCreateWidget"
+          @update-config="handleUpdateConfig"
+          @update-widget="handleUpdateWidget"
+          @delete-widget="handleDeleteWidget"
+        />
+      </DraggableWidget>
+    </template>
   </section>
 </template>
 
@@ -99,7 +132,7 @@ function handleDeleteWidget(id: string) {
   border: 1px solid var(--surface-border);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), var(--surface-strong));
   box-shadow: 0 26px 60px rgba(7, 14, 26, 0.38);
-  overflow: hidden;
+  overflow: auto;
   padding: 26px 28px;
   transition: box-shadow 0.25s ease, border-color 0.25s ease;
 }
@@ -116,6 +149,12 @@ function handleDeleteWidget(id: string) {
   flex-direction: column;
   gap: 16px;
   box-shadow: none;
+  overflow: visible;
+}
+
+.board__canvas {
+  position: relative;
+  min-width: 100%;
 }
 
 .grid-surface {
@@ -139,6 +178,12 @@ function handleDeleteWidget(id: string) {
   .board {
     border-radius: 22px;
     border-width: 1px;
+  }
+
+  .board__canvas {
+    min-width: 0;
+    width: 100% !important;
+    height: auto !important;
   }
 
   .grid-surface {

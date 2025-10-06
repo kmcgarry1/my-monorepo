@@ -35,6 +35,13 @@ function interactionsDisabled() {
   return Boolean(props.disableInteractions);
 }
 
+function getBoardCanvas(element: HTMLElement | null) {
+  if (!element) {
+    return null;
+  }
+  return element.closest<HTMLElement>('[data-board-canvas]') ?? element.parentElement;
+}
+
 function onPointerDown(event: PointerEvent) {
   emit('focus');
 
@@ -53,6 +60,8 @@ function onPointerDown(event: PointerEvent) {
   startPointerY = event.clientY;
   startX = props.widget.position.x;
   startY = props.widget.position.y;
+
+  element.classList.add('is-dragging');
 
   element.setPointerCapture(pointerId);
   element.addEventListener('lostpointercapture', cleanup, { once: true });
@@ -73,7 +82,7 @@ function onPointerMove(event: PointerEvent) {
   let nextY = startY + deltaY;
 
   const element = root.value;
-  const board = element?.parentElement as HTMLElement | null;
+  const board = getBoardCanvas(element);
 
   if (board) {
     const maxX = Math.max(board.clientWidth - props.widget.size.width, 0);
@@ -104,6 +113,7 @@ function cleanup() {
   }
   isDragging = false;
   pointerId = null;
+  element?.classList.remove('is-dragging');
   window.removeEventListener('pointermove', onPointerMove);
 }
 
@@ -133,6 +143,8 @@ function onResizePointerDown(event: PointerEvent) {
 
   window.addEventListener('pointermove', onResizePointerMove);
   window.addEventListener('pointerup', onResizePointerUp, { once: true });
+
+  root.value?.classList.add('is-resizing');
 }
 
 function onResizePointerMove(event: PointerEvent) {
@@ -147,7 +159,7 @@ function onResizePointerMove(event: PointerEvent) {
   let nextHeight = startHeight + deltaY;
 
   const element = root.value;
-  const board = element?.parentElement as HTMLElement | null;
+  const board = getBoardCanvas(element);
 
   if (board) {
     const maxWidth = Math.max(board.clientWidth - props.widget.position.x, MIN_WIDTH);
@@ -179,6 +191,7 @@ function cleanupResize() {
   isResizing = false;
   resizePointerId = null;
   resizeHandleEl = null;
+  root.value?.classList.remove('is-resizing');
 }
 
 onBeforeUnmount(() => {
@@ -260,6 +273,16 @@ onBeforeUnmount(() => {
 
 .widget.pinned {
   box-shadow: 0 16px 48px rgba(5, 12, 24, 0.38);
+}
+
+.widget.is-dragging,
+.widget.is-resizing {
+  box-shadow: 0 28px 70px rgba(6, 13, 26, 0.55);
+  transform: translateZ(0);
+}
+
+.widget.is-dragging .widget__header {
+  cursor: grabbing;
 }
 
 .widget.disabled {
@@ -352,10 +375,10 @@ onBeforeUnmount(() => {
 
 .resize-handle {
   position: absolute;
-  width: 18px;
-  height: 18px;
-  right: 10px;
-  bottom: 10px;
+  width: 22px;
+  height: 22px;
+  right: 12px;
+  bottom: 12px;
   border-radius: 6px;
   background: rgba(148, 190, 255, 0.55);
   border: 1px solid rgba(148, 190, 255, 0.75);
