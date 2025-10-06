@@ -140,26 +140,28 @@ function handleHoverColumn(payload: { column: number | null }) {
     </div>
     <template v-else>
       <div class="grid-surface" aria-hidden="true"></div>
-      <DraggableWidget
-        v-for="widget in props.widgets"
-        :key="widget.id"
-        :widget="widget"
-        :disable-interactions="props.disableInteractions"
-        @dragging="(payload) => emit('update:position', payload)"
-        @resizing="(payload) => emit('update:size', payload)"
-        @focus="emit('focus', widget.id)"
-        @toggle-pin="emit('toggle-pin', widget.id)"
-        @hover-column="handleHoverColumn"
-      >
-        <component
-          :is="componentMap[widget.component] ?? componentMap.EncounterTimeline"
-          v-bind="getWidgetProps(widget)"
-          @create-widget="handleCreateWidget"
-          @update-config="handleUpdateConfig"
-          @update-widget="handleUpdateWidget"
-          @delete-widget="handleDeleteWidget"
-        />
-      </DraggableWidget>
+      <div class="board__mobile-grid">
+        <DraggableWidget
+          v-for="widget in props.widgets"
+          :key="widget.id"
+          :widget="widget"
+          :disable-interactions="props.disableInteractions"
+          @dragging="(payload) => emit('update:position', payload)"
+          @resizing="(payload) => emit('update:size', payload)"
+          @focus="emit('focus', widget.id)"
+          @toggle-pin="emit('toggle-pin', widget.id)"
+          @hover-column="handleHoverColumn"
+        >
+          <component
+            :is="componentMap[widget.component] ?? componentMap.EncounterTimeline"
+            v-bind="getWidgetProps(widget)"
+            @create-widget="handleCreateWidget"
+            @update-config="handleUpdateConfig"
+            @update-widget="handleUpdateWidget"
+            @delete-widget="handleDeleteWidget"
+          />
+        </DraggableWidget>
+      </div>
     </template>
   </section>
 </template>
@@ -184,12 +186,27 @@ function handleHoverColumn(payload: { column: number | null }) {
 
 .board--mobile {
   min-height: 0;
+  max-height: 100vh;
   padding: 20px 16px 32px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   box-shadow: none;
-  overflow: visible;
+  overflow-y: auto;
+}
+
+.board--mobile .grid-surface {
+  display: none;
+}
+
+.board__mobile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.board__mobile-grid > * {
+  min-width: 0;
 }
 
 .board__canvas {
