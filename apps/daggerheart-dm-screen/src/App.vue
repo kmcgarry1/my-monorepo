@@ -4,10 +4,20 @@ import WidgetBoard from './components/WidgetBoard.vue';
 import DMToolbar from './components/DMToolbar.vue';
 import type { CreateWidgetPayload, CustomWidgetConfig, UpdateWidgetPayload, WidgetState } from './types';
 import { createInitialWidgets } from './data/widgets';
+import {
+  GRID_SIZE,
+  MIN_WIDGET_WIDTH,
+  MIN_WIDGET_HEIGHT,
+  COLUMN_COUNT,
+  COLUMN_STEP,
+  clampColumnIndex,
+  getColumnOffset,
+  getSpanWidth,
+  normalizeColumnWidth
+} from './constants/layout';
 
-const GRID_SIZE = 32;
-const MIN_WIDTH = GRID_SIZE * 5;
-const MIN_HEIGHT = GRID_SIZE * 4;
+const MIN_WIDTH = MIN_WIDGET_WIDTH;
+const MIN_HEIGHT = MIN_WIDGET_HEIGHT;
 const CANVAS_PADDING = GRID_SIZE * 4;
 
 const STORAGE_KEY = 'daggerheart-dm-widgets';
@@ -75,21 +85,19 @@ function resolveRect(allWidgets: WidgetState[], widgetId: string, target: Rect):
     .filter((widget) => widget.id !== widgetId)
     .map((widget) => ({ ...createRect(widget) }));
 
-  const baseX = snapToGrid(Math.max(target.x, 0));
-  const baseY = snapToGrid(Math.max(target.y, 0));
-  const desiredWidth = Math.max(snapToGrid(target.width), MIN_WIDTH);
+  const { span, width: desiredWidth } = normalizeColumnWidth(Math.max(target.width, MIN_WIDTH));
   const desiredHeight = Math.max(snapToGrid(target.height), MIN_HEIGHT);
-  const maxExistingRight = others.reduce((max, rect) => Math.max(max, rect.x + rect.width), desiredWidth);
-  const rightLimit = Math.max(maxExistingRight + CANVAS_PADDING * 8, baseX + desiredWidth + CANVAS_PADDING * 4);
+  const baseColumn = clampColumnIndex(Math.round(target.x / COLUMN_STEP), span);
+  const columnLimit = Math.max(COLUMN_COUNT - span, 0);
 
+  let column = baseColumn;
+  let y = snapToGrid(Math.max(target.y, 0));
   let attempt = 0;
-  const maxAttempts = Math.max(others.length * 40, 600);
-  let x = baseX;
-  let y = baseY;
+  const maxAttempts = Math.max(others.length * COLUMN_COUNT * 6, 600);
 
   while (attempt < maxAttempts) {
     const candidate: Rect = {
-      x,
+      x: getColumnOffset(column),
       y,
       width: desiredWidth,
       height: desiredHeight
@@ -101,20 +109,19 @@ function resolveRect(allWidgets: WidgetState[], widgetId: string, target: Rect):
       return candidate;
     }
 
-    const shiftRight = snapToGrid(collider.x + collider.width + GRID_SIZE);
-
-    if (shiftRight + desiredWidth <= rightLimit) {
-      x = shiftRight;
+    if (column < columnLimit) {
+      column += 1;
     } else {
-      x = baseX;
-      y = snapToGrid(Math.max(y, collider.y + collider.height + GRID_SIZE));
+      column = clampColumnIndex(baseColumn, span);
+      const nextY = snapToGrid(Math.max(y, collider.y + collider.height + GRID_SIZE));
+      y = nextY === y ? y + GRID_SIZE : nextY;
     }
 
     attempt += 1;
   }
 
   return {
-    x,
+    x: getColumnOffset(clampColumnIndex(column, span)),
     y,
     width: desiredWidth,
     height: desiredHeight
@@ -123,7 +130,10 @@ function resolveRect(allWidgets: WidgetState[], widgetId: string, target: Rect):
 
 function calculateBoardSize(state: WidgetState[]): { width: number; height: number } {
   if (state.length === 0) {
-    return { width: MIN_WIDTH + CANVAS_PADDING * 2, height: MIN_HEIGHT + CANVAS_PADDING * 2 };
+    return {
+      width: getSpanWidth(COLUMN_COUNT) + CANVAS_PADDING,
+      height: MIN_HEIGHT + CANVAS_PADDING * 2
+    };
   }
 
   const { maxRight, maxBottom } = state.reduce(
@@ -138,13 +148,35 @@ function calculateBoardSize(state: WidgetState[]): { width: number; height: numb
   );
 
   return {
-    width: Math.max(maxRight + CANVAS_PADDING, MIN_WIDTH * 4),
-    height: Math.max(maxBottom + CANVAS_PADDING, MIN_HEIGHT * 3)
+    width: Math.max(maxRight + CANVAS_PADDING, getSpanWidth(COLUMN_COUNT) + CANVAS_PADDING),
+    height: Math.max(maxBottom + CANVAS_PADDING, MIN_HEIGHT + CANVAS_PADDING * 2)
   };
 }
 
+function normalizeWidgetLayout(state: WidgetState[]): WidgetState[] {
+  const next = state.map((widget) => ({
+    ...widget,
+    position: { ...widget.position },
+    size: { ...widget.size }
+  }));
+
+  for (const widget of next) {
+    const resolved = resolveRect(next, widget.id, {
+      x: widget.position.x,
+      y: widget.position.y,
+      width: widget.size.width,
+      height: widget.size.height
+    });
+
+    widget.position = { x: resolved.x, y: resolved.y };
+    widget.size = { width: resolved.width, height: resolved.height };
+  }
+
+  return next;
+}
+
 const initialWidgets = loadPersistedWidgets() ?? createInitialWidgets();
-const widgets = ref<WidgetState[]>(initialWidgets);
+const widgets = ref<WidgetState[]>(normalizeWidgetLayout(initialWidgets));
 const boardSize = computed(() => calculateBoardSize(widgets.value));
 
 let customWidgetCounter = getNextCustomIndex(initialWidgets);
@@ -262,16 +294,17 @@ function bringWidgetToFront(id: string) {
 function getNextCustomPosition() {
   const nonPinned = widgets.value.filter((widget) => !widget.pinned);
   const index = nonPinned.length;
-  const column = index % 3;
-  const row = Math.floor(index / 3);
-  const baseX = snapToGrid(96 + column * (MIN_WIDTH + GRID_SIZE * 5));
-  const baseY = snapToGrid(96 + row * (MIN_HEIGHT + GRID_SIZE * 6));
+  const column = clampColumnIndex(index % COLUMN_COUNT, 1);
+  const row = Math.floor(index / COLUMN_COUNT);
+  const baseX = getColumnOffset(column);
+  const baseY = snapToGrid(GRID_SIZE * 3 + row * (MIN_HEIGHT + GRID_SIZE * 6));
   return { x: baseX, y: baseY };
 }
 
 function addCustomWidget(payload: CreateWidgetPayload) {
   const highest = getHighestZIndex();
   const { x, y } = getNextCustomPosition();
+  const { width: normalizedWidth } = normalizeColumnWidth(Math.max(payload.size.width, MIN_WIDTH));
   const newWidget: WidgetState = {
     id: `custom-${customWidgetCounter++}`,
     title: payload.title,
@@ -280,7 +313,7 @@ function addCustomWidget(payload: CreateWidgetPayload) {
     description: payload.description,
     position: { x, y },
     size: {
-      width: Math.max(MIN_WIDTH, snapToGrid(payload.size.width)),
+      width: normalizedWidth,
       height: Math.max(MIN_HEIGHT, snapToGrid(payload.size.height))
     },
     component: payload.component,
